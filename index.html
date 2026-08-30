@@ -17,7 +17,6 @@
     .navbar-admin { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2); border-bottom: 4px dashed #fbcfe8; transition: all 0.5s ease; }
     .navbar-brand { font-weight: 900; font-size: 1.4rem; color: #ffffff; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* PERBAIKAN: Tombol Navigasi Tema Kawaii */
     .btn-nav-custom { background-color: rgba(255, 255, 255, 0.25); border: 2px dashed rgba(255, 255, 255, 0.6); color: white; font-weight: 800; border-radius: 12px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); backdrop-filter: blur(5px); }
     .btn-nav-custom:hover { background-color: white; color: #db2777; border-color: white; transform: translateY(-2px); }
 
@@ -79,7 +78,7 @@
     .search-wrapper { max-width: 350px; width: 100%; }
     .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
     .cute-toast { background: white; border: 3px dashed #f472b6; border-radius: 20px; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.3); }
-    .tab-content { overflow: visible; /* Perbaikan agar drop shadow card tidak terpotong */ }
+    .tab-content { overflow: visible; }
 
     .text-accent { color: #db2777; }
     .bg-accent-light { background: #fce7f3; color: #db2777; }
@@ -100,7 +99,6 @@
     /* ==========================================
        TEMA 2: GLASSMORPHISM (DARK AURORA) 🔮✨
        ========================================== */
-    /* PERBAIKAN: transform: translateZ(0) memperbaiki bug scroll & klik yang tersangkut karena filter blur di HP */
     body.theme-glass { background: linear-gradient(-45deg, #0f172a, #312e81, #0f172a, #1e1b4b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #f8fafc !important; }
     @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
@@ -112,7 +110,7 @@
       -webkit-backdrop-filter: blur(16px); 
       border: 1px solid rgba(255, 255, 255, 0.15) !important; 
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important; 
-      transform: translateZ(0); /* FIX BUG KLIK TERSANGKUT */
+      transform: translateZ(0); 
     }
     
     body.theme-glass .order-header, body.theme-glass .order-footer { background: rgba(0, 0, 0, 0.3) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
@@ -214,7 +212,6 @@
             <span class="badge bg-danger rounded-pill shadow-sm" id="badgeAutoRefresh" style="vertical-align: top;">🔴 Radar Aktif</span>
           </div>
           <div class="col-md-6 col-12 d-flex justify-content-md-end">
-            <!-- PENCARIAN + TOMBOL SCANNER LIVE -->
             <div class="input-group shadow-sm search-wrapper">
               <span class="input-group-text search-icon-box" style="border-radius: 16px 0 0 16px; border-right: none;"><i class="bi bi-search"></i></span>
               <input type="text" class="form-control border-start-0 border-end-0" style="border-radius: 0;" id="searchOrder" placeholder="Cari / Scan Order..." oninput="filterOrder()">
@@ -232,7 +229,6 @@
         <div class="dashboard-card">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 header-stok">
             <h4 class="fw-bold mb-0 text-accent">🧸 Cek Stok & Harga</h4>
-            <!-- PENCARIAN STOK + TOMBOL SCANNER LIVE -->
             <div class="input-group shadow-sm search-wrapper">
               <span class="input-group-text search-icon-box" style="border-radius: 16px 0 0 16px; border-right: none;"><i class="bi bi-search"></i></span>
               <input type="text" class="form-control border-start-0 border-end-0" style="border-radius: 0;" id="searchStok" placeholder="Cari / Scan Barang..." oninput="filterStok()">
@@ -293,7 +289,7 @@
     </div>
   </div>
 
-  <!-- MODAL LIVE SCANNER CAMERA DENGAN FITUR SENTER 📷✨🔦 -->
+  <!-- MODAL LIVE SCANNER -->
   <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg modal-anim">
@@ -306,7 +302,6 @@
             Penting: Buka web ini dari <b class="text-danger">Chrome / Safari</b> agar kamera tidak diblokir!
           </div>
           
-          <!-- TOMBOL SENTER (Disembunyikan jika HP tidak support) -->
           <button id="btnToggleFlash" class="btn btn-warning w-100 fw-bold shadow-sm mb-3" style="display: none; border-radius: 12px;" onclick="toggleFlash()">
             <i id="iconFlash" class="bi bi-lightning-fill"></i> <span id="textFlash">Nyalakan Senter</span>
           </button>
@@ -388,7 +383,7 @@
   
   <script>
     // =========================================================================
-    // WAJIB GANTI INI DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU (YANG ADA /exec)
+    // URL WEB APP GOOGLE APPS SCRIPT (SUDAH DI-SET)
     // =========================================================================
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrcRmVx0mzJhqg2yHawCdCmVrqQx3iPQkh1ErgWObHH746tn1C-QDDMpd7dodciBw/exec'; 
     // =========================================================================
@@ -396,19 +391,13 @@
     let globalStok = []; let globalOrders = [];
     let currentPrintId = null; let currentStatusSheet = null; let currentStatusId = null;
     let printModalInstance = null; let authModalInstance = null; let statusModalInstance = null; let toastInstance = null; let scannerModalInstance = null;
-    let jumlahOrderSaatIni = 0; 
+    
     let html5QrcodeScanner = null;
     let currentScanTarget = '';
-    
-    // Variabel Senter (Flash)
     let isFlashOn = false;
     let flashCheckInterval = null;
 
-    // ==========================================
-    // FUNGSI BANTUAN FETCH API
-    // ==========================================
     async function fetchAPI(action, params = {}) {
-      if(SCRIPT_URL === 'URL_WEBAPP_KAMU_DISINI') { throw new Error("Ganti SCRIPT_URL dengan URL Web App-mu ya! 😅"); }
       const formData = new URLSearchParams();
       formData.append('action', action);
       for (const key in params) { formData.append(key, params[key]); }
@@ -416,35 +405,28 @@
         const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
         return await response.json();
       } catch (err) {
-        throw new Error("Gagal terhubung ke Database. Coba cek sinyal internetmu.");
+        throw new Error("Gagal terhubung ke Database. Cek internetmu.");
       }
     }
 
-    // ==========================================
-    // LOGIKA SCANNER MURNI & SENTER 📸🔦
-    // ==========================================
     function openScanner(target) {
       currentScanTarget = target;
       scannerModalInstance.show();
 
       setTimeout(() => {
         document.getElementById('reader').innerHTML = ''; 
-        document.getElementById('btnToggleFlash').style.display = 'none'; // Sembunyikan senter di awal
+        document.getElementById('btnToggleFlash').style.display = 'none';
         isFlashOn = false; 
 
         if (!html5QrcodeScanner) {
-          // Setting UI Scanner yang lebih responsif
           html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
             fps: 10, 
             qrbox: {width: 250, height: 250},
             aspectRatio: 1.0,
-            showTorchButtonIfSupported: false // Matikan tombol default karena kita pakai custom button
+            showTorchButtonIfSupported: false 
           }, false);
         }
-        
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-        // Cek secara berkala apakah stream video sudah jalan dan apakah support Senter
         flashCheckInterval = setInterval(checkTorchSupport, 500);
       }, 500);
     }
@@ -456,38 +438,34 @@
         if (track && typeof track.getCapabilities === 'function') {
           const caps = track.getCapabilities();
           if (caps.torch) {
-            // Jika support, munculkan tombol senter
             document.getElementById('btnToggleFlash').style.display = 'block';
             document.getElementById('textFlash').innerText = 'Nyalakan Senter';
             document.getElementById('iconFlash').className = 'bi bi-lightning-fill';
           }
         }
-        clearInterval(flashCheckInterval); // Hentikan pengecekan jika kamera sudah on
+        clearInterval(flashCheckInterval);
       }
     }
 
     async function toggleFlash() {
       const video = document.querySelector('#reader video');
       if(!video || !video.srcObject) return;
-      
       const track = video.srcObject.getVideoTracks()[0];
       try {
         isFlashOn = !isFlashOn;
         await track.applyConstraints({ advanced: [{ torch: isFlashOn }] });
-        
-        // Update UI Tombol
         document.getElementById('textFlash').innerText = isFlashOn ? 'Matikan Senter' : 'Nyalakan Senter';
         document.getElementById('iconFlash').className = isFlashOn ? 'bi bi-lightning' : 'bi bi-lightning-fill';
       } catch(e) {
-        isFlashOn = !isFlashOn; // Kembalikan state jika error
-        alert("Gagal mengakses fitur senter HP. Pastikan browser diizinkan menggunakan Flash.");
+        isFlashOn = !isFlashOn;
+        alert("Gagal mengakses fitur senter HP.");
       }
     }
 
     function closeScanner() {
       if (flashCheckInterval) clearInterval(flashCheckInterval);
       if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear().then(() => { scannerModalInstance.hide(); }).catch(error => { console.log(error); scannerModalInstance.hide(); });
+        html5QrcodeScanner.clear().then(() => { scannerModalInstance.hide(); }).catch(error => { scannerModalInstance.hide(); });
       } else {
         scannerModalInstance.hide();
       }
@@ -496,7 +474,6 @@
     function onScanSuccess(decodedText, decodedResult) {
       document.getElementById('notifSound').play().catch(e=>console.log("Audio diblok"));
       closeScanner();
-      
       if (currentScanTarget === 'order') {
         document.getElementById('searchOrder').value = decodedText; filterOrder();
       } else {
@@ -504,11 +481,8 @@
       }
     }
 
-    function onScanFailure(error) { /* Abaikan error per-frame */ }
+    function onScanFailure(error) {}
 
-    // ==========================================
-    // TEMA & ANIMASI
-    // ==========================================
     function applySavedTheme() {
       const savedTheme = localStorage.getItem('adminTheme');
       if (savedTheme === 'glass') { document.body.classList.add('theme-glass'); document.getElementById('themeIcon').className = 'bi bi-droplet-fill'; }
@@ -541,7 +515,7 @@
     });
 
     // ==========================================
-    // INIT UTAMA
+    // INIT UTAMA & LOGIKA POLLING LOCALSTORAGE
     // ==========================================
     window.onload = async function() {
       printModalInstance = new bootstrap.Modal(document.getElementById('printSlotModal'));
@@ -556,7 +530,7 @@
         const res = await fetchAPI('getSetupData');
         if (res.success) { 
           setupFormPengaturan(res.allSheets, res.savedStockSheet, res.savedOrderSheets); 
-          loadAdminData(true); 
+          await loadAdminData(true); 
           animateIntro(); 
         } else { 
           document.getElementById('loader').style.display = 'none'; 
@@ -567,23 +541,30 @@
         showError(err.message);
       }
 
+      // INTERVAL POLLING TANPA DOBEL NOTIFIKASI
       setInterval(async () => {
         try {
           const res = await fetchAPI('cekPesananBaru');
-          if (res.success && res.total > jumlahOrderSaatIni) {
-            jumlahOrderSaatIni = res.total; 
-            document.getElementById('notifSound').play().catch(e=>console.log("Audio diblok")); 
-            toastInstance.show(); 
-            anime({ targets: '#orderToast', translateY: [50, 0], scale: [0.8, 1], duration: 800, easing: 'easeOutElastic(1, .8)' });
-            loadAdminData(false);
+          if (res.success && res.latestId) {
+            const lastSavedId = localStorage.getItem('lastSeenOrderId');
+
+            if (!lastSavedId) {
+              localStorage.setItem('lastSeenOrderId', res.latestId);
+            } 
+            else if (res.latestId !== lastSavedId) {
+              localStorage.setItem('lastSeenOrderId', res.latestId);
+              
+              document.getElementById('notifSound').play().catch(e=>console.log("Audio diblok")); 
+              toastInstance.show(); 
+              anime({ targets: '#orderToast', translateY: [50, 0], scale: [0.8, 1], duration: 800, easing: 'easeOutElastic(1, .8)' });
+              
+              loadAdminData(false);
+            }
           }
         } catch (err) { }
-      }, 30000);
+      }, 10000);
     };
 
-    // ==========================================
-    // FUNGSI LAINNYA (Sama seperti versi sebelumnya)
-    // ==========================================
     function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
       const selectStock = document.getElementById('selectStockSheet'); const checkContainer = document.getElementById('checkboxOrderSheets');
       let htmlSelect = '<option value="">-- Pilih Sheet Stok --</option>'; let htmlCheck = '';
@@ -641,8 +622,15 @@
           showError(res.message); new bootstrap.Tab(document.querySelector('#setting-tab')).show(); return; 
         }
         if(res.success) { 
-          globalStok = res.stok; globalOrders = res.orders; jumlahOrderSaatIni = globalOrders.length; 
-          renderStokUI(globalStok); renderOrders(); 
+          globalStok = res.stok; 
+          globalOrders = res.orders; 
+          
+          if (globalOrders.length > 0) {
+            localStorage.setItem('lastSeenOrderId', globalOrders[0].idPesanan);
+          }
+
+          renderStokUI(globalStok); 
+          renderOrders(); 
         } else { showError("Gagal memuat data: " + res.message); }
       } catch(err) {
         if(showLoader) document.getElementById('loader').style.display = 'none'; 
