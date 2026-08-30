@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pusat Kendali Gudang (API Based)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       TEMA 1: KAWAII PASTEL (DEFAULT) 🎀
+       ========================================== */
+    body { font-family: 'Nunito', sans-serif; background-color: #fdf2f8; background-image: radial-gradient(circle at 50% 0%, #fff1f2 0%, #fdf2f8 70%); color: #475569; overflow-x: hidden; transition: background 0.5s ease; }
+    
+    .navbar-admin { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2); border-bottom: 4px dashed #fbcfe8; transition: all 0.5s ease; }
+    .navbar-brand { font-weight: 900; font-size: 1.4rem; color: #ffffff; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .nav-tabs { border-bottom: none; margin-bottom: 25px; gap: 10px; display: flex; justify-content: center; border: none; }
+    .nav-tabs .nav-link { color: #db2777 !important; font-weight: 800; border: 2px dashed transparent !important; padding: 12px 25px; border-radius: 25px !important; background-color: white !important; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.05); white-space: nowrap; }
+    .nav-tabs .nav-link:hover { background-color: #fce7f3 !important; transform: translateY(-3px); }
+    .nav-tabs .nav-link.active { background-color: #db2777 !important; color: white !important; border-color: #fbcfe8 !important; transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 15px rgba(219, 39, 119, 0.3); }
+    
+    .dashboard-card { background: white; border-radius: 24px; border: 3px dashed #fbcfe8; box-shadow: 0 10px 30px rgba(244, 114, 182, 0.15); padding: 25px; margin-bottom: 25px; transition: all 0.5s ease; }
+    .order-card { border: 3px dashed #fbcfe8; border-radius: 20px; margin-bottom: 20px; background: white; transition: all 0.3s; box-shadow: 0 5px 15px rgba(244, 114, 182, 0.1); }
+    .order-card:hover { border-color: #f472b6; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(219, 39, 119, 0.2); }
+    .order-header { background: #fff1f2; padding: 15px 20px; border-bottom: 2px dashed #fbcfe8; border-radius: 18px 18px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; transition: all 0.5s ease; }
+    .order-body { padding: 20px; }
+    .order-footer { padding: 15px 20px; background: #fff1f2; border-top: 2px dashed #fbcfe8; border-radius: 0 0 18px 18px; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; transition: all 0.5s ease; }
+    
+    .table-items { font-size: 0.95rem; margin-bottom: 0; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; border: 2px solid #fce7f3; transition: all 0.5s ease; }
+    .table-items th { background: #fce7f3; color: #db2777; font-weight: 800; border-bottom: 1px dashed #fbcfe8; padding: 12px; white-space: nowrap; }
+    .table-items td { padding: 12px; border-bottom: 1px dashed #fbcfe8; vertical-align: middle; }
+    .table-items tr:last-child td { border-bottom: none; }
+    
+    .badge-Pending { background: #fef08a; color: #9a3412; }
+    .badge-Diproses { background: #bae6fd; color: #164e63; }
+    .badge-Dikirim { background: #c7d2fe; color: #3730a3; }
+    .badge-Selesai { background: #bbf7d0; color: #166534; }
+    .badge-Dibatalkan { background: #fecaca; color: #991b1b; }
+
+    .btn-status-cute { border-radius: 16px; font-weight: 800; padding: 12px 15px; border: 3px dashed transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-size: 1.1rem; }
+    .btn-status-cute:hover { transform: scale(1.05); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+    .btn-stat-pending { background: #fef08a; color: #9a3412; border-color: #fde047; }
+    .btn-stat-diproses { background: #bae6fd; color: #164e63; border-color: #7dd3fc; }
+    .btn-stat-dikirim { background: #c7d2fe; color: #3730a3; border-color: #a5b4fc; }
+    .btn-stat-selesai { background: #bbf7d0; color: #166534; border-color: #86efac; }
+    .btn-stat-batal { background: #fecaca; color: #991b1b; border-color: #fca5a5; }
+
+    .form-control, .form-select { border: 2px solid #fbcfe8; border-radius: 16px; padding: 10px 15px; font-weight: 600; color: #475569; transition: all 0.3s; box-shadow: none; width: 100%; }
+    .form-control:focus, .form-select:focus { border-color: #db2777; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.2); }
+    .form-control::placeholder { color: #94a3b8; font-weight: 500; }
+
+    .btn-cute { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: white; border: none; border-radius: 16px; padding: 10px 20px; font-weight: 800; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .btn-cute:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.4); color: white; }
+    .btn-cute:disabled { opacity: 0.6; transform: none; box-shadow: none; }
+    .btn-print { background: white; color: #db2777; border: 2px dashed #fbcfe8; border-radius: 12px; font-weight: 800; transition: all 0.3s; }
+    .btn-print:hover { background: #fdf2f8; border-color: #f472b6; transform: scale(1.05); }
+
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(253, 242, 248, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
+    .spinner-border { width: 3rem; height: 3rem; color: #db2777; border-width: 5px; }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #fdf2f8; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
+
+    .sheet-checkbox-list { max-height: 250px; overflow-y: auto; border: 2px dashed #fbcfe8; border-radius: 16px; padding: 15px; background: white; }
+
+    .btn-slot { background: #fdf2f8; border: 2px dashed #fbcfe8; color: #db2777; border-radius: 16px; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 900; }
+    .btn-slot:hover { background: #fce7f3; border-color: #f472b6; transform: scale(1.08); box-shadow: 0 5px 15px rgba(244, 114, 182, 0.3); }
+    .btn-slot small { font-weight: 700; color: #ec4899; }
+
+    .search-wrapper { max-width: 350px; width: 100%; }
+    .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
+    .cute-toast { background: white; border: 3px dashed #f472b6; border-radius: 20px; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.3); }
+    .tab-content { overflow: hidden; }
+
+    .text-accent { color: #db2777; }
+    .bg-accent-light { background: #fce7f3; color: #db2777; }
+    .badge-hash { background: #fbcfe8; color: #db2777; }
+    .order-note-box { background: #fff1f2; border-color: #fce7f3 !important; }
+    .footer-msg-box { background: #fdf2f8; border-radius: 12px; }
+    .search-icon-box { border: 2px solid #fbcfe8; background: white; }
+    .divider-icon { color: #fbcfe8; }
+    .empty-state-icon { color: #fbcfe8; }
+    
+    .btn-scan { background-color: #fce7f3; color: #db2777; border: 2px solid #fbcfe8; border-left: none; transition: all 0.3s; }
+    .btn-scan:hover { background-color: #db2777; color: white; }
+    
+    #reader { border-radius: 16px; overflow: hidden; border: 3px dashed #fbcfe8; width: 100%; }
+    #reader button { background-color: #f472b6; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
+    #reader select { padding: 5px; border-radius: 8px; margin-bottom: 10px; }
+
+    /* ==========================================
+       TEMA 2: GLASSMORPHISM (DARK AURORA) 🔮✨
+       ========================================== */
+    body.theme-glass { background: linear-gradient(-45deg, #0f172a, #312e81, #0f172a, #1e1b4b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #f8fafc !important; }
+    @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    body.theme-glass .navbar-admin { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+    body.theme-glass .dashboard-card, body.theme-glass .order-card, body.theme-glass .modal-content, body.theme-glass .cute-toast { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important; }
+    body.theme-glass .order-header, body.theme-glass .order-footer { background: rgba(0, 0, 0, 0.3) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+
+    body.theme-glass .text-accent { color: #f8fafc !important; }
+    body.theme-glass .bg-accent-light { background: rgba(255, 255, 255, 0.1) !important; color: #e2e8f0 !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+    body.theme-glass .badge-hash { background: rgba(255, 255, 255, 0.15) !important; color: #f8fafc !important; }
+    body.theme-glass .order-note-box { background: rgba(0, 0, 0, 0.2) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+    body.theme-glass .footer-msg-box { background: rgba(0, 0, 0, 0.2) !important; color: #94a3b8 !important; }
+    body.theme-glass .search-icon-box { background: rgba(0,0,0,0.2) !important; border-color: rgba(255,255,255,0.2) !important; color: #a5b4fc !important; }
+    body.theme-glass .btn-scan { background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.2) !important; color: #a5b4fc !important; }
+    body.theme-glass .btn-scan:hover { background: #a5b4fc !important; color: #0f172a !important; }
+    body.theme-glass #reader { border-color: rgba(255,255,255,0.2) !important; }
+    
+    body.theme-glass .table { --bs-table-bg: transparent !important; --bs-table-accent-bg: transparent !important; --bs-table-striped-bg: transparent !important; background-color: transparent !important; }
+    body.theme-glass .table-items, body.theme-glass .table-items tbody, body.theme-glass .table-items tr, body.theme-glass .table-items td, body.theme-glass .table-items th { background-color: transparent !important; border-color: rgba(255, 255, 255, 0.15) !important; color: #e2e8f0 !important; }
+    body.theme-glass .table-items th { background-color: rgba(255, 255, 255, 0.08) !important; color: #f8fafc !important; border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; }
+    body.theme-glass .table-items td { border-bottom: 1px dashed rgba(255, 255, 255, 0.1) !important; }
+    
+    body.theme-glass .btn-nav-custom { background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.25) !important; color: #f8fafc !important; backdrop-filter: blur(5px); box-shadow: none; }
+    body.theme-glass .btn-nav-custom:hover { background: rgba(255, 255, 255, 0.2) !important; }
+    body.theme-glass .bg-success { background: rgba(34, 197, 94, 0.2) !important; border: 1px solid rgba(34, 197, 94, 0.5) !important; color: #86efac !important; }
+    body.theme-glass .bg-danger { background: rgba(239, 68, 68, 0.2) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #fca5a5 !important; }
+
+    body.theme-glass h3, body.theme-glass h4, body.theme-glass h5, body.theme-glass label, body.theme-glass .fw-bold { color: #f8fafc !important; }
+    body.theme-glass .text-muted, body.theme-glass .small { color: #94a3b8 !important; }
+    
+    body.theme-glass .nav-tabs .nav-link { background: rgba(255, 255, 255, 0.05) !important; color: #f8fafc !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; }
+    body.theme-glass .nav-tabs .nav-link:hover { background: rgba(255, 255, 255, 0.15) !important; }
+    body.theme-glass .nav-tabs .nav-link.active { background: rgba(255, 255, 255, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15) !important; }
+
+    body.theme-glass .form-control, body.theme-glass .form-select, body.theme-glass .sheet-checkbox-list { background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #f8fafc !important; }
+    body.theme-glass .form-control::placeholder { color: #64748b !important; }
+    
+    body.theme-glass .btn-cute, body.theme-glass .btn-print, body.theme-glass .btn-slot, body.theme-glass .btn-status-cute { background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.25) !important; color: #f8fafc !important; backdrop-filter: blur(5px); }
+    body.theme-glass .btn-cute:hover, body.theme-glass .btn-print:hover, body.theme-glass .btn-slot:hover, body.theme-glass .btn-status-cute:hover { background: rgba(255, 255, 255, 0.2) !important; }
+
+    body.theme-glass #loader { background: rgba(15, 23, 42, 0.8) !important; backdrop-filter: blur(15px); }
+    body.theme-glass .spinner-border { color: #a5b4fc !important; }
+
+    @media (max-width: 768px) {
+      .navbar-brand { font-size: 1.1rem; }
+      .nav-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; justify-content: flex-start; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; }
+      .nav-tabs .nav-link { padding: 10px 18px; font-size: 0.9rem; }
+      .dashboard-card { padding: 15px; border-radius: 18px; }
+      .order-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .order-header > div:last-child { width: 100%; display: flex; justify-content: space-between; }
+      .search-wrapper { max-width: 100%; margin-top: 10px; }
+      .table-items { font-size: 0.85rem; }
+      .table-items th, .table-items td { padding: 8px; }
+      .btn-status-cute { font-size: 0.95rem; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+  <div id="loader">
+    <div class="spinner-border mb-3" role="status"></div>
+    <h4 class="fw-bold animate-loader-text text-accent">Tunggu Sebentar Ya... 🎀</h4>
+    <p class="text-muted fw-bold animate-loader-text">Lagi nyiapin datanya nih! ✨</p>
+  </div>
+
+  <nav class="navbar-admin d-flex justify-content-between align-items-center">
+    <div class="navbar-brand animate-nav"><i class="bi bi-box-heart-fill"></i> Pusat Kendali Gudang 💖</div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-nav-custom theme-switch-btn animate-nav" onclick="toggleTheme()" title="Ubah Tema UI">
+        <i id="themeIcon" class="bi bi-magic"></i> Tema
+      </button>
+      <button class="btn btn-sm btn-nav-custom animate-nav" onclick="loadAdminData(true)" title="Refresh Data">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <div id="errorBox" class="alert alert-danger d-none fw-bold shadow-sm" style="border-radius: 16px;"></div>
+
+    <ul class="nav nav-tabs animate-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="order-tab" data-bs-toggle="tab" data-bs-target="#order" type="button"><i class="bi bi-envelope-paper-heart"></i> Daftar Pesanan</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="stok-tab" data-bs-toggle="tab" data-bs-target="#stok" type="button"><i class="bi bi-boxes"></i> Stok Gudang</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="setting-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button"><i class="bi bi-gear-wide-connected"></i> Pengaturan DB</button>
+      </li>
+    </ul>
+
+    <div class="tab-content animate-content">
+      
+      <!-- HALAMAN PESANAN -->
+      <div class="tab-pane fade show active" id="order" role="tabpanel">
+        <div class="row mb-4 align-items-center header-order">
+          <div class="col-md-6 col-12 mb-2 mb-md-0">
+            <h3 class="fw-bold mb-0 d-inline-block me-2 text-accent">📦 Daftar Orderan ✨</h3>
+            <span class="badge bg-danger rounded-pill shadow-sm" id="badgeAutoRefresh" style="vertical-align: top;">🔴 Radar Aktif</span>
+          </div>
+          <div class="col-md-6 col-12 d-flex justify-content-md-end">
+            <!-- PENCARIAN + TOMBOL SCANNER LIVE -->
+            <div class="input-group shadow-sm search-wrapper">
+              <span class="input-group-text search-icon-box" style="border-radius: 16px 0 0 16px; border-right: none;"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control border-start-0 border-end-0" style="border-radius: 0;" id="searchOrder" placeholder="Cari / Scan Order..." oninput="filterOrder()">
+              <button class="btn btn-scan shadow-none" style="border-radius: 0 16px 16px 0;" type="button" onclick="openScanner('order')" title="Scan Live Barcode">
+                <i class="bi bi-qr-code-scan fw-bold"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="orderContainer"></div>
+      </div>
+
+      <!-- HALAMAN STOK -->
+      <div class="tab-pane fade" id="stok" role="tabpanel">
+        <div class="dashboard-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 header-stok">
+            <h4 class="fw-bold mb-0 text-accent">🧸 Cek Stok & Harga</h4>
+            <!-- PENCARIAN STOK + TOMBOL SCANNER LIVE -->
+            <div class="input-group shadow-sm search-wrapper">
+              <span class="input-group-text search-icon-box" style="border-radius: 16px 0 0 16px; border-right: none;"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control border-start-0 border-end-0" style="border-radius: 0;" id="searchStok" placeholder="Cari / Scan Barang..." oninput="filterStok()">
+              <button class="btn btn-scan shadow-none" style="border-radius: 0 16px 16px 0;" type="button" onclick="openScanner('stok')" title="Scan Live Barcode">
+                <i class="bi bi-qr-code-scan fw-bold"></i>
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-borderless table-items w-100">
+              <thead>
+                <tr>
+                  <th width="50" class="text-center">No</th>
+                  <th>Kode 🏷️</th>
+                  <th>Nama Barang 🎁</th>
+                  <th class="text-end">Harga Retail 💵</th>
+                  <th class="text-end">Harga Grosir 📦</th>
+                  <th class="text-end">HPP 💎</th>
+                  <th class="text-center">Sisa Stok 🛒</th>
+                </tr>
+              </thead>
+              <tbody id="stokContainer"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- HALAMAN PENGATURAN -->
+      <div class="tab-pane fade" id="setting" role="tabpanel">
+        <div class="dashboard-card" style="border-width: 3px;">
+          <h4 class="fw-bold mb-2 text-accent"><i class="bi bi-database-heart"></i> Konfigurasi Database Pintar ⚙️</h4>
+          <p class="text-muted small fw-bold mb-4">Pilih Sheet mana yang dijadikan referensi untuk data Stok dan pesanan Toko.</p>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-accent">1. Pilih Sheet Data Stok Gudang 📊</label>
+            <select class="form-select shadow-sm" id="selectStockSheet"><option value="" disabled selected>Memuat daftar sheet...</option></select>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-accent">2. Pilih Sheet Pesanan (Toko yang dipantau) 🏪</label>
+            <div class="sheet-checkbox-list shadow-sm" id="checkboxOrderSheets"></div>
+          </div>
+
+          <button class="btn btn-cute fw-bold px-4" onclick="promptSaveSettings()"><i class="bi bi-shield-lock-fill"></i> Simpan Pengaturan</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast-container">
+    <div id="orderToast" class="toast cute-toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="6000">
+      <div class="toast-header border-0 pb-0" style="background: transparent;">
+        <strong class="me-auto fw-900 text-accent" style="font-size: 1.1rem;">🔔 Horeee! Order Baru!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body fw-bold" style="color: #475569;">Ada pesanan baru yang mendarat di Gudang. Yuk dicek! ✨</div>
+    </div>
+  </div>
+
+  <!-- MODAL LIVE SCANNER CAMERA 📷✨ -->
+  <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;"><i class="bi bi-camera"></i> Live Scanner 🪄</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" onclick="closeScanner()"></button>
+        </div>
+        <div class="modal-body text-center pt-2 pb-4">
+          <div id="scannerAlertInfo" class="alert alert-info small fw-bold mb-3 p-2">
+            Penting: Buka link web ini dari <b class="text-danger">Google Chrome / Safari</b>, bukan dari dalam link WhatsApp/Line agar kamera tidak diblokir!
+          </div>
+          <div id="reader" class="bg-light p-2 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL STATUS -->
+  <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;">Ubah Status ✨</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center pt-2 pb-4">
+          <p class="small text-muted fw-bold mb-2">Order: <code id="statusModalOrderId" class="bg-accent-light px-2 rounded" style="font-weight: 800;">-</code></p>
+          <div class="d-flex flex-column gap-2 status-btn-group mt-3">
+            <button class="btn btn-status-cute btn-stat-pending" onclick="executeStatusUpdate('Pending', this)">⏳ Pending</button>
+            <button class="btn btn-status-cute btn-stat-diproses" onclick="executeStatusUpdate('Diproses', this)">📦 Diproses</button>
+            <button class="btn btn-status-cute btn-stat-dikirim" onclick="executeStatusUpdate('Dikirim', this)">🛵 Dikirim</button>
+            <button class="btn btn-status-cute btn-stat-selesai" onclick="executeStatusUpdate('Selesai', this)">✅ Selesai</button>
+            <button class="btn btn-status-cute btn-stat-batal" onclick="executeStatusUpdate('Dibatalkan', this)">❌ Dibatalkan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OTORISASI -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim" style="margin: 15px;">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-center text-accent" style="font-size: 1.2rem;"><i class="bi bi-shield-lock-fill"></i> Otorisasi Admin</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body pt-2 px-4 pb-4">
+          <p class="small text-muted fw-bold text-center mb-4">Hanya <b class="text-accent">Admin</b> yang boleh mengubah ini. 🔐</p>
+          <div id="authErrorBox" class="alert alert-danger d-none small fw-bold py-2 text-center" style="border-radius: 12px;"></div>
+          <div class="mb-3"><label class="form-label fw-bold text-accent">Username</label><input type="text" class="form-control" id="authUsername" placeholder="Ketik username Anda..."></div>
+          <div class="mb-4"><label class="form-label fw-bold text-accent">Password</label><input type="password" class="form-control" id="authPassword" placeholder="Ketik password..."></div>
+          <button class="btn btn-cute w-100 fs-5" id="btnConfirmAuth" onclick="executeSaveSettings()">Verifikasi 🚀</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL POSISI CETAK -->
+  <div class="modal fade" id="printSlotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;">Posisi Kertas 🖨️</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center pt-2 pb-4">
+          <p class="small text-muted fw-bold mb-3">Pilih blok kosong di A4 (1 kertas = 6 kartu) 🎀</p>
+          <div class="d-grid gap-3 print-btn-group" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(1)">1<br><small>Kiri Atas</small></button>
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(2)">2<br><small>Kanan Atas</small></button>
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(3)">3<br><small>Kiri Tengah</small></button>
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(4)">4<br><small>Kanan Tengah</small></button>
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(5)">5<br><small>Kiri Bawah</small></button>
+            <button class="btn btn-slot p-3 shadow-sm" onclick="executePrint(6)">6<br><small>Kanan Bawah</small></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  
+  <script>
+    // =========================================================================
+    // WAJIB GANTI INI DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU (YANG ADA /exec)
+    // =========================================================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrcRmVx0mzJhqg2yHawCdCmVrqQx3iPQkh1ErgWObHH746tn1C-QDDMpd7dodciBw/exec'; 
+    // =========================================================================
+
+    let globalStok = []; let globalOrders = [];
+    let currentPrintId = null; let currentStatusSheet = null; let currentStatusId = null;
+    let printModalInstance = null; let authModalInstance = null; let statusModalInstance = null; let toastInstance = null; let scannerModalInstance = null;
+    let jumlahOrderSaatIni = 0; 
+    let html5QrcodeScanner = null;
+    let currentScanTarget = '';
+
+    // ==========================================
+    // FUNGSI BANTUAN FETCH API (PENGGANTI google.script.run)
+    // ==========================================
+    async function fetchAPI(action, params = {}) {
+      if(SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzrcRmVx0mzJhqg2yHawCdCmVrqQx3iPQkh1ErgWObHH746tn1C-QDDMpd7dodciBw/exec') {
+        throw new Error("Jangan lupa ganti tulisan SCRIPT_URL dengan URL Web App-mu yang asli ya! 😅");
+      }
+      
+      const formData = new URLSearchParams();
+      formData.append('action', action);
+      for (const key in params) {
+        formData.append(key, params[key]);
+      }
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+        });
+        return await response.json();
+      } catch (err) {
+        throw new Error("Gagal terhubung ke Database. Pastikan internet lancar dan pengaturan CORS sudah benar.");
+      }
+    }
+
+    // ==========================================
+    // LOGIKA SCANNER MURNI (LIVE CAMERA) 📸
+    // ==========================================
+    function openScanner(target) {
+      currentScanTarget = target;
+      scannerModalInstance.show();
+
+      setTimeout(() => {
+        document.getElementById('reader').innerHTML = ''; 
+        if (!html5QrcodeScanner) {
+          html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+        }
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      }, 500);
+    }
+
+    function closeScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().then(() => { scannerModalInstance.hide(); }).catch(error => { console.log(error); scannerModalInstance.hide(); });
+      } else {
+        scannerModalInstance.hide();
+      }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      document.getElementById('notifSound').play().catch(e=>console.log("Audio diblok"));
+      closeScanner();
+      
+      if (currentScanTarget === 'order') {
+        document.getElementById('searchOrder').value = decodedText; filterOrder();
+      } else {
+        document.getElementById('searchStok').value = decodedText; filterStok();
+      }
+    }
+
+    function onScanFailure(error) { /* Abaikan error tiap frame yang biasa terjadi */ }
+
+    // TEMA
+    function applySavedTheme() {
+      const savedTheme = localStorage.getItem('adminTheme');
+      if (savedTheme === 'glass') { document.body.classList.add('theme-glass'); document.getElementById('themeIcon').className = 'bi bi-droplet-fill'; }
+    }
+    function toggleTheme() {
+      const body = document.body; const icon = document.getElementById('themeIcon');
+      anime({ targets: 'body', opacity: [0, 1], duration: 800, easing: 'easeInOutQuad' });
+      if (body.classList.contains('theme-glass')) {
+        body.classList.remove('theme-glass'); localStorage.setItem('adminTheme', 'kawaii'); icon.className = 'bi bi-magic';
+      } else {
+        body.classList.add('theme-glass'); localStorage.setItem('adminTheme', 'glass'); icon.className = 'bi bi-droplet-fill';
+      }
+    }
+    applySavedTheme();
+
+    // ANIMASI
+    function animateIntro() {
+      anime({ targets: '.animate-nav', translateY: [-50, 0], opacity: [0, 1], duration: 1000, easing: 'easeOutElastic(1, .8)', delay: anime.stagger(200) });
+      anime({ targets: '.animate-tabs .nav-item', translateY: [20, 0], opacity: [0, 1], duration: 800, easing: 'easeOutElastic(1, .8)', delay: anime.stagger(100, {start: 500}) });
+    }
+    function animateCards(targetClass) { anime({ targets: targetClass, translateY: [40, 0], opacity: [0, 1], duration: 800, delay: anime.stagger(80), easing: 'easeOutElastic(1, .8)' }); }
+    document.addEventListener('show.bs.modal', function (event) {
+      anime({ targets: '.modal-anim', scale: [0.5, 1], opacity: [0, 1], duration: 600, easing: 'easeOutElastic(1, .8)' });
+      if(event.target.id === 'statusModal') anime({ targets: '.status-btn-group .btn', translateX: [-50, 0], opacity: [0, 1], delay: anime.stagger(100, {start: 200}), easing: 'easeOutElastic(1, .8)' });
+      if(event.target.id === 'printSlotModal') anime({ targets: '.print-btn-group .btn', scale: [0, 1], opacity: [0, 1], delay: anime.stagger(80, {start: 200}), easing: 'easeOutElastic(1, .8)' });
+    });
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+      tab.addEventListener('shown.bs.tab', () => { anime({ targets: '.animate-content', scale: [0.95, 1], opacity: [0, 1], duration: 500, easing: 'easeOutQuart' }); });
+    });
+
+    // INIT UTAMA
+    window.onload = async function() {
+      printModalInstance = new bootstrap.Modal(document.getElementById('printSlotModal'));
+      authModalInstance = new bootstrap.Modal(document.getElementById('authModal'));
+      statusModalInstance = new bootstrap.Modal(document.getElementById('statusModal'));
+      scannerModalInstance = new bootstrap.Modal(document.getElementById('scannerModal'));
+      toastInstance = new bootstrap.Toast(document.getElementById('orderToast'));
+      
+      document.getElementById('loader').style.display = 'flex';
+      
+      // Ambil Pengaturan Awal via API
+      try {
+        const res = await fetchAPI('getSetupData');
+        if (res.success) { 
+          setupFormPengaturan(res.allSheets, res.savedStockSheet, res.savedOrderSheets); 
+          loadAdminData(true); 
+          animateIntro(); 
+        } else { 
+          document.getElementById('loader').style.display = 'none'; 
+          showError("Gagal: " + res.message); 
+        }
+      } catch (err) {
+        document.getElementById('loader').style.display = 'none'; 
+        showError(err.message);
+      }
+
+      // Interval Cek Order Baru via API
+      setInterval(async () => {
+        try {
+          const res = await fetchAPI('cekPesananBaru');
+          if (res.success && res.total > jumlahOrderSaatIni) {
+            jumlahOrderSaatIni = res.total; 
+            document.getElementById('notifSound').play().catch(e=>console.log("Audio diblok")); 
+            toastInstance.show(); 
+            anime({ targets: '#orderToast', translateY: [50, 0], scale: [0.8, 1], duration: 800, easing: 'easeOutElastic(1, .8)' });
+            loadAdminData(false);
+          }
+        } catch (err) { /* Abaikan jika error internet sesaat */ }
+      }, 30000);
+    };
+
+    function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
+      const selectStock = document.getElementById('selectStockSheet'); const checkContainer = document.getElementById('checkboxOrderSheets');
+      let htmlSelect = '<option value="">-- Pilih Sheet Stok --</option>'; let htmlCheck = '';
+      allSheets.forEach(sheet => {
+        let isSelected = (sheet === savedStockSheet) ? 'selected' : ''; htmlSelect += `<option value="${sheet}" ${isSelected}>${sheet}</option>`;
+        let isChecked = savedOrderSheets.includes(sheet) ? 'checked' : '';
+        htmlCheck += `<div class="form-check mb-2"><input class="form-check-input order-sheet-chk" type="checkbox" value="${sheet}" id="chk_${sheet}" ${isChecked}><label class="form-check-label fw-bold" for="chk_${sheet}">${sheet}</label></div>`;
+      });
+      selectStock.innerHTML = htmlSelect; checkContainer.innerHTML = htmlCheck;
+    }
+
+    function promptSaveSettings() {
+      const stockSheet = document.getElementById('selectStockSheet').value; const orderSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked'));
+      if (!stockSheet || orderSheets.length === 0) { alert("Pilih Sheet Stok dan minimal 1 Toko!"); return; }
+      document.getElementById('authUsername').value = ''; document.getElementById('authPassword').value = '';
+      document.getElementById('authErrorBox').classList.add('d-none'); authModalInstance.show();
+    }
+
+    async function executeSaveSettings() {
+      const user = document.getElementById('authUsername').value.trim(); const pass = document.getElementById('authPassword').value.trim(); const errBox = document.getElementById('authErrorBox');
+      if (!user || !pass) { errBox.innerText = "Isi data dulu ya!"; errBox.classList.remove('d-none'); return; }
+      const stockSheet = document.getElementById('selectStockSheet').value;
+      const orderSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked')).map(chk => chk.value);
+      
+      const btn = document.getElementById('btnConfirmAuth'); 
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm" style="border-width:2px;"></span> Verifikasi...'; 
+      btn.disabled = true;
+      
+      try {
+        const res = await fetchAPI('verifyAndSaveSettings', {
+          username: user,
+          password: pass,
+          stockSheet: stockSheet,
+          orderSheetsArray: JSON.stringify(orderSheets)
+        });
+
+        btn.innerHTML = 'Verifikasi 🚀'; btn.disabled = false;
+        
+        if(res.success) { 
+          authModalInstance.hide(); alert(res.message); 
+          new bootstrap.Tab(document.querySelector('#order-tab')).show(); 
+          loadAdminData(true); 
+        } else { 
+          errBox.innerText = res.message; errBox.classList.remove('d-none'); 
+          anime({targets: errBox, translateX: [10, -10, 10, -10, 0], duration: 400, easing: 'easeInOutSine'}); 
+        }
+      } catch (err) {
+        btn.innerHTML = 'Verifikasi 🚀'; btn.disabled = false; 
+        errBox.innerText = "Error: " + err.message; errBox.classList.remove('d-none');
+      }
+    }
+
+    async function loadAdminData(showLoader) {
+      if(showLoader) document.getElementById('loader').style.display = 'flex';
+      document.getElementById('errorBox').classList.add('d-none');
+      
+      try {
+        const res = await fetchAPI('getAdminData');
+        if(showLoader) document.getElementById('loader').style.display = 'none';
+        
+        if(res.needSetup) { 
+          showError(res.message); 
+          new bootstrap.Tab(document.querySelector('#setting-tab')).show(); 
+          return; 
+        }
+        if(res.success) { 
+          globalStok = res.stok; globalOrders = res.orders; jumlahOrderSaatIni = globalOrders.length; 
+          renderStokUI(globalStok); renderOrders(); 
+        } else {
+          showError("Gagal memuat data: " + res.message);
+        }
+      } catch(err) {
+        if(showLoader) document.getElementById('loader').style.display = 'none'; 
+        showError("Error: " + err.message);
+      }
+    }
+
+    function formatRupiah(angka) { if (isNaN(angka) || angka === '') return '-'; return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
+
+    function renderStokUI(dataToRender) {
+      const tbody = document.getElementById('stokContainer');
+      if (dataToRender.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted fw-bold py-5"><i class="bi bi-search fs-1 d-block mb-3 empty-state-icon"></i>Yah, barangnya nggak ketemu nih... 🥺</td></tr>'; return; }
+      let htmlStok = []; const MAX = 150; const batas = Math.min(dataToRender.length, MAX);
+      for(let i = 0; i < batas; i++) {
+        let item = dataToRender[i]; let badgeColor = item.stok > 0 ? 'bg-success' : 'bg-danger';
+        htmlStok.push(`
+          <tr class="stok-row-anim">
+            <td class="text-center fw-bold text-muted">${i + 1}</td>
+            <td><code class="px-2 py-1 rounded bg-accent-light" style="font-weight:800; white-space:nowrap;">${item.id}</code></td>
+            <td class="fw-bold text-accent fs-6">${item.nama}</td>
+            <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hargaRetail)}</td>
+            <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hargaGrosir)}</td>
+            <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hpp)}</td>
+            <td class="text-center"><span class="badge ${badgeColor} px-3 py-2 fs-6 shadow-sm rounded-pill">${item.stok}</span></td>
+          </tr>
+        `);
+      }
+      if (dataToRender.length > MAX) htmlStok.push(`<tr><td colspan="7" class="text-center text-muted small fw-bold py-3 footer-msg-box">Menampilkan ${MAX} data pertama. Ketik di pencarian untuk data lainnya ya! ✨</td></tr>`);
+      tbody.innerHTML = htmlStok.join(''); animateCards('.stok-row-anim'); 
+    }
+
+    let timerStok;
+    function filterStok() {
+      clearTimeout(timerStok);
+      timerStok = setTimeout(() => {
+        const rawInput = document.getElementById('searchStok').value.toLowerCase().trim();
+        if(rawInput === "") { renderStokUI(globalStok); return; }
+        const keywords = rawInput.split(/\s+/);
+        const hasil = globalStok.filter(item => { return keywords.every(k => String(item.id + " " + item.nama).toLowerCase().includes(k)); });
+        renderStokUI(hasil);
+      }, 300);
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orderContainer');
+      if (globalOrders.length === 0) { container.innerHTML = `<div class="dashboard-card text-center py-5 fw-bold text-muted"><i class="bi bi-cup-hot-fill fs-1 d-block mb-3 empty-state-icon"></i>Belum ada orderan masuk nih... Santai dulu aja! 🍵</div>`; return; }
+      let htmlOrders = [];
+      globalOrders.forEach((order, index) => {
+        let itemRows = [];
+        order.items.forEach(item => { itemRows.push(`<tr><td class="small fw-bold text-muted">${item.idBarang}</td><td class="fw-bold">${item.namaBarang}</td><td class="text-center fw-bold fs-6">${item.jumlah}</td></tr>`); });
+        let currentStatus = order.status || 'Pending'; let badgeClass = 'badge-' + currentStatus.replace(/\s+/g, '');
+        htmlOrders.push(`
+          <div class="order-card order-item-box order-card-anim">
+            <div class="order-header">
+              <div>
+                <span class="badge mb-2 badge-hash" style="font-size:0.8rem; padding:6px 12px; border-radius:12px;"><i class="bi bi-hash"></i> ${order.idPesanan}</span>
+                <h4 class="fw-bold mb-1 text-accent"><i class="bi bi-shop"></i> ${order.namaToko}</h4>
+                <small class="text-muted fw-bold"><i class="bi bi-clock"></i> ${order.tanggal} <span class="divider-icon">|</span> 📁 ${order.sheetName}</small>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
+                <button class="btn btn-print btn-sm shadow-sm px-3" onclick="openPrintModal('${order.idPesanan}')"><i class="bi bi-printer-fill"></i> Cetak</button>
+                <span class="badge ${badgeClass} fs-6 px-3 py-2 shadow-sm rounded-pill">${currentStatus}</span>
+              </div>
+            </div>
+            <div class="order-body">
+              <div class="table-responsive"><table class="table table-borderless table-sm table-items mb-3 border w-100"><thead><tr><th>Kode 🏷️</th><th>Nama Barang 🎁</th><th class="text-center">Qty 🛒</th></tr></thead><tbody>${itemRows.join('')}</tbody></table></div>
+              <div class="p-3 rounded small border order-note-box"><span class="fw-bold text-accent"><i class="bi bi-chat-heart-fill"></i> Catatan Toko:</span><br><span class="fw-semibold text-muted">${order.catatan || '<i>Tidak ada pesan khusus~</i>'}</span></div>
+            </div>
+            <div class="order-footer">
+              <button class="btn btn-cute btn-sm px-4 shadow-sm w-100 fs-6 py-2" onclick="openStatusModal('${order.sheetName}', '${order.idPesanan}')"><i class="bi bi-pencil-square"></i> Ubah Status Pesanan 🎀</button>
+            </div>
+          </div>
+        `);
+      });
+      container.innerHTML = htmlOrders.join(''); animateCards('.order-card-anim'); 
+    }
+
+    let timerOrder;
+    function filterOrder() {
+      clearTimeout(timerOrder);
+      timerOrder = setTimeout(() => {
+        const rawInput = document.getElementById('searchOrder').value.toLowerCase().trim();
+        const keywords = rawInput.split(/\s+/);
+        document.querySelectorAll('.order-item-box').forEach(card => { 
+          const textToSearch = card.innerText.toLowerCase(); const isMatch = keywords.every(kata => textToSearch.includes(kata));
+          card.style.display = isMatch ? '' : 'none'; 
+        });
+      }, 300);
+    }
+
+    function openStatusModal(sheetName, idPesanan) {
+      currentStatusSheet = sheetName; currentStatusId = idPesanan;
+      document.getElementById('statusModalOrderId').innerText = idPesanan;
+      statusModalInstance.show();
+    }
+
+    async function executeStatusUpdate(newStatus, btnElement) {
+      const originalText = btnElement.innerHTML; btnElement.innerHTML = '<span class="spinner-border spinner-border-sm" style="border-width:2px;"></span> Diproses...'; 
+      const allBtns = document.querySelectorAll('.btn-status-cute'); allBtns.forEach(b => b.disabled = true);
+      
+      try {
+        const res = await fetchAPI('updateStatusPesanan', {
+          sheetName: currentStatusSheet, 
+          idPesanan: currentStatusId, 
+          newStatus: newStatus
+        });
+        
+        allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide();
+        
+        if(res.success) {
+          const orderIndex = globalOrders.findIndex(o => o.idPesanan === currentStatusId);
+          if (orderIndex > -1) globalOrders[orderIndex].status = newStatus;
+          renderOrders();
+        } else {
+          showError(res.message); 
+        }
+      } catch (err) {
+        allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide(); 
+        showError("Error: " + err.message); 
+      }
+    }
+
+    function showError(msg) { const box = document.getElementById('errorBox'); box.innerHTML = `🚨 Waduh: ${msg}`; box.classList.remove('d-none'); window.scrollTo(0, 0); }
+    function openPrintModal(idPesanan) { currentPrintId = idPesanan; printModalInstance.show(); }
+    
+    function executePrint(slotNumber) {
+      printModalInstance.hide(); const order = globalOrders.find(o => o.idPesanan === currentPrintId); if(!order) return;
+      let rowStart = Math.ceil(slotNumber / 2); let colStart = (slotNumber % 2 === 0) ? 2 : 1; let gridAreaCode = `${rowStart} / ${colStart} / ${rowStart + 1} / ${colStart + 1}`;
+      let itemRows = ''; order.items.forEach((item, index) => { itemRows += `<tr><td style="text-align:center; font-weight:900; color:#db2777;">${index + 1}</td><td style="font-weight:800; color:#475569;">${item.namaBarang}</td><td style="text-align:center; font-weight:900; color:#db2777; font-size:12px;">${item.jumlah}</td></tr>`; });
+      const printWindow = window.open('', '_blank', 'width=850,height=600');
+      printWindow.document.write(`<html><head><title>Print Kartu Slot ${slotNumber} 🎀</title><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"><style>@page { size: A4 portrait; margin: 0; } body { margin: 0; padding: 0; font-family: 'Nunito', sans-serif; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .a4-page { width: 210mm; height: 297mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding: 10mm; gap: 5mm; box-sizing: border-box; } .card-container { grid-area: ${gridAreaCode}; border: 3px dashed #f472b6; border-radius: 16px; background: #fdf2f8; padding: 8mm; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; } .header { text-align: center; border-bottom: 2px dotted #fbcfe8; padding-bottom: 5px; margin-bottom: 8px; } .header h2 { margin: 0; font-size: 16px; color: #db2777; font-weight: 900; } .header h4 { margin: 0; font-size: 13px; color: #ec4899; font-weight: 800; } .info-table { width: 100%; font-size: 9px; font-weight:700; margin-bottom: 8px; background: #fff1f2; padding: 5px; border-radius: 8px; border: 1px solid #fce7f3; color:#475569;} .info-table td { padding: 1px 4px; vertical-align: top; } .items-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 5px; border: 2px solid #fbcfe8; border-radius:8px; overflow:hidden;} .items-table th, .items-table td { padding: 4px 6px; border-bottom: 1px dashed #fbcfe8; } .items-table th { background-color: #fce7f3; color: #db2777; text-align: left; font-weight: 900; } .items-table tr:last-child td { border-bottom: none; } .signature { width: 100%; text-align: center; font-size: 10px; margin-top: auto; color:#db2777; font-weight:800; } .signature td { width: 33.33%; padding-top: 5px; vertical-align: bottom; } .sign-line { border-bottom: 2px dashed #f9a8d4; height: 30px; width: 80%; margin: 5px auto 0; display: block; } .footer { text-align: center; font-size: 8px; color: #f472b6; margin-top: 5px; font-weight: 800; }</style></head><body><div class="a4-page"><div class="card-container"><div class="header"><h2>Paket Meluncur! 🚚💨</h2><h4>Ke: ${order.namaToko} 🏠</h4></div><table class="info-table"><tr><td width="35"><b>ID</b></td><td width="5">:</td><td style="color:#db2777; font-weight:900;">${order.idPesanan}</td></tr><tr><td><b>Waktu</b></td><td>:</td><td>${order.tanggal}</td></tr><tr><td><b>Pesan</b></td><td>:</td><td><i>${order.catatan || 'Gak ada pesan~'}</i></td></tr></table><table class="items-table"><thead><tr><th width="20" style="text-align:center;">No</th><th>Barang 🎁</th><th width="30" style="text-align:center;">Qty</th></tr></thead><tbody>${itemRows}</tbody></table><table class="signature"><tr><td>Disiapin 💖<br><span class="sign-line"></span></td><td>Kurir 🛵<br><span class="sign-line"></span></td><td>Toko 🥳<br><span class="sign-line"></span></td></tr></table><div class="footer">✨ Diproses oleh Pusat Kendali Gudang ✨</div></div></div><script>setTimeout(function(){window.print();},500);<\/script></body></html>`); printWindow.document.close();
+    }
+  </script>
+</body>
+</html>
