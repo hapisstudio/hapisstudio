@@ -12,19 +12,23 @@
     /* ==========================================
        TEMA 1: KAWAII PASTEL (DEFAULT) 🎀
        ========================================== */
-    body { font-family: 'Nunito', sans-serif; background-color: #fdf2f8; background-image: radial-gradient(circle at 50% 0%, #fff1f2 0%, #fdf2f8 70%); color: #475569; overflow-x: hidden; transition: background 0.5s ease; }
+    body { font-family: 'Nunito', sans-serif; background-color: #fdf2f8; background-image: radial-gradient(circle at 50% 0%, #fff1f2 0%, #fdf2f8 70%); color: #475569; overflow-x: hidden; -webkit-overflow-scrolling: touch; transition: background 0.5s ease; }
     
     .navbar-admin { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2); border-bottom: 4px dashed #fbcfe8; transition: all 0.5s ease; }
     .navbar-brand { font-weight: 900; font-size: 1.4rem; color: #ffffff; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
+    /* PERBAIKAN: Tombol Navigasi Tema Kawaii */
+    .btn-nav-custom { background-color: rgba(255, 255, 255, 0.25); border: 2px dashed rgba(255, 255, 255, 0.6); color: white; font-weight: 800; border-radius: 12px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); backdrop-filter: blur(5px); }
+    .btn-nav-custom:hover { background-color: white; color: #db2777; border-color: white; transform: translateY(-2px); }
+
     .nav-tabs { border-bottom: none; margin-bottom: 25px; gap: 10px; display: flex; justify-content: center; border: none; }
     .nav-tabs .nav-link { color: #db2777 !important; font-weight: 800; border: 2px dashed transparent !important; padding: 12px 25px; border-radius: 25px !important; background-color: white !important; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.05); white-space: nowrap; }
     .nav-tabs .nav-link:hover { background-color: #fce7f3 !important; transform: translateY(-3px); }
     .nav-tabs .nav-link.active { background-color: #db2777 !important; color: white !important; border-color: #fbcfe8 !important; transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 15px rgba(219, 39, 119, 0.3); }
     
-    .dashboard-card { background: white; border-radius: 24px; border: 3px dashed #fbcfe8; box-shadow: 0 10px 30px rgba(244, 114, 182, 0.15); padding: 25px; margin-bottom: 25px; transition: all 0.5s ease; }
-    .order-card { border: 3px dashed #fbcfe8; border-radius: 20px; margin-bottom: 20px; background: white; transition: all 0.3s; box-shadow: 0 5px 15px rgba(244, 114, 182, 0.1); }
-    .order-card:hover { border-color: #f472b6; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(219, 39, 119, 0.2); }
+    .dashboard-card { background: white; border-radius: 24px; border: 3px dashed #fbcfe8; box-shadow: 0 10px 30px rgba(244, 114, 182, 0.15); padding: 25px; margin-bottom: 25px; transition: all 0.5s ease; position: relative; z-index: 1; }
+    .order-card { border: 3px dashed #fbcfe8; border-radius: 20px; margin-bottom: 20px; background: white; transition: all 0.3s; box-shadow: 0 5px 15px rgba(244, 114, 182, 0.1); position: relative; z-index: 1; }
+    .order-card:hover { border-color: #f472b6; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(219, 39, 119, 0.2); z-index: 2; }
     .order-header { background: #fff1f2; padding: 15px 20px; border-bottom: 2px dashed #fbcfe8; border-radius: 18px 18px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; transition: all 0.5s ease; }
     .order-body { padding: 20px; }
     .order-footer { padding: 15px 20px; background: #fff1f2; border-top: 2px dashed #fbcfe8; border-radius: 0 0 18px 18px; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; transition: all 0.5s ease; }
@@ -75,7 +79,7 @@
     .search-wrapper { max-width: 350px; width: 100%; }
     .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
     .cute-toast { background: white; border: 3px dashed #f472b6; border-radius: 20px; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.3); }
-    .tab-content { overflow: hidden; }
+    .tab-content { overflow: visible; /* Perbaikan agar drop shadow card tidak terpotong */ }
 
     .text-accent { color: #db2777; }
     .bg-accent-light { background: #fce7f3; color: #db2777; }
@@ -89,18 +93,28 @@
     .btn-scan { background-color: #fce7f3; color: #db2777; border: 2px solid #fbcfe8; border-left: none; transition: all 0.3s; }
     .btn-scan:hover { background-color: #db2777; color: white; }
     
-    #reader { border-radius: 16px; overflow: hidden; border: 3px dashed #fbcfe8; width: 100%; }
+    #reader { border-radius: 16px; overflow: hidden; border: 3px dashed #fbcfe8; width: 100%; background: #fff; }
     #reader button { background-color: #f472b6; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
     #reader select { padding: 5px; border-radius: 8px; margin-bottom: 10px; }
 
     /* ==========================================
        TEMA 2: GLASSMORPHISM (DARK AURORA) 🔮✨
        ========================================== */
+    /* PERBAIKAN: transform: translateZ(0) memperbaiki bug scroll & klik yang tersangkut karena filter blur di HP */
     body.theme-glass { background: linear-gradient(-45deg, #0f172a, #312e81, #0f172a, #1e1b4b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #f8fafc !important; }
     @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     body.theme-glass .navbar-admin { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
-    body.theme-glass .dashboard-card, body.theme-glass .order-card, body.theme-glass .modal-content, body.theme-glass .cute-toast { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15) !important; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important; }
+    
+    body.theme-glass .dashboard-card, body.theme-glass .order-card, body.theme-glass .modal-content, body.theme-glass .cute-toast { 
+      background: rgba(255, 255, 255, 0.05) !important; 
+      backdrop-filter: blur(16px); 
+      -webkit-backdrop-filter: blur(16px); 
+      border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important; 
+      transform: translateZ(0); /* FIX BUG KLIK TERSANGKUT */
+    }
+    
     body.theme-glass .order-header, body.theme-glass .order-footer { background: rgba(0, 0, 0, 0.3) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
 
     body.theme-glass .text-accent { color: #f8fafc !important; }
@@ -111,15 +125,15 @@
     body.theme-glass .search-icon-box { background: rgba(0,0,0,0.2) !important; border-color: rgba(255,255,255,0.2) !important; color: #a5b4fc !important; }
     body.theme-glass .btn-scan { background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.2) !important; color: #a5b4fc !important; }
     body.theme-glass .btn-scan:hover { background: #a5b4fc !important; color: #0f172a !important; }
-    body.theme-glass #reader { border-color: rgba(255,255,255,0.2) !important; }
+    body.theme-glass #reader { border-color: rgba(255,255,255,0.2) !important; background: rgba(0,0,0,0.2) !important; }
     
     body.theme-glass .table { --bs-table-bg: transparent !important; --bs-table-accent-bg: transparent !important; --bs-table-striped-bg: transparent !important; background-color: transparent !important; }
     body.theme-glass .table-items, body.theme-glass .table-items tbody, body.theme-glass .table-items tr, body.theme-glass .table-items td, body.theme-glass .table-items th { background-color: transparent !important; border-color: rgba(255, 255, 255, 0.15) !important; color: #e2e8f0 !important; }
     body.theme-glass .table-items th { background-color: rgba(255, 255, 255, 0.08) !important; color: #f8fafc !important; border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; }
     body.theme-glass .table-items td { border-bottom: 1px dashed rgba(255, 255, 255, 0.1) !important; }
     
-    body.theme-glass .btn-nav-custom { background: rgba(255, 255, 255, 0.1) !important; border: 1px solid rgba(255, 255, 255, 0.25) !important; color: #f8fafc !important; backdrop-filter: blur(5px); box-shadow: none; }
-    body.theme-glass .btn-nav-custom:hover { background: rgba(255, 255, 255, 0.2) !important; }
+    body.theme-glass .btn-nav-custom { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #f8fafc; }
+    body.theme-glass .btn-nav-custom:hover { background: rgba(255, 255, 255, 0.2); border-color: white; transform: translateY(-2px); }
     body.theme-glass .bg-success { background: rgba(34, 197, 94, 0.2) !important; border: 1px solid rgba(34, 197, 94, 0.5) !important; color: #86efac !important; }
     body.theme-glass .bg-danger { background: rgba(239, 68, 68, 0.2) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #fca5a5 !important; }
 
@@ -163,7 +177,7 @@
     <p class="text-muted fw-bold animate-loader-text">Lagi nyiapin datanya nih! ✨</p>
   </div>
 
-  <nav class="navbar-admin d-flex justify-content-between align-items-center">
+  <nav class="navbar-admin d-flex justify-content-between align-items-center sticky-top">
     <div class="navbar-brand animate-nav"><i class="bi bi-box-heart-fill"></i> Pusat Kendali Gudang 💖</div>
     <div class="d-flex gap-2">
       <button class="btn btn-sm btn-nav-custom theme-switch-btn animate-nav" onclick="toggleTheme()" title="Ubah Tema UI">
@@ -175,7 +189,7 @@
     </div>
   </nav>
 
-  <div class="container mt-4">
+  <div class="container mt-4 pb-5">
     <div id="errorBox" class="alert alert-danger d-none fw-bold shadow-sm" style="border-radius: 16px;"></div>
 
     <ul class="nav nav-tabs animate-tabs" id="myTab" role="tablist">
@@ -279,19 +293,25 @@
     </div>
   </div>
 
-  <!-- MODAL LIVE SCANNER CAMERA 📷✨ -->
+  <!-- MODAL LIVE SCANNER CAMERA DENGAN FITUR SENTER 📷✨🔦 -->
   <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg modal-anim">
         <div class="modal-header border-0 pb-0 justify-content-center position-relative">
-          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;"><i class="bi bi-camera"></i> Live Scanner 🪄</h5>
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;"><i class="bi bi-upc-scan"></i> Live Scanner 🪄</h5>
           <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" onclick="closeScanner()"></button>
         </div>
         <div class="modal-body text-center pt-2 pb-4">
           <div id="scannerAlertInfo" class="alert alert-info small fw-bold mb-3 p-2">
-            Penting: Buka link web ini dari <b class="text-danger">Google Chrome / Safari</b>, bukan dari dalam link WhatsApp/Line agar kamera tidak diblokir!
+            Penting: Buka web ini dari <b class="text-danger">Chrome / Safari</b> agar kamera tidak diblokir!
           </div>
-          <div id="reader" class="bg-light p-2 mx-auto"></div>
+          
+          <!-- TOMBOL SENTER (Disembunyikan jika HP tidak support) -->
+          <button id="btnToggleFlash" class="btn btn-warning w-100 fw-bold shadow-sm mb-3" style="display: none; border-radius: 12px;" onclick="toggleFlash()">
+            <i id="iconFlash" class="bi bi-lightning-fill"></i> <span id="textFlash">Nyalakan Senter</span>
+          </button>
+
+          <div id="reader" class="p-2 mx-auto shadow-sm"></div>
         </div>
       </div>
     </div>
@@ -379,34 +399,29 @@
     let jumlahOrderSaatIni = 0; 
     let html5QrcodeScanner = null;
     let currentScanTarget = '';
+    
+    // Variabel Senter (Flash)
+    let isFlashOn = false;
+    let flashCheckInterval = null;
 
     // ==========================================
-    // FUNGSI BANTUAN FETCH API (PENGGANTI google.script.run)
+    // FUNGSI BANTUAN FETCH API
     // ==========================================
     async function fetchAPI(action, params = {}) {
-      if(SCRIPT_URL === 'URL_WEBAPP_KAMU_DISINI') {
-        throw new Error("Jangan lupa ganti tulisan SCRIPT_URL dengan URL Web App-mu yang asli ya! 😅");
-      }
-      
+      if(SCRIPT_URL === 'URL_WEBAPP_KAMU_DISINI') { throw new Error("Ganti SCRIPT_URL dengan URL Web App-mu ya! 😅"); }
       const formData = new URLSearchParams();
       formData.append('action', action);
-      for (const key in params) {
-        formData.append(key, params[key]);
-      }
-
+      for (const key in params) { formData.append(key, params[key]); }
       try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: formData
-        });
+        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
         return await response.json();
       } catch (err) {
-        throw new Error("Gagal terhubung ke Database. Pastikan internet lancar dan pengaturan CORS sudah benar.");
+        throw new Error("Gagal terhubung ke Database. Coba cek sinyal internetmu.");
       }
     }
 
     // ==========================================
-    // LOGIKA SCANNER MURNI (LIVE CAMERA) 📸
+    // LOGIKA SCANNER MURNI & SENTER 📸🔦
     // ==========================================
     function openScanner(target) {
       currentScanTarget = target;
@@ -414,14 +429,63 @@
 
       setTimeout(() => {
         document.getElementById('reader').innerHTML = ''; 
+        document.getElementById('btnToggleFlash').style.display = 'none'; // Sembunyikan senter di awal
+        isFlashOn = false; 
+
         if (!html5QrcodeScanner) {
-          html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+          // Setting UI Scanner yang lebih responsif
+          html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+            fps: 10, 
+            qrbox: {width: 250, height: 250},
+            aspectRatio: 1.0,
+            showTorchButtonIfSupported: false // Matikan tombol default karena kita pakai custom button
+          }, false);
         }
+        
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // Cek secara berkala apakah stream video sudah jalan dan apakah support Senter
+        flashCheckInterval = setInterval(checkTorchSupport, 500);
       }, 500);
     }
 
+    function checkTorchSupport() {
+      const video = document.querySelector('#reader video');
+      if(video && video.srcObject) {
+        const track = video.srcObject.getVideoTracks()[0];
+        if (track && typeof track.getCapabilities === 'function') {
+          const caps = track.getCapabilities();
+          if (caps.torch) {
+            // Jika support, munculkan tombol senter
+            document.getElementById('btnToggleFlash').style.display = 'block';
+            document.getElementById('textFlash').innerText = 'Nyalakan Senter';
+            document.getElementById('iconFlash').className = 'bi bi-lightning-fill';
+          }
+        }
+        clearInterval(flashCheckInterval); // Hentikan pengecekan jika kamera sudah on
+      }
+    }
+
+    async function toggleFlash() {
+      const video = document.querySelector('#reader video');
+      if(!video || !video.srcObject) return;
+      
+      const track = video.srcObject.getVideoTracks()[0];
+      try {
+        isFlashOn = !isFlashOn;
+        await track.applyConstraints({ advanced: [{ torch: isFlashOn }] });
+        
+        // Update UI Tombol
+        document.getElementById('textFlash').innerText = isFlashOn ? 'Matikan Senter' : 'Nyalakan Senter';
+        document.getElementById('iconFlash').className = isFlashOn ? 'bi bi-lightning' : 'bi bi-lightning-fill';
+      } catch(e) {
+        isFlashOn = !isFlashOn; // Kembalikan state jika error
+        alert("Gagal mengakses fitur senter HP. Pastikan browser diizinkan menggunakan Flash.");
+      }
+    }
+
     function closeScanner() {
+      if (flashCheckInterval) clearInterval(flashCheckInterval);
       if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().then(() => { scannerModalInstance.hide(); }).catch(error => { console.log(error); scannerModalInstance.hide(); });
       } else {
@@ -440,13 +504,16 @@
       }
     }
 
-    function onScanFailure(error) { /* Abaikan error tiap frame yang biasa terjadi */ }
+    function onScanFailure(error) { /* Abaikan error per-frame */ }
 
-    // TEMA
+    // ==========================================
+    // TEMA & ANIMASI
+    // ==========================================
     function applySavedTheme() {
       const savedTheme = localStorage.getItem('adminTheme');
       if (savedTheme === 'glass') { document.body.classList.add('theme-glass'); document.getElementById('themeIcon').className = 'bi bi-droplet-fill'; }
     }
+    
     function toggleTheme() {
       const body = document.body; const icon = document.getElementById('themeIcon');
       anime({ targets: 'body', opacity: [0, 1], duration: 800, easing: 'easeInOutQuad' });
@@ -458,12 +525,12 @@
     }
     applySavedTheme();
 
-    // ANIMASI
     function animateIntro() {
       anime({ targets: '.animate-nav', translateY: [-50, 0], opacity: [0, 1], duration: 1000, easing: 'easeOutElastic(1, .8)', delay: anime.stagger(200) });
       anime({ targets: '.animate-tabs .nav-item', translateY: [20, 0], opacity: [0, 1], duration: 800, easing: 'easeOutElastic(1, .8)', delay: anime.stagger(100, {start: 500}) });
     }
     function animateCards(targetClass) { anime({ targets: targetClass, translateY: [40, 0], opacity: [0, 1], duration: 800, delay: anime.stagger(80), easing: 'easeOutElastic(1, .8)' }); }
+    
     document.addEventListener('show.bs.modal', function (event) {
       anime({ targets: '.modal-anim', scale: [0.5, 1], opacity: [0, 1], duration: 600, easing: 'easeOutElastic(1, .8)' });
       if(event.target.id === 'statusModal') anime({ targets: '.status-btn-group .btn', translateX: [-50, 0], opacity: [0, 1], delay: anime.stagger(100, {start: 200}), easing: 'easeOutElastic(1, .8)' });
@@ -473,7 +540,9 @@
       tab.addEventListener('shown.bs.tab', () => { anime({ targets: '.animate-content', scale: [0.95, 1], opacity: [0, 1], duration: 500, easing: 'easeOutQuart' }); });
     });
 
+    // ==========================================
     // INIT UTAMA
+    // ==========================================
     window.onload = async function() {
       printModalInstance = new bootstrap.Modal(document.getElementById('printSlotModal'));
       authModalInstance = new bootstrap.Modal(document.getElementById('authModal'));
@@ -483,7 +552,6 @@
       
       document.getElementById('loader').style.display = 'flex';
       
-      // Ambil Pengaturan Awal via API
       try {
         const res = await fetchAPI('getSetupData');
         if (res.success) { 
@@ -499,7 +567,6 @@
         showError(err.message);
       }
 
-      // Interval Cek Order Baru via API
       setInterval(async () => {
         try {
           const res = await fetchAPI('cekPesananBaru');
@@ -510,10 +577,13 @@
             anime({ targets: '#orderToast', translateY: [50, 0], scale: [0.8, 1], duration: 800, easing: 'easeOutElastic(1, .8)' });
             loadAdminData(false);
           }
-        } catch (err) { /* Abaikan jika error internet sesaat */ }
+        } catch (err) { }
       }, 30000);
     };
 
+    // ==========================================
+    // FUNGSI LAINNYA (Sama seperti versi sebelumnya)
+    // ==========================================
     function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
       const selectStock = document.getElementById('selectStockSheet'); const checkContainer = document.getElementById('checkboxOrderSheets');
       let htmlSelect = '<option value="">-- Pilih Sheet Stok --</option>'; let htmlCheck = '';
@@ -543,19 +613,12 @@
       btn.disabled = true;
       
       try {
-        const res = await fetchAPI('verifyAndSaveSettings', {
-          username: user,
-          password: pass,
-          stockSheet: stockSheet,
-          orderSheetsArray: JSON.stringify(orderSheets)
-        });
-
+        const res = await fetchAPI('verifyAndSaveSettings', { username: user, password: pass, stockSheet: stockSheet, orderSheetsArray: JSON.stringify(orderSheets) });
         btn.innerHTML = 'Verifikasi 🚀'; btn.disabled = false;
         
         if(res.success) { 
           authModalInstance.hide(); alert(res.message); 
-          new bootstrap.Tab(document.querySelector('#order-tab')).show(); 
-          loadAdminData(true); 
+          new bootstrap.Tab(document.querySelector('#order-tab')).show(); loadAdminData(true); 
         } else { 
           errBox.innerText = res.message; errBox.classList.remove('d-none'); 
           anime({targets: errBox, translateX: [10, -10, 10, -10, 0], duration: 400, easing: 'easeInOutSine'}); 
@@ -575,16 +638,12 @@
         if(showLoader) document.getElementById('loader').style.display = 'none';
         
         if(res.needSetup) { 
-          showError(res.message); 
-          new bootstrap.Tab(document.querySelector('#setting-tab')).show(); 
-          return; 
+          showError(res.message); new bootstrap.Tab(document.querySelector('#setting-tab')).show(); return; 
         }
         if(res.success) { 
           globalStok = res.stok; globalOrders = res.orders; jumlahOrderSaatIni = globalOrders.length; 
           renderStokUI(globalStok); renderOrders(); 
-        } else {
-          showError("Gagal memuat data: " + res.message);
-        }
+        } else { showError("Gagal memuat data: " + res.message); }
       } catch(err) {
         if(showLoader) document.getElementById('loader').style.display = 'none'; 
         showError("Error: " + err.message);
@@ -685,24 +744,16 @@
       const allBtns = document.querySelectorAll('.btn-status-cute'); allBtns.forEach(b => b.disabled = true);
       
       try {
-        const res = await fetchAPI('updateStatusPesanan', {
-          sheetName: currentStatusSheet, 
-          idPesanan: currentStatusId, 
-          newStatus: newStatus
-        });
-        
+        const res = await fetchAPI('updateStatusPesanan', { sheetName: currentStatusSheet, idPesanan: currentStatusId, newStatus: newStatus });
         allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide();
         
         if(res.success) {
           const orderIndex = globalOrders.findIndex(o => o.idPesanan === currentStatusId);
           if (orderIndex > -1) globalOrders[orderIndex].status = newStatus;
           renderOrders();
-        } else {
-          showError(res.message); 
-        }
+        } else { showError(res.message); }
       } catch (err) {
-        allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide(); 
-        showError("Error: " + err.message); 
+        allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide(); showError("Error: " + err.message); 
       }
     }
 
