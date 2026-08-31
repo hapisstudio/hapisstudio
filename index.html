@@ -13,6 +13,13 @@
     /* ==========================================
        TEMA 1: KAWAII PASTEL (DEFAULT) 🎀
        ========================================== */
+    :root {
+      --sb-track: #fdf2f8;
+      --sb-thumb: #fbcfe8;
+      --sb-hover: #f472b6;
+      --sb-radius: 10px;
+    }
+    
     body { font-family: 'Nunito', sans-serif; background-color: #fdf2f8; background-image: radial-gradient(circle at 50% 0%, #fff1f2 0%, #fdf2f8 70%); color: #475569; overflow-x: hidden; -webkit-overflow-scrolling: touch; transition: background 0.5s ease; }
     
     .navbar-admin { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2); border-bottom: 4px dashed #fbcfe8; transition: all 0.5s ease; }
@@ -68,10 +75,10 @@
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(253, 242, 248, 0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
     .spinner-border { width: 3rem; height: 3rem; color: #db2777; border-width: 5px; }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #fdf2f8; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--sb-track); border-radius: var(--sb-radius); }
+    ::-webkit-scrollbar-thumb { background: var(--sb-thumb); border-radius: var(--sb-radius); border: 2px solid var(--sb-track); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--sb-hover); }
 
     .sheet-checkbox-list { max-height: 250px; overflow-y: auto; border: 2px dashed #fbcfe8; border-radius: 16px; padding: 15px; background: white; }
 
@@ -82,6 +89,7 @@
     .search-wrapper { max-width: 350px; width: 100%; }
     .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
     .cute-toast { background: white; border: 3px dashed #f472b6; border-radius: 20px; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.3); }
+    .toast-body { color: #475569; }
     .tab-content { overflow: visible; }
 
     .text-accent { color: #db2777; }
@@ -103,7 +111,12 @@
     /* ==========================================
        TEMA 2: GLASSMORPHISM (DARK AURORA) 🔮✨
        ========================================== */
-    body.theme-glass { background: linear-gradient(-45deg, #0f172a, #312e81, #0f172a, #1e1b4b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #f8fafc !important; }
+    body.theme-glass { 
+      background: linear-gradient(-45deg, #0f172a, #312e81, #0f172a, #1e1b4b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #f8fafc !important; 
+      --sb-track: rgba(255,255,255,0.05);
+      --sb-thumb: rgba(255,255,255,0.2);
+      --sb-hover: rgba(255,255,255,0.4);
+    }
     @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     body.theme-glass .navbar-admin { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
@@ -156,58 +169,96 @@
 
     body.theme-glass #loader { background: rgba(15, 23, 42, 0.8) !important; backdrop-filter: blur(15px); }
     body.theme-glass .spinner-border { color: #a5b4fc !important; }
+    body.theme-glass .toast-body { color: #f8fafc !important; }
 
     /* ==========================================
        TEMA 3: PIXEL UI 🕹️ (RETRO 8-BIT)
        ========================================== */
-    body.theme-pixel { font-family: 'VT323', monospace; background-color: #222034; color: #fff !important; font-size: 1.25rem; letter-spacing: 0.5px; }
+    body.theme-pixel { 
+      font-family: 'VT323', monospace; background-color: #222034; color: #fff !important; font-size: 1.25rem; letter-spacing: 0.5px; 
+      --sb-track: #222034;
+      --sb-thumb: #5b6ee1;
+      --sb-hover: #99e550;
+      --sb-radius: 0px;
+    }
     body.theme-pixel h3, body.theme-pixel h4, body.theme-pixel h5, body.theme-pixel label { color: #fbd610 !important; text-transform: uppercase; }
     
     body.theme-pixel .navbar-admin { background: #d95763 !important; border-bottom: 4px solid #000 !important; box-shadow: 0 6px 0 #1a1c2c; }
     
+    /* Pixel Cards & Global resets */
     body.theme-pixel .dashboard-card, body.theme-pixel .order-card, body.theme-pixel .modal-content, body.theme-pixel .cute-toast {
-      background: #3f3f74 !important; 
-      border: 4px solid #5b6ee1 !important;
-      border-radius: 0 !important;
-      box-shadow: 8px 8px 0 #1a1c2c !important;
-      transform: none !important;
+      background: #3f3f74 !important; border: 4px solid #5b6ee1 !important; border-radius: 0 !important; box-shadow: 8px 8px 0 #1a1c2c !important; transform: none !important;
     }
+    body.theme-pixel .rounded, body.theme-pixel .rounded-pill { border-radius: 0 !important; }
+    body.theme-pixel .shadow-sm, body.theme-pixel .shadow, body.theme-pixel .shadow-lg { box-shadow: 6px 6px 0 #1a1c2c !important; }
     
+    /* Buttons */
     body.theme-pixel .btn, body.theme-pixel .form-control, body.theme-pixel .form-select, body.theme-pixel .nav-link, body.theme-pixel .btn-status-cute {
-      border-radius: 0 !important;
-      border: 3px solid #1a1c2c !important;
-      background: #fbd610 !important;
-      color: #1a1c2c !important;
-      font-weight: bold;
-      text-transform: uppercase;
-      box-shadow: 4px 4px 0 #1a1c2c !important;
-      transition: none !important;
+      border-radius: 0 !important; border: 3px solid #1a1c2c !important; background: #fbd610 !important; color: #1a1c2c !important; font-weight: bold; text-transform: uppercase; box-shadow: 4px 4px 0 #1a1c2c !important; transition: none !important;
     }
-    
-    body.theme-pixel .btn:hover, body.theme-pixel .nav-link.active, body.theme-pixel .btn-scan:hover, body.theme-pixel .btn-status-cute:hover {
-      background: #ffea70 !important;
-      transform: translate(2px, 2px) !important;
-      box-shadow: 2px 2px 0 #1a1c2c !important;
+    body.theme-pixel .btn:hover, body.theme-pixel .btn-scan:hover, body.theme-pixel .btn-status-cute:hover {
+      background: #ffea70 !important; transform: translate(2px, 2px) !important; box-shadow: 2px 2px 0 #1a1c2c !important;
     }
+    body.theme-pixel .btn-slot small { color: #1a1c2c !important; font-size: 1.1rem; font-weight: 900; }
+
+    /* Nav Tabs */
+    body.theme-pixel .nav-tabs .nav-link { background: #30346d !important; color: #cbdbfc !important; border-bottom: none !important; margin-bottom: -3px; }
+    body.theme-pixel .nav-tabs .nav-link.active { background: #fbd610 !important; color: #1a1c2c !important; transform: translate(0, -4px) !important; box-shadow: 4px 4px 0 #1a1c2c !important; z-index: 2; }
+    body.theme-pixel .nav-tabs .nav-link:hover:not(.active) { background: #5b6ee1 !important; color: white !important; transform: none !important; }
     
+    /* Tables */
+    body.theme-pixel .table-items { border-radius: 0 !important; border: 4px solid #1a1c2c !important; border-collapse: collapse !important; border-spacing: 0; }
     body.theme-pixel .table-items th { background: #5b6ee1 !important; color: white !important; border: 2px solid #1a1c2c !important; font-size: 1.1rem; }
     body.theme-pixel .table-items td { border: 2px solid #1a1c2c !important; color: #fff !important; background: #30346d !important; }
     
+    /* Badges */
     body.theme-pixel .badge { border-radius: 0 !important; border: 2px solid #1a1c2c; font-size: 0.9rem; text-transform: uppercase; box-shadow: 2px 2px 0 #1a1c2c;}
     body.theme-pixel .badge-Pending, body.theme-pixel .btn-stat-pending { background: #fbd610 !important; color: #1a1c2c !important; }
     body.theme-pixel .badge-Diproses, body.theme-pixel .btn-stat-diproses { background: #5fcde4 !important; color: #1a1c2c !important; }
     body.theme-pixel .badge-Dikirim, body.theme-pixel .btn-stat-dikirim { background: #5b6ee1 !important; color: #fff !important; }
     body.theme-pixel .badge-Selesai, body.theme-pixel .btn-stat-selesai { background: #99e550 !important; color: #1a1c2c !important; }
     body.theme-pixel .badge-Dibatalkan, body.theme-pixel .btn-stat-batal { background: #d95763 !important; color: #fff !important; }
+    body.theme-pixel .bg-danger { background: #d95763 !important; color: #fff !important; border: 2px solid #1a1c2c !important; box-shadow: 2px 2px 0 #1a1c2c !important; }
+    body.theme-pixel .bg-success { background: #99e550 !important; color: #1a1c2c !important; border: 2px solid #1a1c2c !important; box-shadow: 2px 2px 0 #1a1c2c !important; }
+    body.theme-pixel .badge-hash { background: #d95763 !important; color: white !important; border-radius: 0 !important; border: 2px solid #1a1c2c !important;}
     
-    body.theme-pixel .order-header, body.theme-pixel .order-footer, body.theme-pixel .order-note-box, body.theme-pixel .sheet-checkbox-list { background: #30346d !important; border: 2px dashed #5b6ee1 !important; border-radius: 0 !important;}
+    /* Layout Boxes */
+    body.theme-pixel .order-header, body.theme-pixel .order-footer, body.theme-pixel .sheet-checkbox-list { background: #30346d !important; border: 3px solid #1a1c2c !important; border-radius: 0 !important;}
+    body.theme-pixel .order-note-box { background: #1a1c2c !important; border: 3px solid #5b6ee1 !important; border-radius: 0 !important; color: #fff !important; }
+    body.theme-pixel .order-note-box span { color: #cbdbfc !important; }
+    body.theme-pixel .order-note-box .text-accent { color: #fbd610 !important; }
+    body.theme-pixel .bg-accent-light { background: #1a1c2c !important; color: #99e550 !important; border: 2px solid #5b6ee1 !important; border-radius: 0 !important; }
+    body.theme-pixel .footer-msg-box { background: #1a1c2c !important; color: #5fcde4 !important; border: 2px solid #5b6ee1 !important; border-radius: 0 !important; }
+    
     body.theme-pixel .text-accent { color: #fbd610 !important; }
     body.theme-pixel .text-muted, body.theme-pixel .small { color: #cbdbfc !important; }
-    body.theme-pixel .search-icon-box { background: #1a1c2c !important; border-color: #1a1c2c !important; color: #fff !important; border-radius: 0 !important;}
-    body.theme-pixel .form-check-input { border-radius: 0 !important; border: 2px solid #1a1c2c !important; background-color: #1a1c2c !important; box-shadow: none !important;}
-    body.theme-pixel .custom-switch:checked { background-color: #99e550 !important; border-color: #99e550 !important; }
-    body.theme-pixel #loader { background: rgba(34, 32, 52, 0.9) !important; backdrop-filter: none; }
-    body.theme-pixel .spinner-border { color: #99e550 !important; }
+    
+    /* Search Box fixes */
+    body.theme-pixel .search-wrapper * { border-radius: 0 !important; }
+    body.theme-pixel .search-icon-box { background: #1a1c2c !important; border: 3px solid #1a1c2c !important; border-right: none !important; color: #fff !important;}
+    body.theme-pixel .search-wrapper input { background: #30346d !important; color: #fff !important; border: 3px solid #1a1c2c !important; border-left: none !important; border-right: none !important;}
+    body.theme-pixel .search-wrapper input::placeholder { color: #5b6ee1 !important; }
+    body.theme-pixel .btn-scan { border: 3px solid #1a1c2c !important; border-left: none !important; }
+    
+    /* Forms & Switches */
+    body.theme-pixel .form-check-input { border-radius: 0 !important; border: 2px solid #1a1c2c !important; background-color: #30346d !important; box-shadow: none !important;}
+    body.theme-pixel .form-switch .form-check-input { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3crect width='6' height='6' x='-3' y='-3' fill='%23fff'/%3e%3c/svg%3e") !important; }
+    body.theme-pixel .form-switch .form-check-input:focus { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3crect width='6' height='6' x='-3' y='-3' fill='%23fff'/%3e%3c/svg%3e") !important; }
+    body.theme-pixel .custom-switch:checked { background-color: #99e550 !important; border-color: #1a1c2c !important; }
+    
+    /* Modals & Alerts */
+    body.theme-pixel .modal-header, body.theme-pixel .toast-header { border-bottom: 4px solid #1a1c2c !important; background: #30346d !important; color: #fbd610 !important; border-radius: 0 !important; }
+    body.theme-pixel .modal-body, body.theme-pixel .toast-body { background: #3f3f74 !important; color: #fff !important; border-radius: 0 !important; }
+    body.theme-pixel .cute-toast { padding: 0 !important; overflow: hidden; border: 4px solid #1a1c2c !important; border-radius: 0 !important; }
+    body.theme-pixel .btn-close { filter: brightness(0) invert(1); opacity: 1; border: 2px solid #fff; border-radius: 0; padding: 0.5rem; background-color: #d95763; box-shadow: 2px 2px 0 #1a1c2c; }
+    body.theme-pixel .btn-close:hover { background-color: #ffea70; }
+    body.theme-pixel .alert { border-radius: 0 !important; border: 4px solid #1a1c2c !important; box-shadow: 4px 4px 0 #1a1c2c !important; }
+    body.theme-pixel .alert-danger { background: #d95763 !important; color: #fff !important; }
+    body.theme-pixel .alert-info { background: #5fcde4 !important; color: #1a1c2c !important; }
+    
+    /* Scanner */
+    body.theme-pixel #reader { border: 4px solid #1a1c2c !important; background: #3f3f74 !important; border-radius: 0 !important; }
+    body.theme-pixel #reader button { background: #fbd610 !important; color: #1a1c2c !important; border: 3px solid #1a1c2c !important; border-radius: 0 !important; font-family: 'VT323', monospace; text-transform: uppercase; font-weight: bold; box-shadow: 4px 4px 0 #1a1c2c; }
 
     @media (max-width: 768px) {
       .navbar-brand { font-size: 1.1rem; }
@@ -236,8 +287,8 @@
   <nav class="navbar-admin d-flex justify-content-between align-items-center sticky-top">
     <div class="navbar-brand animate-nav"><i class="bi bi-box-heart-fill"></i> Pusat Kendali Gudang 💖</div>
     <div class="d-flex gap-2">
-      <button class="btn btn-sm btn-nav-custom theme-switch-btn animate-nav" onclick="toggleTheme()" title="Ubah Tema UI">
-        <i id="themeIcon" class="bi bi-magic"></i> Tema
+      <button class="btn btn-sm btn-nav-custom animate-nav" onclick="openThemeModal()" title="Pilih Tema UI">
+        <i id="themeIcon" class="bi bi-palette-fill"></i> Tema
       </button>
       <button class="btn btn-sm btn-nav-custom animate-nav" onclick="loadAdminData(true)" title="Refresh Data">
         <i class="bi bi-arrow-clockwise"></i> Refresh
@@ -349,7 +400,7 @@
         <strong class="me-auto fw-900 text-accent" style="font-size: 1.1rem;">🔔 Horeee! Order Baru!</strong>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
-      <div class="toast-body fw-bold" style="color: #475569;">Ada pesanan baru yang mendarat di Gudang. Yuk dicek! ✨</div>
+      <div class="toast-body fw-bold">Ada pesanan baru yang mendarat di Gudang. Yuk dicek! ✨</div>
     </div>
   </div>
 
@@ -440,6 +491,32 @@
     </div>
   </div>
 
+  <!-- MODAL PILIH TEMA -->
+  <div class="modal fade" id="themeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;"><i class="bi bi-palette-fill"></i> Pilih Tema ✨</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center pt-2 pb-4">
+          <p class="small text-muted fw-bold mb-3">Pilih gaya visual favoritmu! 🎨</p>
+          <div class="d-flex flex-column gap-3">
+            <button class="btn w-100 fw-bold" style="background: #fdf2f8 !important; color: #db2777 !important; border: 2px dashed #fbcfe8 !important; border-radius: 12px !important; padding: 10px; font-family: 'Nunito', sans-serif;" onclick="setTheme('kawaii')">
+              🎀 Kawaii Pastel
+            </button>
+            <button class="btn w-100 fw-bold" style="background: linear-gradient(45deg, #312e81, #0f172a) !important; color: #f8fafc !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 12px !important; padding: 10px; font-family: 'Nunito', sans-serif;" onclick="setTheme('glass')">
+              🔮 Glassmorphism
+            </button>
+            <button class="btn w-100 fw-bold" style="background: #222034 !important; color: #fbd610 !important; border: 3px solid #1a1c2c !important; border-radius: 0 !important; padding: 10px; font-family: 'VT323', monospace; font-size: 1.2rem; text-transform: uppercase;" onclick="setTheme('pixel')">
+              🕹️ Pixel Retro
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CDNs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -454,7 +531,7 @@
 
     let globalStok = []; let globalOrders = [];
     let currentPrintId = null; let currentStatusSheet = null; let currentStatusId = null;
-    let printModalInstance = null; let authModalInstance = null; let statusModalInstance = null; let toastInstance = null; let scannerModalInstance = null;
+    let printModalInstance = null; let authModalInstance = null; let statusModalInstance = null; let toastInstance = null; let scannerModalInstance = null; let themeModalInstance = null;
     
     let html5QrcodeScanner = null;
     let currentScanTarget = '';
@@ -560,31 +637,36 @@
         document.body.classList.add('theme-pixel');
         icon.className = 'bi bi-controller';
       } else {
-        icon.className = 'bi bi-magic';
+        icon.className = 'bi bi-palette-fill';
       }
     }
     
-    function toggleTheme() {
-      const body = document.body; const icon = document.getElementById('themeIcon');
+    function openThemeModal() {
+      themeModalInstance.show();
+    }
+
+    function setTheme(themeName) {
+      const body = document.body; 
+      const icon = document.getElementById('themeIcon');
+      
       anime({ targets: 'body', opacity: [0, 1], duration: 800, easing: 'easeInOutQuad' });
       
-      if (!body.classList.contains('theme-glass') && !body.classList.contains('theme-pixel')) {
-        // Pindah dari Kawaii -> Glass
+      body.classList.remove('theme-glass', 'theme-pixel');
+      
+      if (themeName === 'glass') {
         body.classList.add('theme-glass'); 
         localStorage.setItem('adminTheme', 'glass'); 
         icon.className = 'bi bi-droplet-fill';
-      } else if (body.classList.contains('theme-glass')) {
-        // Pindah dari Glass -> Pixel
-        body.classList.remove('theme-glass');
+      } else if (themeName === 'pixel') {
         body.classList.add('theme-pixel'); 
         localStorage.setItem('adminTheme', 'pixel'); 
         icon.className = 'bi bi-controller';
       } else {
-        // Pindah dari Pixel -> Kawaii
-        body.classList.remove('theme-pixel'); 
         localStorage.setItem('adminTheme', 'kawaii'); 
-        icon.className = 'bi bi-magic';
+        icon.className = 'bi bi-palette-fill';
       }
+      
+      themeModalInstance.hide();
     }
     applySavedTheme();
 
@@ -612,6 +694,7 @@
       statusModalInstance = new bootstrap.Modal(document.getElementById('statusModal'));
       scannerModalInstance = new bootstrap.Modal(document.getElementById('scannerModal'));
       toastInstance = new bootstrap.Toast(document.getElementById('orderToast'));
+      themeModalInstance = new bootstrap.Modal(document.getElementById('themeModal'));
       
       document.getElementById('loader').style.display = 'flex';
       
