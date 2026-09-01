@@ -382,11 +382,12 @@
               <thead>
                 <tr>
                   <th width="50" class="text-center">No</th>
-                  <th>Kode 🏷️</th>
+                  <th>Kode 📜</th>
                   <th>Nama Barang 🎁</th>
                   <th class="text-end">Harga Retail 💵</th>
                   <th class="text-end">Harga Grosir 📦</th>
                   <th class="text-end">HPP 💎</th>
+                  <th class="text-end">Disc 🏷️</th>
                   <th class="text-center">Sisa Stok 🛒</th>
                 </tr>
               </thead>
@@ -898,6 +899,7 @@
             <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hargaRetail)}</td>
             <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hargaGrosir)}</td>
             <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${formatRupiah(item.hpp)}</td>
+            <td class="text-end fw-bold text-muted" style="white-space:nowrap;">${Number(item.diskon).toFixed(2)}%</td>
             <td class="text-center"><span class="badge ${badgeColor} px-3 py-2 fs-6 shadow-sm rounded-pill">${item.stok}</span></td>
           </tr>
         `);
