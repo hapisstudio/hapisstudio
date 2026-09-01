@@ -463,6 +463,7 @@
             <button class="btn btn-status-cute btn-stat-pending" onclick="executeStatusUpdate('Pending', this)">⏳ Pending</button>
             <button class="btn btn-status-cute btn-stat-diproses" onclick="executeStatusUpdate('Diproses', this)">📦 Diproses</button>
             <button class="btn btn-status-cute btn-stat-dikirim" onclick="executeStatusUpdate('Dikirim', this)">🛵 Dikirim</button>
+            <button class="btn btn-status-cute btn-stat-selesai" onclick="executeStatusUpdate('Selesai', this)">✅ Selesai</button>
             <button class="btn btn-status-cute btn-stat-batal" onclick="executeStatusUpdate('Dibatalkan', this)">❌ Dibatalkan</button>
           </div>
         </div>
@@ -928,6 +929,7 @@
         let itemRows = [];
         order.items.forEach(item => { itemRows.push(`<tr><td class="small fw-bold text-muted">${item.idBarang}</td><td class="fw-bold text-uppercase">${item.namaBarang}</td><td class="text-center fw-bold fs-6">${item.jumlah}</td></tr>`); });
         let currentStatus = order.status || 'Pending'; let badgeClass = 'badge-' + currentStatus.replace(/\s+/g, '');
+        
         htmlOrders.push(`
           <div class="order-card order-item-box order-card-anim">
             <div class="order-header">
@@ -945,9 +947,11 @@
               <div class="table-responsive"><table class="table table-borderless table-sm table-items mb-3 border w-100"><thead><tr><th>Kode 🏷️</th><th>Nama Barang 🎁</th><th class="text-center">Qty 🛒</th></tr></thead><tbody>${itemRows.join('')}</tbody></table></div>
               <div class="p-3 rounded small border order-note-box"><span class="fw-bold text-accent"><i class="bi bi-chat-heart-fill"></i> Catatan Toko:</span><br><span class="fw-semibold text-muted">${order.catatan || '<i>Tidak ada pesan khusus~</i>'}</span></div>
             </div>
+            ${currentStatus !== 'Selesai' ? `
             <div class="order-footer">
               <button class="btn btn-cute btn-sm px-4 shadow-sm w-100 fs-6 py-2" onclick="openStatusModal('${order.sheetName}', '${order.idPesanan}')"><i class="bi bi-pencil-square"></i> Ubah Status Pesanan 🎀</button>
             </div>
+            ` : ''}
           </div>
         `);
       });
