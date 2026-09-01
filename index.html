@@ -331,6 +331,9 @@
           <div class="col-md-6 col-12 mb-2 mb-md-0">
             <h3 class="fw-bold mb-0 d-inline-block me-2 text-accent">📦 Daftar Orderan ✨</h3>
             <span class="badge bg-danger rounded-pill shadow-sm" id="badgeAutoRefresh" style="vertical-align: top;">🔴 Radar Aktif</span>
+            <button class="badge bg-danger rounded-pill shadow-sm border-0 ms-1" style="vertical-align: top; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="refreshOrderData(this)" title="Refresh data pesanan saja">
+              <i class="bi bi-arrow-clockwise"></i> Sync
+            </button>
           </div>
           <div class="col-md-6 col-12 d-flex justify-content-md-end">
             <div class="input-group shadow-sm search-wrapper">
@@ -850,6 +853,33 @@
       } catch(err) {
         if(showLoader) document.getElementById('loader').style.display = 'none'; 
         showError("Error: " + err.message);
+      }
+    }
+
+    async function refreshOrderData(btnElement) {
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = '<span class="spinner-border spinner-border-sm" style="width: 10px; height: 10px; border-width: 2px;"></span>'; 
+      btnElement.disabled = true;
+      
+      try {
+        const res = await fetchAPI('getAdminData');
+        btnElement.innerHTML = originalText;
+        btnElement.disabled = false;
+        
+        if(res.success) { 
+          globalOrders = res.orders; 
+          // HANYA update globalOrders dan trigger render khusus pesanan
+          if (globalOrders.length > 0) {
+            localStorage.setItem('lastSeenOrderId', globalOrders[0].idPesanan);
+          }
+          renderOrders(); 
+        } else { 
+          alert("Gagal refresh pesanan: " + res.message); 
+        }
+      } catch(err) {
+        btnElement.innerHTML = originalText;
+        btnElement.disabled = false;
+        alert("Error: " + err.message);
       }
     }
 
