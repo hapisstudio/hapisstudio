@@ -62,6 +62,10 @@
     .btn-stat-selesai { background: #bbf7d0; color: #166534; border-color: #86efac; }
     .btn-stat-batal { background: #fecaca; color: #991b1b; border-color: #fca5a5; }
 
+    .btn-status-filter { background: white; border: 2px dashed #fbcfe8; color: #db2777; border-radius: 20px; font-weight: 800; transition: all 0.3s; padding: 8px 16px; font-size: 0.95rem; }
+    .btn-status-filter:hover { background: #fce7f3; transform: translateY(-2px); color: #db2777; }
+    .btn-status-filter.active { background: #db2777; color: white; border-color: #db2777; box-shadow: 0 4px 10px rgba(219,39,119,0.3); transform: scale(1.05); }
+
     .form-control, .form-select { border: 2px solid #fbcfe8; border-radius: 16px; padding: 10px 15px; font-weight: 600; color: #475569; transition: all 0.3s; box-shadow: none; width: 100%; }
     .form-control:focus, .form-select:focus { border-color: #db2777; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.2); }
     .form-control::placeholder { color: #94a3b8; font-weight: 500; }
@@ -154,6 +158,10 @@
     body.theme-glass .bg-success { background: rgba(34, 197, 94, 0.2) !important; border: 1px solid rgba(34, 197, 94, 0.5) !important; color: #86efac !important; }
     body.theme-glass .bg-danger { background: rgba(239, 68, 68, 0.2) !important; border: 1px solid rgba(239, 68, 68, 0.5) !important; color: #fca5a5 !important; }
 
+    body.theme-glass .btn-status-filter { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #f8fafc; }
+    body.theme-glass .btn-status-filter:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    body.theme-glass .btn-status-filter.active { background: rgba(255,255,255,0.25); border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.2); color: #fff; }
+
     body.theme-glass h3, body.theme-glass h4, body.theme-glass h5, body.theme-glass label, body.theme-glass .fw-bold { color: #f8fafc !important; }
     body.theme-glass .text-muted, body.theme-glass .small { color: #94a3b8 !important; }
     
@@ -200,6 +208,10 @@
       background: #ffea70 !important; transform: translate(2px, 2px) !important; box-shadow: 2px 2px 0 #1a1c2c !important;
     }
     body.theme-pixel .btn-slot small { color: #1a1c2c !important; font-size: 1.1rem; font-weight: 900; }
+
+    body.theme-pixel .btn-status-filter { background: #30346d !important; border: 3px solid #1a1c2c !important; color: #cbdbfc !important; border-radius: 0 !important; font-family: 'VT323', monospace; text-transform: uppercase; font-size: 1.1rem; box-shadow: 4px 4px 0 #1a1c2c !important; }
+    body.theme-pixel .btn-status-filter:hover { background: #5b6ee1 !important; color: white !important; transform: translate(2px, 2px) !important; box-shadow: 2px 2px 0 #1a1c2c !important;}
+    body.theme-pixel .btn-status-filter.active { background: #fbd610 !important; color: #1a1c2c !important; transform: translate(2px, 2px) !important; box-shadow: 2px 2px 0 #1a1c2c !important; }
 
     /* Nav Tabs */
     body.theme-pixel .nav-tabs .nav-link { background: #30346d !important; color: #cbdbfc !important; border-bottom: none !important; margin-bottom: -3px; }
@@ -330,6 +342,16 @@
             </div>
           </div>
         </div>
+
+        <div class="order-status-tabs mb-4 d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+          <button class="btn btn-status-filter active" data-status="Semua" onclick="setOrderFilter('Semua')">Semua</button>
+          <button class="btn btn-status-filter" data-status="Pending" onclick="setOrderFilter('Pending')">⏳ Pending</button>
+          <button class="btn btn-status-filter" data-status="Diproses" onclick="setOrderFilter('Diproses')">📦 Diproses</button>
+          <button class="btn btn-status-filter" data-status="Dikirim" onclick="setOrderFilter('Dikirim')">🛵 Dikirim</button>
+          <button class="btn btn-status-filter" data-status="Selesai" onclick="setOrderFilter('Selesai')">✅ Selesai</button>
+          <button class="btn btn-status-filter" data-status="Dibatalkan" onclick="setOrderFilter('Dibatalkan')">❌ Dibatalkan</button>
+        </div>
+
         <div id="orderContainer"></div>
       </div>
 
@@ -449,6 +471,24 @@
     </div>
   </div>
 
+  <!-- MODAL KODE UNIK DIKIRIM -->
+  <div class="modal fade" id="kodeUnikModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content shadow-lg modal-anim">
+        <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+          <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;">Input Kode Unik 🛵</h5>
+          <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center pt-2 pb-4">
+          <p class="small text-muted fw-bold mb-3">Masukkan Resi / Kode Unik untuk Order: <br><code id="kodeUnikOrderId" class="bg-accent-light px-2 rounded mt-1 d-inline-block" style="font-weight: 800;">-</code></p>
+          <div id="kodeUnikError" class="alert alert-danger d-none small fw-bold py-2 mb-2" style="border-radius: 12px;">Kode unik tidak boleh kosong!</div>
+          <input type="text" class="form-control mb-3 text-center fw-bold" id="inputKodeUnik" placeholder="Ketik kode di sini...">
+          <button class="btn btn-cute w-100 fs-6" id="btnConfirmDikirim" onclick="confirmDikirimStatus()">Simpan & Kirim ✨</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL OTORISASI -->
   <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -531,7 +571,9 @@
 
     let globalStok = []; let globalOrders = [];
     let currentPrintId = null; let currentStatusSheet = null; let currentStatusId = null;
+    let currentOrderFilter = 'Semua';
     let printModalInstance = null; let authModalInstance = null; let statusModalInstance = null; let toastInstance = null; let scannerModalInstance = null; let themeModalInstance = null;
+    let kodeUnikModalInstance = null; let tempDikirimBtn = null;
     
     let html5QrcodeScanner = null;
     let currentScanTarget = '';
@@ -695,6 +737,7 @@
       scannerModalInstance = new bootstrap.Modal(document.getElementById('scannerModal'));
       toastInstance = new bootstrap.Toast(document.getElementById('orderToast'));
       themeModalInstance = new bootstrap.Modal(document.getElementById('themeModal'));
+      kodeUnikModalInstance = new bootstrap.Modal(document.getElementById('kodeUnikModal'));
       
       document.getElementById('loader').style.display = 'flex';
       
@@ -734,7 +777,7 @@
             }
           }
         } catch (err) { }
-      }, 10000);
+      }, 60000); 
     };
 
     function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
@@ -856,11 +899,33 @@
       }, 300);
     }
 
+    function setOrderFilter(status) {
+      currentOrderFilter = status;
+      document.querySelectorAll('.btn-status-filter').forEach(btn => {
+        if(btn.getAttribute('data-status') === status) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      renderOrders();
+    }
+
     function renderOrders() {
       const container = document.getElementById('orderContainer');
-      if (globalOrders.length === 0) { container.innerHTML = `<div class="dashboard-card text-center py-5 fw-bold text-muted"><i class="bi bi-cup-hot-fill fs-1 d-block mb-3 empty-state-icon"></i>Belum ada orderan masuk nih... Santai dulu aja! 🍵</div>`; return; }
+      
+      let filteredOrders = globalOrders;
+      if (currentOrderFilter !== 'Semua') {
+        filteredOrders = globalOrders.filter(o => (o.status || 'Pending') === currentOrderFilter);
+      }
+
+      if (filteredOrders.length === 0) { 
+        container.innerHTML = `<div class="dashboard-card text-center py-5 fw-bold text-muted"><i class="bi bi-cup-hot-fill fs-1 d-block mb-3 empty-state-icon"></i>Belum ada orderan ${currentOrderFilter !== 'Semua' ? 'dengan status ' + currentOrderFilter : 'masuk'} nih... Santai dulu aja! 🍵</div>`; 
+        return; 
+      }
+      
       let htmlOrders = [];
-      globalOrders.forEach((order, index) => {
+      filteredOrders.forEach((order, index) => {
         let itemRows = [];
         order.items.forEach(item => { itemRows.push(`<tr><td class="small fw-bold text-muted">${item.idBarang}</td><td class="fw-bold text-uppercase">${item.namaBarang}</td><td class="text-center fw-bold fs-6">${item.jumlah}</td></tr>`); });
         let currentStatus = order.status || 'Pending'; let badgeClass = 'badge-' + currentStatus.replace(/\s+/g, '');
@@ -888,6 +953,7 @@
         `);
       });
       container.innerHTML = htmlOrders.join(''); animateCards('.order-card-anim'); 
+      filterOrder(); 
     }
 
     let timerOrder;
@@ -910,16 +976,42 @@
     }
 
     async function executeStatusUpdate(newStatus, btnElement) {
+      if (newStatus === 'Dikirim') {
+        tempDikirimBtn = btnElement;
+        statusModalInstance.hide();
+        document.getElementById('kodeUnikOrderId').innerText = currentStatusId;
+        document.getElementById('inputKodeUnik').value = '';
+        document.getElementById('kodeUnikError').classList.add('d-none');
+        kodeUnikModalInstance.show();
+        return;
+      }
+      proceedStatusUpdate(newStatus, btnElement, '');
+    }
+
+    function confirmDikirimStatus() {
+      const kode = document.getElementById('inputKodeUnik').value.trim();
+      if (!kode) {
+        document.getElementById('kodeUnikError').classList.remove('d-none');
+        anime({targets: '#kodeUnikError', translateX: [10, -10, 10, -10, 0], duration: 400, easing: 'easeInOutSine'});
+        return;
+      }
+      kodeUnikModalInstance.hide();
+      proceedStatusUpdate('Dikirim', tempDikirimBtn, kode);
+    }
+
+    async function proceedStatusUpdate(newStatus, btnElement, kodeUnik) {
       const originalText = btnElement.innerHTML; btnElement.innerHTML = '<span class="spinner-border spinner-border-sm" style="border-width:2px;"></span> Diproses...'; 
       const allBtns = document.querySelectorAll('.btn-status-cute'); allBtns.forEach(b => b.disabled = true);
       
       try {
-        const res = await fetchAPI('updateStatusPesanan', { sheetName: currentStatusSheet, idPesanan: currentStatusId, newStatus: newStatus });
+        const res = await fetchAPI('updateStatusPesanan', { sheetName: currentStatusSheet, idPesanan: currentStatusId, newStatus: newStatus, kodeUnik: kodeUnik });
         allBtns.forEach(b => b.disabled = false); btnElement.innerHTML = originalText; statusModalInstance.hide();
         
         if(res.success) {
           const orderIndex = globalOrders.findIndex(o => o.idPesanan === currentStatusId);
-          if (orderIndex > -1) globalOrders[orderIndex].status = newStatus;
+          if (orderIndex > -1) {
+            globalOrders[orderIndex].status = newStatus;
+          }
           renderOrders();
         } else { showError(res.message); }
       } catch (err) {
@@ -931,11 +1023,101 @@
     function openPrintModal(idPesanan) { currentPrintId = idPesanan; printModalInstance.show(); }
     
     function executePrint(slotNumber) {
-      printModalInstance.hide(); const order = globalOrders.find(o => o.idPesanan === currentPrintId); if(!order) return;
-      let rowStart = Math.ceil(slotNumber / 2); let colStart = (slotNumber % 2 === 0) ? 2 : 1; let gridAreaCode = `${rowStart} / ${colStart} / ${rowStart + 1} / ${colStart + 1}`;
-      let itemRows = ''; order.items.forEach((item, index) => { itemRows += `<tr><td style="text-align:center; font-weight:900; color:#db2777;">${index + 1}</td><td style="font-weight:800; color:#475569; text-transform: uppercase;">${item.namaBarang}</td><td style="text-align:center; font-weight:900; color:#db2777; font-size:12px;">${item.jumlah}</td></tr>`; });
+      printModalInstance.hide(); 
+      const order = globalOrders.find(o => o.idPesanan === currentPrintId); 
+      if(!order) return;
+      
+      let rowStart = Math.ceil(slotNumber / 2); 
+      let colStart = (slotNumber % 2 === 0) ? 2 : 1; 
+      let gridAreaCode = `${rowStart} / ${colStart} / ${rowStart + 1} / ${colStart + 1}`;
+      
+      let itemRows = ''; 
+      order.items.forEach((item, index) => { 
+        itemRows += `<tr>
+          <td style="text-align:center; font-weight:900; color:#db2777;">${index + 1}</td>
+          <td style="font-weight:700; color:#db2777; font-size:10px;">${item.idBarang}</td>
+          <td style="font-weight:800; color:#475569; text-transform: uppercase;">${item.namaBarang}</td>
+          <td style="text-align:center; font-weight:900; color:#db2777; font-size:12px;">${item.jumlah}</td>
+        </tr>`; 
+      });
+      
       const printWindow = window.open('', '_blank', 'width=850,height=600');
-      printWindow.document.write(`<html><head><title>Print Kartu Slot ${slotNumber} 🎀</title><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"><style>@page { size: A4 portrait; margin: 0; } body { margin: 0; padding: 0; font-family: 'Nunito', sans-serif; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .a4-page { width: 210mm; height: 297mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding: 10mm; gap: 5mm; box-sizing: border-box; } .card-container { grid-area: ${gridAreaCode}; border: 3px dashed #f472b6; border-radius: 16px; background: #fdf2f8; padding: 8mm; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; } .header { text-align: center; border-bottom: 2px dotted #fbcfe8; padding-bottom: 5px; margin-bottom: 8px; } .header h2 { margin: 0; font-size: 16px; color: #db2777; font-weight: 900; } .header h4 { margin: 0; font-size: 13px; color: #ec4899; font-weight: 800; } .info-table { width: 100%; font-size: 9px; font-weight:700; margin-bottom: 8px; background: #fff1f2; padding: 5px; border-radius: 8px; border: 1px solid #fce7f3; color:#475569;} .info-table td { padding: 1px 4px; vertical-align: top; } .items-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 5px; border: 2px solid #fbcfe8; border-radius:8px; overflow:hidden;} .items-table th, .items-table td { padding: 4px 6px; border-bottom: 1px dashed #fbcfe8; } .items-table th { background-color: #fce7f3; color: #db2777; text-align: left; font-weight: 900; } .items-table tr:last-child td { border-bottom: none; } .signature { width: 100%; text-align: center; font-size: 10px; margin-top: auto; color:#db2777; font-weight:800; } .signature td { width: 33.33%; padding-top: 5px; vertical-align: bottom; } .sign-line { border-bottom: 2px dashed #f9a8d4; height: 30px; width: 80%; margin: 5px auto 0; display: block; } .footer { text-align: center; font-size: 8px; color: #f472b6; margin-top: 5px; font-weight: 800; }</style></head><body><div class="a4-page"><div class="card-container"><div class="header"><h2>Paket Meluncur! 🚚💨</h2><h4>Ke: ${order.namaToko} 🏠</h4></div><table class="info-table"><tr><td width="35"><b>ID</b></td><td width="5">:</td><td style="color:#db2777; font-weight:900;">${order.idPesanan}</td></tr><tr><td><b>Waktu</b></td><td>:</td><td>${order.tanggal}</td></tr><tr><td><b>Pesan</b></td><td>:</td><td><i>${order.catatan || 'Gak ada pesan~'}</i></td></tr></table><table class="items-table"><thead><tr><th width="20" style="text-align:center;">No</th><th>Barang 🎁</th><th width="30" style="text-align:center;">Qty</th></tr></thead><tbody>${itemRows}</tbody></table><table class="signature"><tr><td>Disiapin 💖<br><span class="sign-line"></span></td><td>Kurir 🛵<br><span class="sign-line"></span></td><td>Toko 🥳<br><span class="sign-line"></span></td></tr></table><div class="footer">✨ Diproses oleh Pusat Kendali Gudang ✨</div></div></div><script>setTimeout(function(){window.print();},500);<\/script></body></html>`); printWindow.document.close();
+      
+      const printHTML = `
+      <html>
+      <head>
+        <title>Print Kartu Slot ${slotNumber} 🎀</title>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+        <style>
+          @page { size: A4 portrait; margin: 0; } 
+          body { margin: 0; padding: 0; font-family: 'Nunito', sans-serif; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+          .a4-page { width: 210mm; height: 297mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding: 10mm; gap: 5mm; box-sizing: border-box; } 
+          .card-container { grid-area: ${gridAreaCode}; border: 3px dashed #f472b6; border-radius: 16px; background: #fdf2f8; padding: 8mm; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; } 
+          .header { text-align: center; border-bottom: 2px dotted #fbcfe8; padding-bottom: 5px; margin-bottom: 8px; } 
+          .header h2 { margin: 0; font-size: 16px; color: #db2777; font-weight: 900; } 
+          .header h4 { margin: 0; font-size: 13px; color: #ec4899; font-weight: 800; } 
+          .info-table { width: 100%; font-size: 9px; font-weight:700; margin-bottom: 8px; background: #fff1f2; padding: 5px; border-radius: 8px; border: 1px solid #fce7f3; color:#475569;} 
+          .info-table td { padding: 1px 4px; vertical-align: top; } 
+          .items-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 5px; border: 2px solid #fbcfe8; border-radius:8px; overflow:hidden;} 
+          .items-table th, .items-table td { padding: 4px 6px; border-bottom: 1px dashed #fbcfe8; } 
+          .items-table th { background-color: #fce7f3; color: #db2777; text-align: left; font-weight: 900; } 
+          .items-table tr:last-child td { border-bottom: none; } 
+          .signature { width: 100%; text-align: center; font-size: 10px; margin-top: auto; color:#db2777; font-weight:800; } 
+          .signature td { width: 33.33%; padding-top: 5px; vertical-align: bottom; } 
+          .sign-line { border-bottom: 2px dashed #f9a8d4; height: 30px; width: 80%; margin: 5px auto 0; display: block; } 
+          .footer { text-align: center; font-size: 8px; color: #f472b6; margin-top: 5px; font-weight: 800; }
+        </style>
+      </head>
+      <body>
+        <div class="a4-page">
+          <div class="card-container">
+            <div class="header">
+              <h2>Paket Meluncur! 🚚💨</h2>
+              <h4>Ke: ${order.namaToko} 🏠</h4>
+            </div>
+            <table class="info-table">
+              <tr>
+                <td width="35"><b>ID</b></td><td width="5">:</td><td style="color:#db2777; font-weight:900;">${order.idPesanan}</td>
+              </tr>
+              <tr>
+                <td><b>Waktu</b></td><td>:</td><td>${order.tanggal}</td>
+              </tr>
+              <tr>
+                <td><b>Pesan</b></td><td>:</td><td><i>${order.catatan || 'Gak ada pesan~'}</i></td>
+              </tr>
+            </table>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th width="20" style="text-align:center;">No</th>
+                  <th width="45">Kode 🏷️</th>
+                  <th>Barang 🎁</th>
+                  <th width="30" style="text-align:center;">Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemRows}
+              </tbody>
+            </table>
+            <table class="signature">
+              <tr>
+                <td>Disiapin 💖<br><span class="sign-line"></span></td>
+                <td>Kurir 🛵<br><span class="sign-line"></span></td>
+                <td>Toko 🥳<br><span class="sign-line"></span></td>
+              </tr>
+            </table>
+            <div class="footer">✨ Diproses oleh Pusat Kendali Gudang ✨</div>
+          </div>
+        </div>
+        <script>
+          setTimeout(function(){window.print();},500);
+        <\/script>
+      </body>
+      </html>
+      `;
+      
+      printWindow.document.write(printHTML);
+      printWindow.document.close();
     }
   </script>
 </body>
