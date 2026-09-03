@@ -610,54 +610,7 @@
         const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
         return await response.json();
       } catch (err) {
-        // Mock fallback if offline/preview iframe to keep app alive
-        console.warn("API request failed, providing live fallback preview data:", err);
-        if (action === 'getSetupData') {
-          return {
-            success: true,
-            allSheets: ['Stok_Utama', 'Toko_A', 'Toko_B', 'Toko_C'],
-            savedStockSheet: 'Stok_Utama',
-            savedOrderSheets: ['Toko_A', 'Toko_B']
-          };
-        }
-        if (action === 'getAdminData') {
-          return {
-            success: true,
-            stok: [
-              { id: 'BRG-001', nama: 'Boneka Boba Plushie Jumbo', hargaRetail: 85000, hargaGrosir: 65000, hpp: 45000, diskon: 10, stok: 42 },
-              { id: 'BRG-002', nama: 'Tumbler Pastel Aesthetic 600ml', hargaRetail: 49000, hargaGrosir: 38000, hpp: 25000, diskon: 5, stok: 18 },
-              { id: 'BRG-003', nama: 'Sticker Pack Kawaii Hologram', hargaRetail: 15000, hargaGrosir: 10000, hpp: 6000, diskon: 15, stok: 120 },
-              { id: 'BRG-004', nama: 'Kotak Pensil Bunny Fuzzy', hargaRetail: 35000, hargaGrosir: 27000, hpp: 18000, diskon: 0, stok: 0 },
-              { id: 'BRG-005', nama: 'Lampu Tidur Kucing LED RGB', hargaRetail: 72000, hargaGrosir: 55000, hpp: 39000, diskon: 12.5, stok: 15 }
-            ],
-            orders: [
-              {
-                idPesanan: 'ORD-20260901-01',
-                namaToko: 'Toko Candy Pop',
-                sheetName: 'Toko_A',
-                tanggal: '01/09/2026 14:30',
-                status: 'Pending',
-                catatan: 'Tolong packing bubble wrap tebal ya kak! 🎀',
-                items: [
-                  { idBarang: 'BRG-001', namaBarang: 'Boneka Boba Plushie Jumbo', jumlah: 2 },
-                  { idBarang: 'BRG-002', namaBarang: 'Tumbler Pastel Aesthetic 600ml', jumlah: 3 }
-                ]
-              },
-              {
-                idPesanan: 'ORD-20260901-02',
-                namaToko: 'Store Rainbow Star',
-                sheetName: 'Toko_B',
-                tanggal: '01/09/2026 15:10',
-                status: 'Diproses',
-                catatan: 'Kirim via kurir sore ini.',
-                items: [
-                  { idBarang: 'BRG-003', namaBarang: 'Sticker Pack Kawaii Hologram', jumlah: 10 }
-                ]
-              }
-            ]
-          };
-        }
-        throw new Error("Gagal terhubung ke Database. Cek koneksi internetmu.");
+        throw new Error("Gagal terhubung ke Database. Cek koneksi internetmu atau URL script.");
       }
     }
 
@@ -978,7 +931,6 @@
 
     function renderStokUI(dataToRender) {
       const tbody = document.getElementById('stokContainer');
-      // Fix: Colspan changed from 7 to 8 to match all 8 columns including Disc
       if (!dataToRender || dataToRender.length === 0) { 
         tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted fw-bold py-5"><i class="bi bi-search fs-1 d-block mb-3 empty-state-icon"></i>Yah, barangnya nggak ketemu nih... 🥺</td></tr>'; 
         return; 
