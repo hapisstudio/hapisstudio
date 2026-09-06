@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pusat Kendali Gudang (API Based)</title>
+  <title>Pusat Kendali Gudang (API Based - Secured)</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,7 +71,7 @@
       transform: translateY(-2px); 
     }
 
-    /* Tab Navigasi Mengambang di Bawah Layar (Floating Bottom Dock) */
+    /* Tab Navigasi Mengambang di Bawah Layar */
     .nav-tabs { 
       position: fixed !important;
       bottom: 14px !important;
@@ -101,7 +101,7 @@
       text-align: center !important;
     }
     .nav-tabs .nav-link { 
-      width: 100% !important;
+      width: 100% !important; 
       color: #db2777 !important; 
       font-weight: 800; 
       border: none !important; 
@@ -300,7 +300,6 @@
     }
     .btn-print:hover { background: #fdf2f8; border-color: #f472b6; transform: scale(1.03); }
 
-    /* Top Silent Sync Bar */
     #syncBar {
       position: fixed;
       top: 0;
@@ -340,7 +339,6 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--sb-hover); }
 
     .sheet-checkbox-list { max-height: 220px; overflow-y: auto; border: 2px dashed #fbcfe8; border-radius: 14px; padding: 12px; background: white; }
-
     .btn-slot { background: #fdf2f8; border: 2px dashed #fbcfe8; color: #db2777; border-radius: 14px; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 900; }
     .btn-slot:hover { background: #fce7f3; border-color: #f472b6; transform: scale(1.05); box-shadow: 0 4px 12px rgba(244, 114, 182, 0.25); }
     .btn-slot small { font-weight: 700; color: #ec4899; }
@@ -370,74 +368,14 @@
     .stok-mobile-label { display: none; }
     .stok-price-pill { background: transparent; }
 
-    /* ==========================================
-       FITUR CACHE BARU: CHIP HISTORY & FRESHNESS
-       ========================================== */
-    .cache-history-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-      align-items: center;
-    }
-    .history-pill {
-      font-size: 0.74rem;
-      font-weight: 700;
-      background: white;
-      border: 1.5px dashed #fbcfe8;
-      color: #db2777;
-      border-radius: 12px;
-      padding: 3px 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    .history-pill:hover {
-      background: #fce7f3;
-      border-color: #f472b6;
-      transform: translateY(-1px);
-    }
-    .history-pill-remove {
-      font-weight: 900;
-      opacity: 0.6;
-    }
-    .history-pill-remove:hover {
-      opacity: 1;
-      color: #dc2626;
-    }
-    .freshness-badge {
-      font-size: 0.76rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 10px;
-      border-radius: 12px;
-      background: white;
-      border: 1.5px solid #fbcfe8;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .freshness-badge:hover {
-      background: #fff1f2;
-      border-color: #db2777;
-    }
-    .outbox-bar {
-      display: none;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 12px;
-      font-size: 0.82rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
-      align-items: center;
-      justify-content: space-between;
-    }
+    .cache-history-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center; }
+    .history-pill { font-size: 0.74rem; font-weight: 700; background: white; border: 1.5px dashed #fbcfe8; color: #db2777; border-radius: 12px; padding: 3px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; white-space: nowrap; }
+    .history-pill:hover { background: #fce7f3; border-color: #f472b6; transform: translateY(-1px); }
+    .history-pill-remove { font-weight: 900; opacity: 0.6; }
+    .history-pill-remove:hover { opacity: 1; color: #dc2626; }
+    .freshness-badge { font-size: 0.76rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 12px; background: white; border: 1.5px solid #fbcfe8; cursor: pointer; transition: all 0.2s; }
+    .freshness-badge:hover { background: #fff1f2; border-color: #db2777; }
+    .outbox-bar { display: none; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 6px 14px; border-radius: 12px; font-size: 0.82rem; font-weight: 800; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2); align-items: center; justify-content: space-between; }
 
     /* ==========================================
        TEMA 2: GLASSMORPHISM (DARK AURORA) 🔮✨
@@ -549,7 +487,7 @@
     body.theme-pixel .freshness-badge { background: #30346d; border: 2px solid #1a1c2c; color: #99e550; border-radius: 0; }
 
     /* ==========================================
-       MEDIA QUERY: STANDAR LAYAR KECIL (RESPONSIF)
+       MEDIA QUERY: STANDAR LAYAR KECIL
        ========================================== */
     @media (max-width: 768px) {
       body { padding-bottom: 95px !important; }
@@ -576,15 +514,8 @@
         padding: 6px 10px !important; border-radius: 10px !important; font-size: 0.82rem !important; background: #fff1f2; border: 1px solid #fce7f3;
       }
       .stok-mobile-label { display: inline-block !important; font-size: 0.72rem !important; font-weight: 800 !important; color: #94a3b8; }
-      .nav-tabs .nav-link { 
-        padding: 6px 4px !important; 
-        font-size: 0.75rem !important; 
-        flex-direction: column !important; 
-        gap: 2px !important; 
-      }
-      .nav-tabs .nav-link i { 
-        font-size: 1.2rem !important; 
-      }
+      .nav-tabs .nav-link { padding: 6px 4px !important; font-size: 0.75rem !important; flex-direction: column !important; gap: 2px !important; }
+      .nav-tabs .nav-link i { font-size: 1.2rem !important; }
       .toast-container { bottom: 85px !important; }
       .dashboard-card { padding: 15px; border-radius: 18px; }
       .order-header { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -595,9 +526,6 @@
       .btn-status-cute { font-size: 0.95rem; padding: 10px; }
     }
 
-    /* ==========================================
-       MODE PAKSA MOBILE (KETIKA MODE HP DIAKTIFKAN)
-       ========================================== */
     body.force-mobile { padding-bottom: 95px !important; }
     body.force-mobile .container { max-width: 480px !important; margin: 0 auto !important; }
     body.force-mobile .navbar-admin { position: sticky !important; top: 0 !important; padding: 10px 15px !important; }
@@ -612,16 +540,8 @@
       background: #ffffff; border: 2px dashed #fbcfe8 !important; border-radius: 18px !important; padding: 14px !important; margin-bottom: 12px !important;
       box-shadow: 0 4px 12px rgba(244, 114, 182, 0.08) !important;
     }
-    body.force-mobile.theme-glass .table-items tr.stok-row-anim {
-      background: rgba(255, 255, 255, 0.05) !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-    }
-    body.force-mobile.theme-pixel .table-items tr.stok-row-anim {
-      background: #30346d !important;
-      border: 3px solid #1a1c2c !important;
-      border-radius: 0 !important;
-      box-shadow: 4px 4px 0 #1a1c2c !important;
-    }
+    body.force-mobile.theme-glass .table-items tr.stok-row-anim { background: rgba(255, 255, 255, 0.05) !important; border-color: rgba(255, 255, 255, 0.15) !important; }
+    body.force-mobile.theme-pixel .table-items tr.stok-row-anim { background: #30346d !important; border: 3px solid #1a1c2c !important; border-radius: 0 !important; box-shadow: 4px 4px 0 #1a1c2c !important; }
     body.force-mobile .table-items td { border: none !important; padding: 0 !important; }
     body.force-mobile .td-no { order: 1; width: auto !important; font-size: 0.8rem; background: #fce7f3; color: #db2777 !important; padding: 2px 8px !important; border-radius: 8px; }
     body.force-mobile .td-kode { order: 2; width: auto !important; margin-right: auto !important; margin-left: 6px !important; }
@@ -633,15 +553,8 @@
       padding: 6px 10px !important; border-radius: 10px !important; font-size: 0.82rem !important; background: #fff1f2; border: 1px solid #fce7f3;
     }
     body.force-mobile .stok-mobile-label { display: inline-block !important; font-size: 0.72rem !important; font-weight: 800 !important; color: #94a3b8; }
-    body.force-mobile .nav-tabs .nav-link { 
-      padding: 6px 4px !important; 
-      font-size: 0.75rem !important; 
-      flex-direction: column !important; 
-      gap: 2px !important; 
-    }
-    body.force-mobile .nav-tabs .nav-link i { 
-      font-size: 1.2rem !important; 
-    }
+    body.force-mobile .nav-tabs .nav-link { padding: 6px 4px !important; font-size: 0.75rem !important; flex-direction: column !important; gap: 2px !important; }
+    body.force-mobile .nav-tabs .nav-link i { font-size: 1.2rem !important; }
     body.force-mobile .toast-container { bottom: 85px !important; }
     body.force-mobile .dashboard-card { padding: 15px !important; border-radius: 18px !important; }
     body.force-mobile .order-header { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
@@ -654,12 +567,11 @@
 </head>
 <body>
 
-  <!-- Garis Sinkronisasi Halus di Bagian Paling Atas Layar -->
+  <!-- Indikator Sinkronisasi -->
   <div id="syncBar"></div>
 
   <audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-  <!-- Fullscreen Loader (Hanya saat data benar-benar kosong di awal) -->
   <div id="loader">
     <div class="spinner-border mb-3" role="status"></div>
     <h4 class="fw-bold animate-loader-text text-accent">Tunggu Sebentar Ya... 🎀</h4>
@@ -685,7 +597,6 @@
   </nav>
 
   <div class="container mt-4 pb-5">
-    <!-- Bar Notifikasi Antrean Offline (Outbox Queue) -->
     <div id="outboxBar" class="outbox-bar">
       <span><i class="bi bi-cloud-slash-fill me-2"></i> <span id="outboxCountText">1 perubahan status menunggu sinyal pulih...</span></span>
       <button class="btn btn-sm btn-light fw-bold py-0 px-2 rounded-pill" onclick="processOfflineQueue(true)">Kirim Sekarang</button>
@@ -701,7 +612,7 @@
         <button class="nav-link" id="stok-tab" data-bs-toggle="tab" data-bs-target="#stok" type="button"><i class="bi bi-boxes"></i> Stok Gudang</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="setting-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button"><i class="bi bi-gear-wide-connected"></i> Pengaturan Sheet</button>
+        <button class="nav-link" id="setting-tab" type="button" data-bs-target="#setting" onclick="handleSettingTabClick(event)"><i class="bi bi-gear-wide-connected"></i> Pengaturan Sheet <span id="settingTabLockBadge"><i class="bi bi-lock-fill ms-1"></i></span></button>
       </li>
     </ul>
 
@@ -730,7 +641,6 @@
                 <i class="bi bi-qr-code-scan fw-bold"></i>
               </button>
             </div>
-            <!-- Riwayat Pencarian Pesanan Cepat -->
             <div id="orderSearchHistory" class="cache-history-container"></div>
           </div>
         </div>
@@ -758,7 +668,6 @@
                   <input class="form-check-input shadow-sm custom-switch" type="checkbox" id="toggleEmptyStock" onchange="filterStok()">
                   <label class="form-check-label fw-bold text-muted small" style="cursor: pointer;" for="toggleEmptyStock">Sembunyikan Stok Kosong</label>
                 </div>
-                <!-- Indikator Umur Cache Stok -->
                 <span id="stokFreshnessBadge" class="freshness-badge shadow-sm mt-1" onclick="loadAdminData(true)" title="Klik untuk menyinkronkan stok">
                   <i class="bi bi-clock-history text-accent"></i> <span id="stokFreshnessText">Memuat umur data...</span>
                 </span>
@@ -772,7 +681,6 @@
                   <i class="bi bi-qr-code-scan fw-bold"></i>
                 </button>
               </div>
-              <!-- Riwayat Pencarian Stok Cepat -->
               <div id="stokSearchHistory" class="cache-history-container"></div>
             </div>
           </div>
@@ -802,7 +710,12 @@
       <!-- HALAMAN PENGATURAN SHEET -->
       <div class="tab-pane fade" id="setting" role="tabpanel">
         <div class="dashboard-card" style="border-width: 3px;">
-          <h4 class="fw-bold mb-2 text-accent"><i class="bi bi-database-heart"></i> Konfigurasi Spreadsheet ⚙️</h4>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+            <h4 class="fw-bold mb-0 text-accent"><i class="bi bi-database-heart"></i> Konfigurasi Spreadsheet ⚙️</h4>
+            <button class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3" onclick="lockAdminSession()">
+              <i class="bi bi-lock-fill"></i> Kunci Akses Admin
+            </button>
+          </div>
           <p class="text-muted small fw-bold mb-4">Pilih Sheet mana yang dijadikan referensi untuk data Stok dan pesanan Toko dari Spreadsheet Anda.</p>
 
           <div class="mb-4">
@@ -820,7 +733,6 @@
             <button class="btn btn-print fw-bold px-3" onclick="openDbConfigModal()"><i class="bi bi-cpu-fill"></i> Pengaturan Engine & Pemetaan</button>
           </div>
 
-          <!-- Pengaturan Cache & Performa -->
           <div class="border-top pt-4">
             <h5 class="fw-bold text-accent mb-2"><i class="bi bi-lightning-charge-fill"></i> Pengelolaan Cache Perangkat</h5>
             <p class="text-muted small fw-bold mb-3">Atur database lokal perangkat untuk mempercepat akses lapangan.</p>
@@ -850,7 +762,7 @@
     </div>
   </div>
 
-  <!-- MODAL LIVE SCANNER -->
+  <!-- MODAL SCANNER -->
   <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg modal-anim">
@@ -862,11 +774,9 @@
           <div id="scannerAlertInfo" class="alert alert-info small fw-bold mb-3 p-2">
             Penting: Buka web ini dari <b class="text-danger">Chrome / Safari</b> agar izin kamera lancar!
           </div>
-          
           <button id="btnToggleFlash" class="btn btn-warning w-100 fw-bold shadow-sm mb-3" style="display: none; border-radius: 12px;" onclick="toggleFlash()">
             <i id="iconFlash" class="bi bi-lightning-fill"></i> <span id="textFlash">Nyalakan Senter</span>
           </button>
-
           <div id="reader" class="p-2 mx-auto shadow-sm"></div>
         </div>
       </div>
@@ -917,15 +827,15 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg modal-anim" style="margin: 15px;">
         <div class="modal-header border-0 pb-0 justify-content-center position-relative">
-          <h5 class="modal-title fw-bold text-center text-accent" style="font-size: 1.2rem;"><i class="bi bi-shield-lock-fill"></i> Otorisasi Admin</h5>
+          <h5 class="modal-title fw-bold text-center text-accent" style="font-size: 1.2rem;" id="authModalTitle"><i class="bi bi-shield-lock-fill"></i> Otorisasi Admin</h5>
           <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body pt-2 px-4 pb-4">
-          <p class="small text-muted fw-bold text-center mb-4">Hanya <b class="text-accent">Admin</b> yang boleh mengubah ini. 🔐</p>
+          <p class="small text-muted fw-bold text-center mb-4" id="authModalDesc">Hanya <b class="text-accent">Admin</b> yang boleh mengakses dan mengubah ini. 🔐</p>
           <div id="authErrorBox" class="alert alert-danger d-none small fw-bold py-2 text-center" style="border-radius: 12px;"></div>
           <div class="mb-3"><label class="form-label fw-bold text-accent">Username</label><input type="text" class="form-control" id="authUsername" placeholder="Ketik username Anda..."></div>
           <div class="mb-4"><label class="form-label fw-bold text-accent">Password</label><input type="password" class="form-control" id="authPassword" placeholder="Ketik password..."></div>
-          <button class="btn btn-cute w-100 fs-5" id="btnConfirmAuth" onclick="executeSaveSettings()">Verifikasi 🚀</button>
+          <button class="btn btn-cute w-100 fs-5" id="btnConfirmAuth" onclick="executeAuthAction()">Verifikasi 🚀</button>
         </div>
       </div>
     </div>
@@ -954,7 +864,7 @@
     </div>
   </div>
 
-  <!-- MODAL PILIH TEMA -->
+  <!-- MODAL TEMA -->
   <div class="modal fade" id="themeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content shadow-lg modal-anim">
@@ -980,22 +890,21 @@
     </div>
   </div>
 
-  <!-- MODAL CONFIG ENGINE & PEMETAAN (HYBRID DB) -->
+  <!-- MODAL CONFIG ENGINE -->
   <div class="modal fade" id="dbConfigModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content shadow-lg modal-anim">
         <div class="modal-header border-0 pb-0 justify-content-between position-relative">
           <h5 class="modal-title fw-bold text-accent" style="font-size: 1.3rem;">
-            <i class="bi bi-cpu-fill"></i> Pengaturan Engine Database & Pemetaan
+            <i class="bi bi-cpu-fill"></i> Pengaturan Engine Database & Keamanan
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body pt-2 pb-4">
           <p class="small text-muted fw-bold mb-3">
-            Atur routing database independen untuk setiap modul dan sesuaikan pemetaan kolom Spreadsheet / Supabase.
+            Atur routing database independen dan kunci token otentikasi API backend.
           </p>
 
-          <!-- Preset Cepat -->
           <div class="mb-4 p-3 rounded-4 bg-light border border-2">
             <label class="form-label fw-bold text-accent mb-2"><i class="bi bi-lightning-charge-fill"></i> Preset Cepat Routing Engine</label>
             <div class="d-flex flex-wrap gap-2">
@@ -1011,7 +920,6 @@
             </div>
           </div>
 
-          <!-- Routing Independen -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label class="form-label fw-bold text-accent">Modul Stok Barang</label>
@@ -1035,14 +943,11 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold text-accent">Papan Info & Konfigurasi</label>
-              <select class="form-select shadow-sm" id="engineConfig" disabled>
-                <option value="spreadsheet">Google Spreadsheet (Tersimpan di Sheet Config)</option>
-              </select>
+              <label class="form-label fw-bold text-accent">API Access Secret Token 🔑</label>
+              <input type="password" class="form-control form-control-sm" id="cfgApiToken" placeholder="Kunci rahasia API GAS">
             </div>
           </div>
 
-          <!-- Kredensial & Pengujian -->
           <div class="accordion mb-4" id="accordionDbSettings">
             <div class="accordion-item border-2 rounded-3 overflow-hidden mb-2">
               <h2 class="accordion-header">
@@ -1075,7 +980,6 @@
               </div>
             </div>
 
-            <!-- Pemetaan Spreadsheet -->
             <div class="accordion-item border-2 rounded-3 overflow-hidden mb-2">
               <h2 class="accordion-header">
                 <button class="accordion-button collapsed fw-bold text-accent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMappingSheets">
@@ -1089,20 +993,19 @@
                     <div class="col-4"><label class="small fw-bold">Baris Mulai</label><input type="number" class="form-control form-control-sm" id="mSheetStokRowStart" value="2"></div>
                     <div class="col-4"><label class="small fw-bold">Kolom ID</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColId" value="A"></div>
                     <div class="col-4"><label class="small fw-bold">Kolom Nama</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColNama" value="B"></div>
-                    <div class="col-3"><label class="small fw-bold">Kolom Retail</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColRetail" value="C"></div>
-                    <div class="col-3"><label class="small fw-bold">Kolom Grosir</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColGrosir" value="D"></div>
-                    <div class="col-3"><label class="small fw-bold">Kolom HPP</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColHpp" value="E"></div>
-                    <div class="col-3"><label class="small fw-bold">Kolom Stok</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColQty" value="G"></div>
+                    <div class="col-3"><label class="small fw-bold">Kolom Retail</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColRetail" value="E"></div>
+                    <div class="col-3"><label class="small fw-bold">Kolom Grosir</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColGrosir" value="F"></div>
+                    <div class="col-3"><label class="small fw-bold">Kolom HPP</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColHpp" value="D"></div>
+                    <div class="col-3"><label class="small fw-bold">Kolom Stok</label><input type="text" class="form-control form-control-sm text-uppercase" id="mSheetStokColQty" value="C"></div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Pemetaan Supabase -->
             <div class="accordion-item border-2 rounded-3 overflow-hidden">
               <h2 class="accordion-header">
                 <button class="accordion-button collapsed fw-bold text-accent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMappingSupa">
-                  <i class="bi bi-database me-2"></i> Pemetaan Tabel & Kolom Supabase (Hanya Stok)
+                  <i class="bi bi-database me-2"></i> Pemetaan Tabel & Kolom Supabase
                 </button>
               </h2>
               <div id="collapseMappingSupa" class="accordion-collapse collapse" data-bs-parent="#accordionDbSettings">
@@ -1126,6 +1029,9 @@
           </div>
 
           <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-danger fw-bold rounded-pill px-3" onclick="lockAdminSession()">
+              <i class="bi bi-lock-fill"></i> Kunci Akses Admin
+            </button>
             <button type="button" class="btn btn-secondary fw-bold rounded-pill px-3" data-bs-dismiss="modal">Tutup</button>
             <button type="button" class="btn btn-cute fw-bold rounded-pill px-4" onclick="saveHybridDbConfig()">
               <i class="bi bi-save-fill"></i> Simpan Konfigurasi Engine
@@ -1142,8 +1048,23 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   
   <script>
+    // Sanitasi XSS Utama: Konversi karakter berisiko ke HTML entity
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>'"]/g, function(tag) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag;
+      });
+    }
+
     const DEFAULT_CONFIG = {
       gasUrl: 'https://script.google.com/macros/s/AKfycbxxoVAl9jx4HS6ibW3TtCQ8Wu7-qIKl_yZm9992RpMGZ85IKYSGu1WrWRK1Kw9frRCiGg/exec',
+      apiToken: 'GudangSecretToken_2026_SecureKey',
       supabaseUrl: 'https://dkottdwqvvsiwlcuwtte.supabase.co',
       supabaseKey: 'sb_publishable_5jXmeFgisSUuLXUogRB8Ig_3j7bZu4J',
       engines: {
@@ -1153,7 +1074,7 @@
         config: 'spreadsheet'
       },
       mappingSheets: {
-        stok: { rowStart: 2, colId: 'A', colNama: 'B', colRetail: 'C', colGrosir: 'D', colHpp: 'E', colDisc: 'F', colQty: 'G' }
+        stok: { rowStart: 2, colId: 'A', colNama: 'B', colQty: 'C', colHpp: 'D', colRetail: 'E', colGrosir: 'F', colDisc: 'G' }
       },
       mappingSupabase: {
         stok: {
@@ -1169,9 +1090,6 @@
       }
     };
 
-    /* =========================================================================
-       ARSITEKTUR CACHE 3: INDEXEDDB STORAGE WRAPPER (UNTUK DATA BESAR > 5MB)
-       ========================================================================= */
     const IDB_CONFIG = { dbName: 'WarehouseControlDB', dbVersion: 1, storeName: 'keyval' };
 
     function openIndexedDB() {
@@ -1233,33 +1151,25 @@
       try {
         localStorage.setItem(key, JSON.stringify(val));
       } catch (e) {
-        console.warn('LocalStorage error/penuh:', e);
+        console.warn('Storage quota warning:', e);
       }
     }
 
-    /* =========================================================================
-       MODUL FITUR CACHE: PWA WORKER, OUTBOX, FRESHNESS, SEARCH HISTORY & CLEANUP
-       ========================================================================= */
     function registerPwaCacheWorker() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         try {
           const swCode = `
-            const CACHE_NAME = 'gudang-cache-v1';
+            const CACHE_NAME = 'gudang-cache-v2';
             self.addEventListener('install', (e) => { self.skipWaiting(); });
             self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
           `;
           const blob = new Blob([swCode], { type: 'application/javascript' });
           const swUrl = URL.createObjectURL(blob);
-          navigator.serviceWorker.register(swUrl).catch((err) => {
-            console.debug('ServiceWorker disabled in iframe/sandbox environment:', err);
-          });
-        } catch (e) {
-          console.debug('ServiceWorker setup skipped:', e);
-        }
+          navigator.serviceWorker.register(swUrl).catch(() => {});
+        } catch (e) {}
       }
     }
 
-    // --- Outbox Queue (Offline Action Pattern) ---
     let offlineActionQueue = safeStorageGet('offline_action_queue', []);
 
     function enqueueOfflineAction(payload) {
@@ -1296,13 +1206,12 @@
             successCount++;
           }
         } catch (e) {
-          console.warn("Gagal sinkronisasi antrean offline:", e);
           break;
         }
       }
       updateOutboxUI();
       if (successCount > 0) {
-        showNotification("Sinkronisasi Selesai", `${successCount} perubahan status offline berhasil terkirim ke server!`);
+        showNotification("Sinkronisasi Selesai", `${successCount} perubahan status offline berhasil tersinkron!`);
         loadAdminData(false);
       }
     }
@@ -1312,10 +1221,9 @@
       processOfflineQueue();
     });
     window.addEventListener('offline', () => {
-      showNotification("Mode Offline", "Koneksi internet terputus. Perubahan status akan disimpan ke antrean lokal.");
+      showNotification("Mode Offline", "Koneksi internet terputus. Perubahan status disimpan ke antrean lokal.");
     });
 
-    // --- Riwayat Pencarian Cepat (Chip History) ---
     let orderSearchHistory = safeStorageGet('history_order_search', []);
     let stokSearchHistory = safeStorageGet('history_stok_search', []);
 
@@ -1328,9 +1236,9 @@
         return;
       }
       container.innerHTML = list.map((item, idx) => `
-        <span class="history-pill" onclick="applySearchHistory('${type}', '${item.replace(/'/g, "\\'")}')">
-          <i class="bi bi-clock-history"></i> ${item}
-          <span class="history-pill-remove" onclick="removeSearchHistory(event, '${type}', ${idx})">&times;</span>
+        <span class="history-pill" data-type="${escapeHTML(type)}" data-keyword="${escapeHTML(item)}">
+          <i class="bi bi-clock-history"></i> ${escapeHTML(item)}
+          <span class="history-pill-remove" data-type="${escapeHTML(type)}" data-idx="${idx}">&times;</span>
         </span>
       `).join('');
     }
@@ -1369,16 +1277,10 @@
     function applySearchHistory(type, keyword) {
       if (type === 'order') {
         const input = document.getElementById('searchOrder');
-        if (input) {
-          input.value = keyword;
-          filterOrder();
-        }
+        if (input) { input.value = keyword; filterOrder(); }
       } else {
         const input = document.getElementById('searchStok');
-        if (input) {
-          input.value = keyword;
-          filterStok();
-        }
+        if (input) { input.value = keyword; filterStok(); }
       }
     }
 
@@ -1400,7 +1302,6 @@
       }, 1000);
     }
 
-    // --- Umur Data / Freshness Indicator ---
     function recordCacheTimestamp(type) {
       const now = Date.now();
       safeStorageSet(`cache_time_${type}`, now);
@@ -1408,7 +1309,7 @@
     }
 
     function getRelativeTime(timestamp) {
-      if (!timestamp) return 'Belum pernah disinkronkan';
+      if (!timestamp) return 'Belum disinkronkan';
       const diffSec = Math.floor((Date.now() - timestamp) / 1000);
       if (diffSec < 15) return 'Baru saja';
       if (diffSec < 60) return `${diffSec} detik lalu`;
@@ -1422,25 +1323,18 @@
     function updateFreshnessBadges() {
       const orderTime = safeStorageGet('cache_time_order', null);
       const stokTime = safeStorageGet('cache_time_stok', null);
-
       const orderText = document.getElementById('orderFreshnessText');
       const stokText = document.getElementById('stokFreshnessText');
 
-      if (orderText) {
-        orderText.innerHTML = orderTime ? `Disinkron: <b>${getRelativeTime(orderTime)}</b>` : 'Klik untuk sinkron';
-      }
-      if (stokText) {
-        stokText.innerHTML = stokTime ? `Disinkron: <b>${getRelativeTime(stokTime)}</b>` : 'Klik untuk sinkron';
-      }
+      if (orderText) orderText.innerHTML = orderTime ? `Disinkron: <b>${getRelativeTime(orderTime)}</b>` : 'Klik untuk sinkron';
+      if (stokText) stokText.innerHTML = stokTime ? `Disinkron: <b>${getRelativeTime(stokTime)}</b>` : 'Klik untuk sinkron';
     }
     setInterval(updateFreshnessBadges, 30000);
 
-    // --- Pembersihan Cache Manual ---
     async function clearAppCache() {
       try {
         localStorage.removeItem('cached_stok');
         localStorage.removeItem('cached_orders');
-        localStorage.removeItem('cached_setup');
         localStorage.removeItem('history_order_search');
         localStorage.removeItem('history_stok_search');
         localStorage.removeItem('cache_time_order');
@@ -1466,7 +1360,7 @@
         renderSearchHistory('order');
         updateFreshnessBadges();
 
-        showNotification("Cache Bersih", "Semua data cache lokal dan riwayat pencarian telah dihapus.");
+        showNotification("Cache Bersih", "Semua cache lokal dan riwayat pencarian telah dihapus.");
         loadAdminData(true);
       } catch (err) {
         showNotification("Error", "Gagal membersihkan cache: " + err.message);
@@ -1475,6 +1369,7 @@
 
     let appConfig = safeStorageGet('appHybridConfig', DEFAULT_CONFIG);
     if (!appConfig.engines) appConfig.engines = { ...DEFAULT_CONFIG.engines };
+    if (!appConfig.apiToken) appConfig.apiToken = DEFAULT_CONFIG.apiToken;
 
     let supabaseClient = null;
     function initSupabaseClient() {
@@ -1504,32 +1399,94 @@
     let dbConfigModalInstance = null;
     let tempDikirimBtn = null;
     
+    // Status Sesi Admin (Aktif selama 20 menit setelah verifikasi)
+    let adminSessionToken = null;
+    let adminSessionExpiry = 0;
+    let adminSessionUser = null;
+    let adminSessionPass = null;
+    let pendingAuthAction = null; // 'openEngineModal' | 'saveSettings' | 'openSettingTab'
+
+    function isCurrentSessionAdmin() {
+      return adminSessionToken !== null && Date.now() < adminSessionExpiry;
+    }
+
+    function setAdminSession(user = null, pass = null) {
+      adminSessionToken = 'admin_session_' + Date.now();
+      adminSessionExpiry = Date.now() + (20 * 60 * 1000); // 20 Menit
+      if (user) adminSessionUser = user;
+      if (pass) adminSessionPass = pass;
+      updateEngineBadges();
+      updateSettingTabBadge();
+    }
+
+    function updateSettingTabBadge() {
+      const badge = document.getElementById('settingTabLockBadge');
+      if (badge) {
+        badge.innerHTML = isCurrentSessionAdmin()
+          ? '<i class="bi bi-unlock-fill text-warning ms-1"></i>'
+          : '<i class="bi bi-lock-fill ms-1"></i>';
+      }
+    }
+
+    function lockAdminSession() {
+      adminSessionToken = null;
+      adminSessionExpiry = 0;
+      adminSessionUser = null;
+      adminSessionPass = null;
+      updateEngineBadges();
+      updateSettingTabBadge();
+      if (dbConfigModalInstance) dbConfigModalInstance.hide();
+
+      // Jika sedang berada di tab pengaturan, kembalikan ke tab pesanan
+      const settingTab = document.getElementById('setting-tab');
+      if (settingTab && settingTab.classList.contains('active')) {
+        const orderTab = bootstrap.Tab.getOrCreateInstance(document.getElementById('order-tab'));
+        orderTab.show();
+      }
+
+      showNotification("Akses Dikunci", "Sesi Admin telah dikunci kembali untuk keamanan. 🔒");
+    }
+
+    function handleSettingTabClick(e) {
+      if (e) e.preventDefault();
+      if (!isCurrentSessionAdmin()) {
+        promptAdminAuthForSettingTab();
+        return;
+      }
+      const tab = bootstrap.Tab.getOrCreateInstance(document.getElementById('setting-tab'));
+      tab.show();
+    }
+
+    function promptAdminAuthForSettingTab() {
+      pendingAuthAction = 'openSettingTab';
+      document.getElementById('authModalTitle').innerHTML = '<i class="bi bi-shield-lock-fill"></i> Otorisasi Pengaturan Sheet';
+      document.getElementById('authModalDesc').innerHTML = 'Pengaturan referensi sheet toko hanya boleh diakses oleh <b class="text-accent">Admin</b>. Silakan verifikasi identitas Anda. 🔐';
+      document.getElementById('authUsername').value = '';
+      document.getElementById('authPassword').value = '';
+      document.getElementById('authErrorBox').classList.add('d-none');
+      authModalInstance.show();
+    }
+    
     let html5QrcodeScanner = null;
     let currentScanTarget = '';
     let isFlashOn = false;
     let flashCheckInterval = null;
 
     let currentViewMode = safeStorageGet('adminViewMode', 'auto');
-    if (currentViewMode === 'desktop') currentViewMode = 'auto'; // migrasi dari mode desktop sebelumnya
 
     function applyViewMode(mode) {
       currentViewMode = mode;
       safeStorageSet('adminViewMode', mode);
-
       const body = document.body;
-      const meta = document.getElementById('viewportMeta');
       const icon = document.getElementById('viewModeIcon');
       const text = document.getElementById('viewModeText');
-
       body.classList.remove('force-mobile');
 
       if (mode === 'mobile') {
         body.classList.add('force-mobile');
-        if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
         if (icon) icon.className = 'bi bi-phone-fill';
         if (text) text.innerText = 'Mobile';
       } else {
-        if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
         if (icon) icon.className = 'bi bi-aspect-ratio';
         if (text) text.innerText = 'Auto';
       }
@@ -1552,7 +1509,7 @@
       const btn = document.getElementById('btnRefreshMain');
       if (btn) {
         btn.innerHTML = active 
-          ? '<span class="spinner-border spinner-border-sm" style="width:12px; height:12px; border-width:2px;"></span>'
+          ? '<span class="spinner-border spinner-border-sm" style="width:12px; height:12px; border-width:2px;"></span>' 
           : '<i class="bi bi-arrow-clockwise"></i> Refresh';
       }
     }
@@ -1576,9 +1533,11 @@
       return `${num % 1 === 0 ? num : num.toFixed(2)}%`;
     }
 
+    // Eksekusi API Terautentikasi Token
     async function fetchAPI(action, params = {}) {
       const formData = new URLSearchParams();
       formData.append('action', action);
+      formData.append('token', appConfig.apiToken || DEFAULT_CONFIG.apiToken);
       for (const key in params) { formData.append(key, params[key]); }
       try {
         const scriptUrl = appConfig.gasUrl || DEFAULT_CONFIG.gasUrl;
@@ -1587,15 +1546,6 @@
       } catch (err) {
         throw new Error("Gagal terhubung ke Database Spreadsheet (" + err.message + ")");
       }
-    }
-
-    function colToIdx(colStr) {
-      let result = 0;
-      const str = String(colStr || 'A').toUpperCase().trim();
-      for (let i = 0; i < str.length; i++) {
-        result = result * 26 + (str.charCodeAt(i) - 64);
-      }
-      return Math.max(0, result - 1);
     }
 
     function getNormalizedVal(row, primaryCol, fallbackAliases = []) {
@@ -1624,25 +1574,29 @@
       let query = supabaseClient.from(tableName).select('*');
       
       if (searchKeyword && searchKeyword.trim() !== '') {
-        const tokens = searchKeyword.trim().split(/\s+/).filter(Boolean);
+        // Sanitasi karakter kontrol PostgREST (, . ( ) \ ") untuk mencegah Query Syntax Injection
+        const sanitizedRaw = searchKeyword.replace(/[,().%"\\]/g, ' ').trim();
+        const tokens = sanitizedRaw.split(/\s+/).filter(Boolean);
         const colNama = mapping.colNama || 'ITEMNAME';
         const colId = mapping.colId || 'ITEMID';
 
-        const directIlike = tokens.map(t => `${colNama}.ilike.%${t}%`).join(',');
-        query = query.or(`${directIlike},${colId}.ilike.%${searchKeyword.trim()}%`);
+        if (tokens.length > 0) {
+          const directIlike = tokens.map(t => `${colNama}.ilike.%${t}%`).join(',');
+          query = query.or(`${directIlike},${colId}.ilike.%${tokens[0]}%`);
+        }
       }
 
       const { data, error } = await query.limit(2000);
       if (error) throw error;
 
       return (data || []).map(row => ({
-        id: getNormalizedVal(row, mapping.colId, ['id', 'itemid', 'item_id', 'kode', 'kode_barang']) || '-',
-        nama: getNormalizedVal(row, mapping.colNama, ['nama', 'itemname', 'item_name', 'nama_barang', 'description']) || '-',
-        stok: Number(getNormalizedVal(row, mapping.colQty, ['qty', 'stok', 'googdqty', 'goodqty', 'good_qty', 'stock'])) || 0,
-        hargaRetail: Number(getNormalizedVal(row, mapping.colRetail, ['retail', 'ritailprice', 'retailprice', 'retail_price', 'harga_retail'])) || 0,
-        hargaGrosir: Number(getNormalizedVal(row, mapping.colGrosir, ['grosir', 'whprice', 'wholesale_price', 'harga_grosir'])) || 0,
-        hpp: Number(getNormalizedVal(row, mapping.colHpp, ['hpp', 'itemcost', 'cost', 'item_cost'])) || 0,
-        disc: getNormalizedVal(row, mapping.colDisc, ['disc', 'maxdisc', 'diskon', 'discount']) || '0%'
+        id: String(getNormalizedVal(row, mapping.colId, ['id', 'itemid', 'kode']) || '-'),
+        nama: String(getNormalizedVal(row, mapping.colNama, ['nama', 'itemname', 'description']) || '-'),
+        stok: Number(getNormalizedVal(row, mapping.colQty, ['qty', 'stok', 'googdqty'])) || 0,
+        hargaRetail: Number(getNormalizedVal(row, mapping.colRetail, ['retail', 'ritailprice'])) || 0,
+        hargaGrosir: Number(getNormalizedVal(row, mapping.colGrosir, ['grosir', 'whprice'])) || 0,
+        hpp: Number(getNormalizedVal(row, mapping.colHpp, ['hpp', 'itemcost'])) || 0,
+        disc: getNormalizedVal(row, mapping.colDisc, ['disc', 'maxdisc', 'diskon']) || '0%'
       }));
     }
 
@@ -1650,7 +1604,11 @@
       const badge = document.getElementById('navEngineBadge');
       if (badge) {
         const stokEng = (appConfig.engines.stok || 'spreadsheet').toUpperCase();
-        badge.innerText = `Engine: ${stokEng === 'SUPABASE' ? 'Supabase' : 'Sheets'}`;
+        const engName = stokEng === 'SUPABASE' ? 'Supabase' : 'Sheets';
+        const lockIcon = isCurrentSessionAdmin() 
+          ? '<i class="bi bi-unlock-fill text-warning me-1"></i>' 
+          : '<i class="bi bi-lock-fill me-1"></i>';
+        badge.innerHTML = `${lockIcon}Engine: ${engName}`;
       }
     }
 
@@ -1668,30 +1626,30 @@
         if (appConfig.engines.stok === 'supabase' && supabaseClient) {
           const [stokData, adminRes] = await Promise.all([
             fetchStockFromSupabase().catch(e => {
-              console.warn("Supabase fetch fallback:", e);
+              console.warn("Supabase fallback:", e);
               return globalStok;
             }),
             fetchAPI('getAdminData').catch(e => {
-              console.warn("GAS fetch fallback:", e);
+              console.warn("GAS fallback:", e);
               return { success: false };
             })
           ]);
           stokResult = stokData || [];
-          if (adminRes && adminRes.success) {
-            orderResult = adminRes.orders || [];
-          } else {
-            orderResult = globalOrders;
-          }
+          orderResult = (adminRes && adminRes.success) ? (adminRes.orders || []) : globalOrders;
         } else {
           const res = await fetchAPI('getAdminData');
           if (res && res.needSetup) {
             showError(res.message);
-            new bootstrap.Tab(document.querySelector('#setting-tab')).show();
+            if (isCurrentSessionAdmin()) {
+              bootstrap.Tab.getOrCreateInstance(document.querySelector('#setting-tab')).show();
+            } else {
+              promptAdminAuthForSettingTab();
+            }
           } else if (res && res.success) {
             stokResult = res.stok || [];
             orderResult = res.orders || [];
           } else {
-            throw new Error((res && res.message) || "Gagal mengambil data dari Spreadsheet.");
+            throw new Error((res && res.message) || "Gagal mengambil data.");
           }
         }
 
@@ -1701,7 +1659,6 @@
         globalStok = stokResult;
         globalOrders = orderResult;
 
-        // Simpan paralel ke IndexedDB & LocalStorage
         idbSet('cached_stok', globalStok);
         idbSet('cached_orders', globalOrders);
         safeStorageSet('cached_stok', globalStok.slice(0, 1000));
@@ -1730,7 +1687,7 @@
     function renderStokUI(dataToRender) {
       const tbody = document.getElementById('stokContainer');
       if (!dataToRender || dataToRender.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted fw-bold py-5"><i class="bi bi-search fs-1 d-block mb-3 empty-state-icon"></i>Yah, barangnya nggak ketemu nih... 🥺</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted fw-bold py-5"><i class="bi bi-search fs-1 d-block mb-3 empty-state-icon"></i>Barang tidak ditemukan 🥺</td></tr>'; 
         return; 
       }
       
@@ -1744,19 +1701,19 @@
         htmlStok.push(`
           <tr class="stok-row-anim">
             <td class="td-no text-center fw-bold text-muted">${i + 1}</td>
-            <td class="td-kode"><code class="px-2 py-1 rounded bg-accent-light" style="font-weight:800; white-space:nowrap;">${item.id || '-'}</code></td>
-            <td class="td-nama fw-bold text-accent fs-6 text-uppercase">${item.nama || '-'}</td>
+            <td class="td-kode"><code class="px-2 py-1 rounded bg-accent-light" style="font-weight:800; white-space:nowrap;">${escapeHTML(item.id)}</code></td>
+            <td class="td-nama fw-bold text-accent fs-6 text-uppercase">${escapeHTML(item.nama)}</td>
             <td class="td-prices td-retail text-end fw-bold text-muted stok-price-pill"><span class="stok-mobile-label">Retail</span> <span style="white-space:nowrap;">${formatRupiah(item.hargaRetail)}</span></td>
             <td class="td-prices td-grosir text-end fw-bold text-muted stok-price-pill"><span class="stok-mobile-label">Grosir</span> <span style="white-space:nowrap;">${formatRupiah(item.hargaGrosir)}</span></td>
             <td class="td-prices td-hpp text-end fw-bold text-muted stok-price-pill"><span class="stok-mobile-label">HPP</span> <span style="white-space:nowrap;">${formatRupiah(item.hpp)}</span></td>
             <td class="td-prices td-disc text-end fw-bold text-muted stok-price-pill"><span class="stok-mobile-label">Disc</span> <span style="white-space:nowrap;">${formatPersen(item.diskon !== undefined ? item.diskon : item.disc)}</span></td>
-            <td class="td-stok text-center"><span class="badge ${badgeColor} px-3 py-2 fs-6 shadow-sm rounded-pill">${item.stok !== undefined ? item.stok : 0} Stok</span></td>
+            <td class="td-stok text-center"><span class="badge ${badgeColor} px-3 py-2 fs-6 shadow-sm rounded-pill">${Number(item.stok) || 0} Stok</span></td>
           </tr>
         `);
       }
       
       if (dataToRender.length > MAX) {
-        htmlStok.push(`<tr><td colspan="8" class="text-center text-muted small fw-bold py-3 footer-msg-box">Menampilkan ${MAX} data pertama. Ketik di pencarian untuk data lainnya ya! ✨</td></tr>`);
+        htmlStok.push(`<tr><td colspan="8" class="text-center text-muted small fw-bold py-3 footer-msg-box">Menampilkan ${MAX} data pertama. Gunakan pencarian untuk barang lainnya ✨</td></tr>`);
       }
       
       tbody.innerHTML = htmlStok.join(''); 
@@ -1819,14 +1776,13 @@
 
     function renderOrders() {
       const container = document.getElementById('orderContainer');
-      
       let filteredOrders = globalOrders || [];
       if (currentOrderFilter !== 'Semua') {
         filteredOrders = globalOrders.filter(o => (o.status || 'Pending') === currentOrderFilter);
       }
 
       if (filteredOrders.length === 0) { 
-        container.innerHTML = `<div class="dashboard-card text-center py-5 fw-bold text-muted"><i class="bi bi-cup-hot-fill fs-1 d-block mb-3 empty-state-icon"></i>Belum ada pesanan dengan status ${currentOrderFilter !== 'Semua' ? currentOrderFilter : 'masuk'} nih... Santai dulu aja! 🍵</div>`; 
+        container.innerHTML = `<div class="dashboard-card text-center py-5 fw-bold text-muted"><i class="bi bi-cup-hot-fill fs-1 d-block mb-3 empty-state-icon"></i>Belum ada pesanan dengan status ${escapeHTML(currentOrderFilter)} 🍵</div>`; 
         return; 
       }
       
@@ -1834,32 +1790,33 @@
       filteredOrders.forEach((order) => {
         let itemRows = [];
         (order.items || []).forEach(item => { 
-          itemRows.push(`<tr><td class="small fw-bold text-muted">${item.idBarang || '-'}</td><td class="fw-bold text-uppercase">${item.namaBarang || '-'}</td><td class="text-center fw-bold fs-6">${item.jumlah || 0}</td></tr>`); 
+          itemRows.push(`<tr><td class="small fw-bold text-muted">${escapeHTML(item.idBarang)}</td><td class="fw-bold text-uppercase">${escapeHTML(item.namaBarang)}</td><td class="text-center fw-bold fs-6">${Number(item.jumlah) || 0}</td></tr>`); 
         });
         
         let currentStatus = order.status || 'Pending'; 
-        let badgeClass = 'badge-' + currentStatus.replace(/\s+/g, '');
+        let badgeClass = 'badge-' + escapeHTML(currentStatus.replace(/\s+/g, ''));
         
+        // Menggunakan data-order-id dan data-sheet daripada inline JS handler untuk mencegah DOM XSS
         htmlOrders.push(`
           <div class="order-card order-item-box order-card-anim">
             <div class="order-header">
               <div>
-                <span class="badge mb-2 badge-hash" style="font-size:0.8rem; padding:6px 12px; border-radius:12px;"><i class="bi bi-receipt"></i> No. Pesanan: ${order.idPesanan}</span>
-                <h4 class="fw-bold mb-1 text-accent"><i class="bi bi-shop"></i> ${order.namaToko}</h4>
-                <small class="text-muted fw-bold"><i class="bi bi-clock"></i> ${order.tanggal} <span class="divider-icon">•</span> Sumber: ${order.sheetName}</small>
+                <span class="badge mb-2 badge-hash" style="font-size:0.8rem; padding:6px 12px; border-radius:12px;"><i class="bi bi-receipt"></i> No. Pesanan: ${escapeHTML(order.idPesanan)}</span>
+                <h4 class="fw-bold mb-1 text-accent"><i class="bi bi-shop"></i> ${escapeHTML(order.namaToko)}</h4>
+                <small class="text-muted fw-bold"><i class="bi bi-clock"></i> ${escapeHTML(order.tanggal)} <span class="divider-icon">•</span> Sumber: ${escapeHTML(order.sheetName)}</small>
               </div>
               <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                <button class="btn btn-print btn-sm shadow-sm px-3" onclick="openPrintModal('${order.idPesanan}')"><i class="bi bi-printer-fill"></i> Cetak Label</button>
-                <span class="badge ${badgeClass} fs-6 px-3 py-2 shadow-sm rounded-pill">${currentStatus}</span>
+                <button class="btn btn-print btn-sm shadow-sm px-3 btn-action-print" data-order-id="${escapeHTML(order.idPesanan)}"><i class="bi bi-printer-fill"></i> Cetak Label</button>
+                <span class="badge ${badgeClass} fs-6 px-3 py-2 shadow-sm rounded-pill">${escapeHTML(currentStatus)}</span>
               </div>
             </div>
             <div class="order-body">
               <div class="table-responsive"><table class="table table-borderless table-sm table-items mb-3 border w-100"><thead><tr><th>Kode Barang 🏷️</th><th>Nama Barang 🎁</th><th class="text-center">Jumlah (Qty) 🛒</th></tr></thead><tbody>${itemRows.join('')}</tbody></table></div>
-              <div class="p-3 rounded small border order-note-box"><span class="fw-bold text-accent"><i class="bi bi-chat-heart-fill"></i> Catatan Toko:</span><br><span class="fw-semibold text-muted">${order.catatan || '<i>Tidak ada catatan khusus dari toko.</i>'}</span></div>
+              <div class="p-3 rounded small border order-note-box"><span class="fw-bold text-accent"><i class="bi bi-chat-heart-fill"></i> Catatan Toko:</span><br><span class="fw-semibold text-muted">${escapeHTML(order.catatan) || '<i>Tidak ada catatan khusus.</i>'}</span></div>
             </div>
             ${currentStatus !== 'Selesai' ? `
             <div class="order-footer">
-              <button class="btn btn-cute btn-sm px-4 shadow-sm w-100 fs-6 py-2" onclick="openStatusModal('${order.sheetName}', '${order.idPesanan}')"><i class="bi bi-pencil-square"></i> Perbarui Status Pesanan 🎀</button>
+              <button class="btn btn-cute btn-sm px-4 shadow-sm w-100 fs-6 py-2 btn-action-status" data-sheet-name="${escapeHTML(order.sheetName)}" data-order-id="${escapeHTML(order.idPesanan)}"><i class="bi bi-pencil-square"></i> Perbarui Status Pesanan 🎀</button>
             </div>
             ` : ''}
           </div>
@@ -1914,7 +1871,6 @@
       proceedStatusUpdate('Dikirim', tempDikirimBtn, kode);
     }
 
-    /* Update Status dengan Optimistic UI & Outbox Queue saat Offline */
     async function proceedStatusUpdate(newStatus, btnElement, kodeUnik) {
       const originalText = btnElement ? btnElement.innerHTML : ''; 
       if (btnElement) btnElement.innerHTML = '<span class="spinner-border spinner-border-sm" style="border-width:2px;"></span> Diproses...'; 
@@ -1924,7 +1880,6 @@
       const orderIndex = globalOrders.findIndex(o => o.idPesanan === currentStatusId);
       const oldStatus = orderIndex > -1 ? globalOrders[orderIndex].status : null;
 
-      // 1. Optimistic UI: langsung ubah di layar pengguna seketika
       if (orderIndex > -1) {
         globalOrders[orderIndex].status = newStatus;
         renderOrders();
@@ -1936,16 +1891,14 @@
 
       const payload = { sheetName: currentStatusSheet, idPesanan: currentStatusId, newStatus: newStatus, kodeUnik: kodeUnik };
 
-      // 2. Jika offline, masukkan ke Outbox Queue
       if (!navigator.onLine) {
         enqueueOfflineAction(payload);
         allBtns.forEach(b => b.disabled = false);
         if (btnElement) btnElement.innerHTML = originalText;
-        showNotification("Disimpan Offline", `Status diubah ke ${newStatus} (antrean disimpan di HP & akan disinkron saat online). 📴`);
+        showNotification("Disimpan Offline", `Status diubah ke ${newStatus} (antrean disimpan di memori HP). 📴`);
         return;
       }
 
-      // 3. Jika online, kirim langsung ke server
       try {
         const res = await fetchAPI('updateStatusPesanan', payload);
         allBtns.forEach(b => b.disabled = false); 
@@ -1962,11 +1915,10 @@
           showError(res.message); 
         }
       } catch (err) {
-        // Fallback otomatis ke Outbox Queue jika jaringan putus di tengah request
         enqueueOfflineAction(payload);
         allBtns.forEach(b => b.disabled = false); 
         if (btnElement) btnElement.innerHTML = originalText; 
-        showNotification("Antrean Ditambahkan", `Sinyal terputus. Status #${currentStatusId} disimpan ke antrean offline. ⚠️`);
+        showNotification("Antrean Ditambahkan", `Koneksi terputus. Status #${currentStatusId} disimpan ke antrean offline. ⚠️`);
       }
     }
 
@@ -2013,7 +1965,7 @@
 
     function showError(msg) { 
       const box = document.getElementById('errorBox'); 
-      box.innerHTML = `🚨 Waduh: ${msg}`; 
+      box.innerText = `🚨 Error: ${msg}`; 
       box.classList.remove('d-none'); 
       window.scrollTo(0, 0); 
     }
@@ -2025,9 +1977,9 @@
       let htmlCheck = '';
       (allSheets || []).forEach(sheet => {
         let isSelected = (sheet === savedStockSheet) ? 'selected' : ''; 
-        htmlSelect += `<option value="${sheet}" ${isSelected}>${sheet}</option>`;
+        htmlSelect += `<option value="${escapeHTML(sheet)}" ${isSelected}>${escapeHTML(sheet)}</option>`;
         let isChecked = (savedOrderSheets || []).includes(sheet) ? 'checked' : '';
-        htmlCheck += `<div class="form-check mb-2"><input class="form-check-input order-sheet-chk" type="checkbox" value="${sheet}" id="chk_${sheet}" ${isChecked}><label class="form-check-label fw-bold" for="chk_${sheet}">${sheet}</label></div>`;
+        htmlCheck += `<div class="form-check mb-2"><input class="form-check-input order-sheet-chk" type="checkbox" value="${escapeHTML(sheet)}" id="chk_${escapeHTML(sheet)}" ${isChecked}><label class="form-check-label fw-bold" for="chk_${escapeHTML(sheet)}">${escapeHTML(sheet)}</label></div>`;
       });
       selectStock.innerHTML = htmlSelect; 
       checkContainer.innerHTML = htmlCheck;
@@ -2037,16 +1989,52 @@
       const stockSheet = document.getElementById('selectStockSheet').value; 
       const orderSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked'));
       if (!stockSheet || orderSheets.length === 0) { 
-        showNotification("Peringatan", "Pilih Sheet Stok dan minimal 1 Toko!"); 
+        showNotification("Peringatan", "Pilih Sheet Stok dan minimal 1 Sheet Toko!"); 
         return; 
       }
+
+      // Jika sesi admin aktif dan kredensial tersedia di memori, simpan langsung
+      if (isCurrentSessionAdmin() && adminSessionUser && adminSessionPass) {
+        saveSettingsDirectly(adminSessionUser, adminSessionPass, stockSheet, orderSheets.map(c => c.value));
+        return;
+      }
+
+      pendingAuthAction = 'saveSettings';
+      document.getElementById('authModalTitle').innerHTML = '<i class="bi bi-shield-lock-fill"></i> Otorisasi Simpan Pengaturan';
+      document.getElementById('authModalDesc').innerHTML = 'Hanya <b class="text-accent">Admin</b> yang boleh mengubah konfigurasi sheet toko. 🔐';
       document.getElementById('authUsername').value = ''; 
       document.getElementById('authPassword').value = ''; 
       document.getElementById('authErrorBox').classList.add('d-none'); 
       authModalInstance.show();
     }
 
-    async function executeSaveSettings() {
+    async function saveSettingsDirectly(user, pass, stockSheet, orderSheetsArray) {
+      setSyncIndicator(true);
+      try {
+        const activeToken = appConfig.apiToken || DEFAULT_CONFIG.apiToken;
+        const res = await fetchAPI('verifyAndSaveSettings', {
+          username: user,
+          password: pass,
+          stockSheet: stockSheet,
+          orderSheetsArray: JSON.stringify(orderSheetsArray),
+          newApiToken: activeToken
+        });
+        setSyncIndicator(false);
+
+        if (res && res.success) {
+          showNotification("Berhasil", res.message || "Pengaturan berhasil disimpan!");
+          bootstrap.Tab.getOrCreateInstance(document.querySelector('#order-tab')).show();
+          loadAdminData(true);
+        } else {
+          showError((res && res.message) || "Gagal menyimpan pengaturan.");
+        }
+      } catch (err) {
+        setSyncIndicator(false);
+        showError("Error: " + err.message);
+      }
+    }
+
+    async function executeAuthAction() {
       const user = document.getElementById('authUsername').value.trim(); 
       const pass = document.getElementById('authPassword').value.trim(); 
       const errBox = document.getElementById('authErrorBox');
@@ -2055,26 +2043,56 @@
         errBox.classList.remove('d-none'); 
         return; 
       }
-      const stockSheet = document.getElementById('selectStockSheet').value;
-      const orderSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked')).map(chk => chk.value);
-      
+
       const btn = document.getElementById('btnConfirmAuth'); 
       btn.innerHTML = '<span class="spinner-border spinner-border-sm" style="border-width:2px;"></span> Verifikasi...'; 
       btn.disabled = true;
-      
+
       try {
-        const res = await fetchAPI('verifyAndSaveSettings', { username: user, password: pass, stockSheet: stockSheet, orderSheetsArray: JSON.stringify(orderSheets) });
-        btn.innerHTML = 'Verifikasi 🚀'; 
-        btn.disabled = false;
-        
-        if(res.success) { 
-          authModalInstance.hide(); 
-          showNotification("Berhasil", res.message || "Pengaturan berhasil disimpan!"); 
-          new bootstrap.Tab(document.querySelector('#order-tab')).show(); 
-          loadAdminData(true); 
-        } else { 
-          errBox.innerText = res.message; 
-          errBox.classList.remove('d-none'); 
+        if (pendingAuthAction === 'openEngineModal' || pendingAuthAction === 'openSettingTab') {
+          const res = await fetchAPI('verifyAdminAuth', { username: user, password: pass });
+          btn.innerHTML = 'Verifikasi 🚀'; 
+          btn.disabled = false;
+
+          if (res && res.success) {
+            setAdminSession(user, pass);
+            authModalInstance.hide();
+            if (pendingAuthAction === 'openEngineModal') {
+              showNotification("Admin Terverifikasi", "Akses Pengaturan Engine dibuka! ⚙️");
+              showDbConfigModalDirectly();
+            } else {
+              showNotification("Admin Terverifikasi", "Akses Pengaturan Sheet dibuka! 📋");
+              bootstrap.Tab.getOrCreateInstance(document.getElementById('setting-tab')).show();
+            }
+          } else {
+            errBox.innerText = (res && res.message) || "Otorisasi gagal.";
+            errBox.classList.remove('d-none');
+          }
+        } else if (pendingAuthAction === 'saveSettings') {
+          const stockSheet = document.getElementById('selectStockSheet').value;
+          const orderSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked')).map(chk => chk.value);
+          const activeToken = appConfig.apiToken || DEFAULT_CONFIG.apiToken;
+
+          const res = await fetchAPI('verifyAndSaveSettings', { 
+            username: user, 
+            password: pass, 
+            stockSheet: stockSheet, 
+            orderSheetsArray: JSON.stringify(orderSheets),
+            newApiToken: activeToken
+          });
+          btn.innerHTML = 'Verifikasi 🚀'; 
+          btn.disabled = false;
+          
+          if (res && res.success) { 
+            setAdminSession(user, pass);
+            authModalInstance.hide(); 
+            showNotification("Berhasil", res.message || "Pengaturan berhasil disimpan!"); 
+            bootstrap.Tab.getOrCreateInstance(document.querySelector('#order-tab')).show(); 
+            loadAdminData(true); 
+          } else { 
+            errBox.innerText = (res && res.message) || "Otorisasi gagal."; 
+            errBox.classList.remove('d-none'); 
+          }
         }
       } catch (err) {
         btn.innerHTML = 'Verifikasi 🚀'; 
@@ -2085,11 +2103,28 @@
     }
 
     function openDbConfigModal() {
+      // Periksa apakah sesi admin sudah aktif
+      if (!isCurrentSessionAdmin()) {
+        pendingAuthAction = 'openEngineModal';
+        document.getElementById('authModalTitle').innerHTML = '<i class="bi bi-shield-lock-fill"></i> Otorisasi Admin Engine';
+        document.getElementById('authModalDesc').innerHTML = 'Pengaturan Engine & Database hanya dapat diakses oleh <b class="text-accent">Admin</b>. Silakan login terlebih dahulu. 🔐';
+        document.getElementById('authUsername').value = '';
+        document.getElementById('authPassword').value = '';
+        document.getElementById('authErrorBox').classList.add('d-none');
+        authModalInstance.show();
+        return;
+      }
+
+      showDbConfigModalDirectly();
+    }
+
+    function showDbConfigModalDirectly() {
       document.getElementById('engineStok').value = appConfig.engines.stok || 'spreadsheet';
       document.getElementById('engineOrders').value = appConfig.engines.orders || 'spreadsheet';
       document.getElementById('engineUsers').value = appConfig.engines.users || 'spreadsheet';
 
       document.getElementById('cfgGasUrl').value = appConfig.gasUrl || DEFAULT_CONFIG.gasUrl;
+      document.getElementById('cfgApiToken').value = appConfig.apiToken || DEFAULT_CONFIG.apiToken;
       document.getElementById('cfgSupabaseUrl').value = appConfig.supabaseUrl || DEFAULT_CONFIG.supabaseUrl;
       document.getElementById('cfgSupabaseKey').value = appConfig.supabaseKey || DEFAULT_CONFIG.supabaseKey;
 
@@ -2097,10 +2132,10 @@
       document.getElementById('mSheetStokRowStart').value = mS.rowStart || 2;
       document.getElementById('mSheetStokColId').value = mS.colId || 'A';
       document.getElementById('mSheetStokColNama').value = mS.colNama || 'B';
-      document.getElementById('mSheetStokColRetail').value = mS.colRetail || 'C';
-      document.getElementById('mSheetStokColGrosir').value = mS.colGrosir || 'D';
-      document.getElementById('mSheetStokColHpp').value = mS.colHpp || 'E';
-      document.getElementById('mSheetStokColQty').value = mS.colQty || 'G';
+      document.getElementById('mSheetStokColRetail').value = mS.colRetail || 'E';
+      document.getElementById('mSheetStokColGrosir').value = mS.colGrosir || 'F';
+      document.getElementById('mSheetStokColHpp').value = mS.colHpp || 'D';
+      document.getElementById('mSheetStokColQty').value = mS.colQty || 'C';
 
       const mSp = appConfig.mappingSupabase?.stok || DEFAULT_CONFIG.mappingSupabase.stok;
       document.getElementById('mSupaStokTable').value = mSp.table || 'inventory';
@@ -2142,13 +2177,14 @@
 
       try {
         const url = document.getElementById('cfgGasUrl').value.trim();
-        const res = await fetch(url, { method: 'POST', body: new URLSearchParams({ action: 'cekPesananBaru' }) });
+        const token = document.getElementById('cfgApiToken').value.trim();
+        const res = await fetch(url, { method: 'POST', body: new URLSearchParams({ action: 'cekPesananBaru', token: token }) });
         const json = await res.json();
         if (json && json.success !== undefined) {
           resBox.className = 'mt-2 small fw-bold alert alert-success py-2';
-          resBox.innerText = '✅ GAS Merespon Normal: Endpoint siap digunakan!';
+          resBox.innerText = '✅ GAS Merespon Normal: Token valid!';
         } else {
-          throw new Error('Format JSON tidak sesuai.');
+          throw new Error(json.message || 'Respon ditolak backend.');
         }
       } catch (e) {
         resBox.className = 'mt-2 small fw-bold alert alert-danger py-2';
@@ -2174,7 +2210,7 @@
         if (error) throw error;
 
         resBox.className = 'mt-2 small fw-bold alert alert-success py-2';
-        resBox.innerText = `✅ Supabase Berhasil! Tabel "${table}" terbaca (${data ? data.length : 0} baris tes).`;
+        resBox.innerText = `✅ Supabase Berhasil! Tabel "${escapeHTML(table)}" terbaca (${data ? data.length : 0} baris tes).`;
       } catch (e) {
         resBox.className = 'mt-2 small fw-bold alert alert-danger py-2';
         resBox.innerText = '❌ Gagal Terhubung ke Supabase: ' + e.message;
@@ -2182,6 +2218,13 @@
     }
 
     function saveHybridDbConfig() {
+      if (!isCurrentSessionAdmin()) {
+        dbConfigModalInstance.hide();
+        showNotification("Akses Dibatasi", "Sesi admin telah berakhir. Silakan login kembali.");
+        openDbConfigModal();
+        return;
+      }
+
       appConfig.engines = {
         stok: document.getElementById('engineStok').value,
         orders: document.getElementById('engineOrders').value,
@@ -2190,6 +2233,7 @@
       };
 
       appConfig.gasUrl = document.getElementById('cfgGasUrl').value.trim();
+      appConfig.apiToken = document.getElementById('cfgApiToken').value.trim();
       appConfig.supabaseUrl = document.getElementById('cfgSupabaseUrl').value.trim();
       appConfig.supabaseKey = document.getElementById('cfgSupabaseKey').value.trim();
 
@@ -2198,10 +2242,10 @@
           rowStart: Number(document.getElementById('mSheetStokRowStart').value) || 2,
           colId: document.getElementById('mSheetStokColId').value.trim().toUpperCase() || 'A',
           colNama: document.getElementById('mSheetStokColNama').value.trim().toUpperCase() || 'B',
-          colRetail: document.getElementById('mSheetStokColRetail').value.trim().toUpperCase() || 'C',
-          colGrosir: document.getElementById('mSheetStokColGrosir').value.trim().toUpperCase() || 'D',
-          colHpp: document.getElementById('mSheetStokColHpp').value.trim().toUpperCase() || 'E',
-          colQty: document.getElementById('mSheetStokColQty').value.trim().toUpperCase() || 'G'
+          colQty: document.getElementById('mSheetStokColQty').value.trim().toUpperCase() || 'C',
+          colHpp: document.getElementById('mSheetStokColHpp').value.trim().toUpperCase() || 'D',
+          colRetail: document.getElementById('mSheetStokColRetail').value.trim().toUpperCase() || 'E',
+          colGrosir: document.getElementById('mSheetStokColGrosir').value.trim().toUpperCase() || 'F'
         }
       };
 
@@ -2223,7 +2267,7 @@
       updateEngineBadges();
       dbConfigModalInstance.hide();
 
-      showNotification("Pengaturan Disimpan", "Engine DB dan pemetaan kolom berhasil disimpan.");
+      showNotification("Pengaturan Disimpan", "Engine DB dan konfigurasi keamanan berhasil disimpan.");
       loadAdminData(true);
     }
 
@@ -2291,15 +2335,16 @@
 
     function onScanSuccess(decodedText) {
       const sound = document.getElementById('notifSound');
-      if (sound) sound.play().catch(()=>console.log("Audio diblok"));
+      if (sound) sound.play().catch(()=>{});
       closeScanner();
+      const sanitizedScan = escapeHTML(decodedText.trim());
       if (currentScanTarget === 'order') {
-        document.getElementById('searchOrder').value = decodedText; 
-        addSearchHistory('order', decodedText);
+        document.getElementById('searchOrder').value = sanitizedScan; 
+        addSearchHistory('order', sanitizedScan);
         filterOrder();
       } else {
-        document.getElementById('searchStok').value = decodedText; 
-        addSearchHistory('stok', decodedText);
+        document.getElementById('searchStok').value = sanitizedScan; 
+        addSearchHistory('stok', sanitizedScan);
         filterStok();
       }
     }
@@ -2309,7 +2354,6 @@
     function applySavedTheme() {
       const savedTheme = safeStorageGet('adminTheme', 'kawaii');
       const icon = document.getElementById('themeIcon');
-      
       document.body.classList.remove('theme-glass', 'theme-pixel');
       
       if (savedTheme === 'glass') { 
@@ -2377,9 +2421,9 @@
       (order.items || []).forEach((item, index) => { 
         itemRows += `<tr>
           <td style="text-align:center; font-weight:900; color:#db2777;">${index + 1}</td>
-          <td style="font-weight:700; color:#db2777; font-size:10px;">${item.idBarang || '-'}</td>
-          <td style="font-weight:800; color:#475569; text-transform: uppercase;">${item.namaBarang || '-'}</td>
-          <td style="text-align:center; font-weight:900; color:#db2777; font-size:12px;">${item.jumlah || 0}</td>
+          <td style="font-weight:700; color:#db2777; font-size:10px;">${escapeHTML(item.idBarang)}</td>
+          <td style="font-weight:800; color:#475569; text-transform: uppercase;">${escapeHTML(item.namaBarang)}</td>
+          <td style="text-align:center; font-weight:900; color:#db2777; font-size:12px;">${Number(item.jumlah) || 0}</td>
         </tr>`; 
       });
       
@@ -2420,17 +2464,17 @@
           <div class="card-container">
             <div class="header">
               <h2>Paket Meluncur! 🚚💨</h2>
-              <h4>Ke: ${order.namaToko} 🏠</h4>
+              <h4>Ke: ${escapeHTML(order.namaToko)} 🏠</h4>
             </div>
             <table class="info-table">
               <tr>
-                <td width="35"><b>ID</b></td><td width="5">:</td><td style="color:#db2777; font-weight:900;">${order.idPesanan}</td>
+                <td width="35"><b>ID</b></td><td width="5">:</td><td style="color:#db2777; font-weight:900;">${escapeHTML(order.idPesanan)}</td>
               </tr>
               <tr>
-                <td><b>Waktu</b></td><td>:</td><td>${order.tanggal}</td>
+                <td><b>Waktu</b></td><td>:</td><td>${escapeHTML(order.tanggal)}</td>
               </tr>
               <tr>
-                <td><b>Pesan</b></td><td>:</td><td><i>${order.catatan || 'Gak ada pesan~'}</i></td>
+                <td><b>Pesan</b></td><td>:</td><td><i>${escapeHTML(order.catatan) || 'Gak ada pesan~'}</i></td>
               </tr>
             </table>
             <table class="items-table">
@@ -2465,6 +2509,46 @@
       printWindow.document.close();
     }
 
+    function bindDelegatedEvents() {
+      document.addEventListener('click', function(e) {
+        // 1. Delegasi Tombol Cetak Label Pesanan
+        const printBtn = e.target.closest('.btn-action-print');
+        if (printBtn) {
+          const orderId = printBtn.getAttribute('data-order-id');
+          if (orderId) openPrintModal(orderId);
+          return;
+        }
+
+        // 2. Delegasi Tombol Update Status Pesanan
+        const statusBtn = e.target.closest('.btn-action-status');
+        if (statusBtn) {
+          const sheetName = statusBtn.getAttribute('data-sheet-name');
+          const orderId = statusBtn.getAttribute('data-order-id');
+          if (sheetName && orderId) openStatusModal(sheetName, orderId);
+          return;
+        }
+
+        // 3. Delegasi Hapus Chip Riwayat Pencarian
+        const removeChipBtn = e.target.closest('.history-pill-remove');
+        if (removeChipBtn) {
+          e.stopPropagation();
+          const type = removeChipBtn.getAttribute('data-type');
+          const idx = parseInt(removeChipBtn.getAttribute('data-idx'), 10);
+          removeSearchHistory(e, type, idx);
+          return;
+        }
+
+        // 4. Delegasi Klik Chip Riwayat Pencarian
+        const pill = e.target.closest('.history-pill');
+        if (pill) {
+          const type = pill.getAttribute('data-type');
+          const keyword = pill.getAttribute('data-keyword');
+          if (type && keyword) applySearchHistory(type, keyword);
+          return;
+        }
+      });
+    }
+
     window.onload = async function() {
       printModalInstance = new bootstrap.Modal(document.getElementById('printSlotModal'));
       authModalInstance = new bootstrap.Modal(document.getElementById('authModal'));
@@ -2475,42 +2559,37 @@
       kodeUnikModalInstance = new bootstrap.Modal(document.getElementById('kodeUnikModal'));
       dbConfigModalInstance = new bootstrap.Modal(document.getElementById('dbConfigModal'));
 
+      bindDelegatedEvents();
       updateEngineBadges();
+      updateSettingTabBadge();
       animateIntro();
       registerPwaCacheWorker();
 
-      // Pulihkan dari IndexedDB dengan fallback ke LocalStorage
       const idbStok = await idbGet('cached_stok', null);
       const idbOrders = await idbGet('cached_orders', null);
       if (idbStok && idbStok.length > 0) globalStok = idbStok;
       if (idbOrders && idbOrders.length > 0) globalOrders = idbOrders;
 
-      // Render cache lokal instan
       if (globalStok.length > 0) filterStok();
       if (globalOrders.length > 0) renderOrders();
 
-      // Tampilkan indikator umur data dan riwayat pencarian
       updateFreshnessBadges();
       renderSearchHistory('stok');
       renderSearchHistory('order');
       updateOutboxUI();
 
-      // Pemuatan data bersih di latar belakang
       loadAdminData(false);
 
-      // Coba kirim antrean tertunda jika internet tersedia
       if (navigator.onLine && offlineActionQueue.length > 0) {
         setTimeout(processOfflineQueue, 2000);
       }
 
-      // Ambil daftar setup sheets di latar belakang
       fetchAPI('getSetupData').then(res => {
         if (res && res.success) {
           setupFormPengaturan(res.allSheets, res.savedStockSheet, res.savedOrderSheets);
         }
-      }).catch(err => console.warn('Setup load note:', err));
+      }).catch(err => console.warn('Setup load error:', err));
 
-      // Polling radar pesanan baru (setiap 30 detik)
       setInterval(async () => {
         try {
           if (!navigator.onLine) return;
@@ -2522,7 +2601,7 @@
             } else if (res.latestId !== lastSavedId) {
               safeStorageSet('lastSeenOrderId', res.latestId);
               const sound = document.getElementById('notifSound');
-              if (sound) sound.play().catch(()=>console.log("Audio diblok"));
+              if (sound) sound.play().catch(()=>{});
               showNotification("🔔 Horeee! Order Baru!", "Ada pesanan baru yang mendarat di Gudang. Yuk dicek! ✨");
               loadAdminData(false);
             }
