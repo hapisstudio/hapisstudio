@@ -1339,7 +1339,7 @@
 
         if (AppState.currentOrderFilter === 'Tugas Saya') {
           orders = orders.filter(o => String(o.status || '').toLowerCase() === 'diproses' && String(o.picker || '').toLowerCase() === myName);
-        } else if (AppState.currentOrderFilter !== 'Pending') {
+        } else if (AppState.currentOrderFilter !== 'Semua') {
           orders = orders.filter(o => String(o.status || 'Pending').toLowerCase() === AppState.currentOrderFilter.toLowerCase());
         }
 
