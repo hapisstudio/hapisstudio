@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html class="dark" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+    <title>Pusat Kendali Gudang</title>
+    
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    
+    <!-- GSAP Motion Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+      :root {
+        --ios-bg: 242, 242, 247;
+        --ios-card: 255, 255, 255;
+        --ios-card-sub: 245, 245, 247;
+        --ios-text: 15, 17, 23;
+        --ios-text-sec: 100, 100, 108;
+        --ios-text-ter: 142, 142, 147;
+        --ios-separator: 226, 226, 232;
+        --ios-blue: 0, 122, 255;
+        --ios-green: 52, 199, 89;
+        --ios-red: 255, 59, 48;
+        --ios-orange: 255, 149, 0;
+        --ios-purple: 175, 82, 222;
+        --ios-bar-bg: 255, 255, 255;
+      }
+      html.dark {
+        --ios-bg: 12, 12, 14;
+        --ios-card: 24, 24, 28;
+        --ios-card-sub: 34, 34, 38;
+        --ios-text: 250, 250, 252;
+        --ios-text-sec: 174, 174, 182;
+        --ios-text-ter: 130, 130, 136;
+        --ios-separator: 44, 44, 50;
+        --ios-blue: 10, 132, 255;
+        --ios-green: 48, 209, 88;
+        --ios-red: 255, 69, 58;
+        --ios-orange: 255, 159, 10;
+        --ios-purple: 191, 90, 242;
+        --ios-bar-bg: 20, 20, 24;
+      }
+
+      @layer base {
+        html, body {
+          margin: 0;
+          padding: 0;
+          background-color: rgb(var(--ios-bg));
+          color: rgb(var(--ios-text));
+          font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Text", sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -webkit-tap-highlight-color: transparent;
+          transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        body {
+          overscroll-behavior-y: none;
+          padding-bottom: env(safe-area-inset-bottom, 24px);
+        }
+      }
+
+      .ios-press {
+        transition: transform 0.14s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.14s ease;
+      }
+      .ios-press:active {
+        transform: scale(0.96);
+        opacity: 0.85;
+      }
+
+      .ios-blur {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .scrollbar-none::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-none {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      @media print {
+        body {
+          background: #ffffff !important;
+          color: #000000 !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              ios: {
+                bg: "rgba(var(--ios-bg), <alpha-value>)",
+                card: "rgba(var(--ios-card), <alpha-value>)",
+                "card-sub": "rgba(var(--ios-card-sub), <alpha-value>)",
+                text: "rgba(var(--ios-text), <alpha-value>)",
+                "text-sec": "rgba(var(--ios-text-sec), <alpha-value>)",
+                "text-ter": "rgba(var(--ios-text-ter), <alpha-value>)",
+                separator: "rgba(var(--ios-separator), <alpha-value>)",
+                blue: "rgba(var(--ios-blue), <alpha-value>)",
+                green: "rgba(var(--ios-green), <alpha-value>)",
+                red: "rgba(var(--ios-red), <alpha-value>)",
+                orange: "rgba(var(--ios-orange), <alpha-value>)",
+                purple: "rgba(var(--ios-purple), <alpha-value>)",
+                bar: "rgba(var(--ios-bar-bg), <alpha-value>)",
+              }
+            },
+            fontFamily: {
+              sans: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            boxShadow: {
+              'ios-card': '0 3px 16px -2px rgba(0, 0, 0, 0.05)',
+              'ios-card-dark': '0 4px 24px -2px rgba(0, 0, 0, 0.45)',
+            }
+          }
+        }
+      };
+    </script>
+  </head>
+
+  <body class="bg-ios-bg text-ios-text min-h-screen selection:bg-ios-blue/25">
+
+    <!-- Top iOS Header Bar -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-ios-bar/90 ios-blur border-b border-ios-separator/60 no-print transition-colors">
+      <!-- Silent Sync Track Indicator -->
+      <div class="w-full h-[2px] bg-transparent overflow-hidden">
+        <div id="silentSyncBar" class="h-full w-0 bg-ios-blue transition-all duration-300"></div>
+      </div>
+
+      <!-- Offline Banner -->
+      <div id="outboxBanner" class="hidden bg-ios-orange/15 px-4 py-2 items-center justify-between border-b border-ios-orange/30 text-xs font-semibold">
+        <div class="flex items-center gap-2 text-ios-orange">
+          <span class="material-symbols-outlined text-[16px]">cloud_off</span>
+          <span id="outboxBannerText">0 aksi menunggu sinyal pulih</span>
+        </div>
+        <button onclick="window.WarehouseApp.processOfflineQueue(true)" class="h-6 px-3 rounded-full bg-ios-orange text-white flex items-center gap-1 text-[11px] font-bold ios-press" type="button">
+          <span class="material-symbols-outlined text-[13px]">sync</span>
+          Kirim Sekarang
+        </button>
+      </div>
+
+      <!-- App Bar Area -->
+      <div class="h-14 w-full px-4 sm:px-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-ios-blue/15 text-ios-blue flex items-center justify-center font-bold shrink-0 border border-ios-blue/25">
+            <span class="material-symbols-outlined text-[19px]">warehouse</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="font-bold text-[14.5px] leading-tight tracking-tight truncate">Kendali Gudang</span>
+            <div class="flex items-center gap-1.5 text-[10px] mt-0.5">
+              <span id="liveStatusDot" class="w-1.5 h-1.5 rounded-full bg-ios-green shrink-0 animate-pulse"></span>
+              <span id="liveStatusText" class="text-ios-green font-bold uppercase tracking-wider">Online</span>
+              <span class="text-ios-text-ter">•</span>
+              <span id="headerSyncTimestamp" class="text-ios-text-ter font-mono truncate">Menghubungkan...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="window.WarehouseApp.toggleTheme()" aria-label="Ganti Tema" class="w-8 h-8 rounded-full bg-ios-card-sub text-ios-text flex items-center justify-center ios-press border border-ios-separator/60" type="button" title="Ganti Mode Tema">
+            <span id="themeToggleIcon" class="material-symbols-outlined text-[17px] text-ios-blue">light_mode</span>
+          </button>
+
+          <button onclick="window.WarehouseApp.loadAdminData(true)" aria-label="Sinkronkan Data" class="w-8 h-8 rounded-full bg-ios-card-sub text-ios-text flex items-center justify-center ios-press border border-ios-separator/60" type="button" title="Sinkron Data">
+            <span id="refreshIcon" class="material-symbols-outlined text-[17px] text-ios-blue">sync</span>
+          </button>
+
+          <button onclick="window.WarehouseApp.logoutPengguna()" class="flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-ios-card-sub hover:bg-ios-separator/40 text-ios-text border border-ios-separator/60 ios-press" type="button">
+            <div class="w-5 h-5 rounded-full bg-ios-blue text-white flex items-center justify-center text-[11px] font-bold">
+              <span class="material-symbols-outlined text-[13px]">person</span>
+            </div>
+            <div class="flex flex-col text-left min-w-0">
+              <span id="headerUserName" class="text-[11px] font-bold leading-tight max-w-[80px] sm:max-w-[120px] truncate">Belum Masuk</span>
+              <span id="headerUserRole" class="text-[8.5px] text-ios-blue font-extrabold uppercase tracking-wider leading-none">LOCKED</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="w-full pt-20 pb-28 px-3.5 sm:px-6 max-w-[1360px] mx-auto min-h-screen no-print">
+
+      <!-- =========================================================================
+           VIEW 1: DAFTAR PESANAN (ORDERS QUEUE)
+           ========================================================================= -->
+      <section id="view-order" class="view-panel flex flex-col gap-4 w-full">
+        <!-- Floating Batch Action Bar -->
+        <div id="batchSelectionBar" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-full bg-ios-card/95 ios-blur border border-ios-blue/40 shadow-xl flex items-center gap-3">
+          <div class="flex items-center gap-1.5 text-xs font-bold">
+            <span class="material-symbols-outlined text-ios-blue text-[18px]">checklist</span>
+            <span><strong id="batchSelectedCount" class="text-ios-blue font-mono text-sm">0</strong> Dipilih</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="window.WarehouseApp.clearOrderSelection()" class="px-2.5 py-1 rounded-full bg-ios-card-sub text-ios-text-sec text-[11px] font-semibold ios-press" type="button">Batal</button>
+            <button onclick="window.WarehouseApp.bukaModalBatchPrint()" class="px-3.5 py-1 rounded-full bg-ios-blue text-white text-[11px] font-bold flex items-center gap-1 shadow-sm ios-press" type="button" title="Cetak Batch A4">
+              <span class="material-symbols-outlined text-[14px]">print</span>
+              <span>A4</span>
+            </button>
+            <button onclick="window.WarehouseApp.cetakBatchThermal()" class="px-3.5 py-1 rounded-full bg-ios-orange text-white text-[11px] font-bold flex items-center gap-1 shadow-sm ios-press" type="button" title="Cetak Batch Thermal">
+              <span class="material-symbols-outlined text-[14px]">receipt_long</span>
+              <span>Thermal</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-ios-text">Antrean Pesanan</h1>
+            <p id="orderCountSubtitle" class="text-xs text-ios-text-ter font-medium mt-0.5">Memuat antrean aktif gudang...</p>
+          </div>
+          <button onclick="window.WarehouseApp.toggleSelectAllOrders()" class="h-8 px-3 rounded-xl bg-ios-card-sub border border-ios-separator/60 text-ios-blue text-xs font-bold flex items-center gap-1 ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px]">select_all</span>
+            <span>Pilih Semua</span>
+          </button>
+        </div>
+
+        <!-- Search Order Bar -->
+        <div class="flex items-center gap-2.5">
+          <div class="relative flex-1 flex items-center">
+            <span class="material-symbols-outlined absolute left-3.5 text-ios-text-ter text-[18px] pointer-events-none">search</span>
+            <input id="searchOrder" oninput="window.WarehouseApp.handleOrderInput(this.value)" class="w-full h-10 pl-10 pr-9 rounded-xl bg-ios-card border border-ios-separator/60 text-ios-text placeholder:text-ios-text-ter text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ios-blue/30 shadow-ios-card dark:shadow-ios-card-dark" placeholder="Cari ID Pesanan, Toko, atau SKU..." type="text" />
+            <button onclick="document.getElementById('searchOrder').value=''; window.WarehouseApp.handleOrderInput('');" class="absolute right-3 text-ios-text-ter hover:text-ios-text text-xs" type="button">
+              <span class="material-symbols-outlined text-[15px]">close</span>
+            </button>
+          </div>
+          <button onclick="window.WarehouseApp.openScanner('order')" class="h-10 px-3.5 rounded-xl bg-ios-blue text-white text-xs font-bold flex items-center gap-1.5 ios-press shrink-0 shadow-sm" type="button">
+            <span class="material-symbols-outlined text-[17px]">qr_code_scanner</span>
+            <span class="hidden sm:inline">Scan</span>
+          </button>
+        </div>
+
+        <!-- Filter Segmented Tabs -->
+        <div class="p-1.5 rounded-2xl bg-ios-card-sub border border-ios-separator/50 flex items-center gap-1 overflow-x-auto scrollbar-none text-xs font-semibold">
+          <button onclick="window.WarehouseApp.setOrderFilter('Semua')" data-filter="Semua" class="filter-order-btn flex-1 min-w-[70px] h-8 rounded-xl bg-ios-card text-ios-text font-bold shadow-sm flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Semua</span><span id="cntFilterSemua" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Tugas Saya')" data-filter="Tugas Saya" class="filter-order-btn flex-1 min-w-[95px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span class="material-symbols-outlined text-[14px]">assignment_ind</span>
+            <span>Tugas Saya</span><span id="cntFilterSaya" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Pending')" data-filter="Pending" class="filter-order-btn flex-1 min-w-[75px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Pending</span><span id="cntFilterPending" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Diproses')" data-filter="Diproses" class="filter-order-btn flex-1 min-w-[80px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Diproses</span><span id="cntFilterDiproses" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Dikirim')" data-filter="Dikirim" class="filter-order-btn flex-1 min-w-[75px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Dikirim</span><span id="cntFilterDikirim" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Selesai')" data-filter="Selesai" class="filter-order-btn flex-1 min-w-[75px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Selesai</span><span id="cntFilterSelesai" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+          <button onclick="window.WarehouseApp.setOrderFilter('Dibatalkan')" data-filter="Dibatalkan" class="filter-order-btn flex-1 min-w-[80px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press" type="button">
+            <span>Batal</span><span id="cntFilterDibatalkan" class="text-[10px] opacity-60 font-mono">0</span>
+          </button>
+        </div>
+
+        <!-- Orders Grid Feed -->
+        <div id="orderContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 w-full"></div>
+      </section>
+
+      <!-- =========================================================================
+           VIEW 2: STOK GUDANG (INVENTORY & PRICING HUB) - COMPACT CARD DESIGN
+           ========================================================================= -->
+      <section id="view-stok" class="view-panel hidden flex-col gap-4 w-full">
+        <!-- Stock Header Title & Quick Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-ios-text">Katalog Stok</h1>
+            <div class="flex items-center gap-2 text-xs text-ios-text-ter font-medium mt-0.5">
+              <span id="stokCountBadge" class="text-ios-blue font-bold">0 SKU Terdata</span>
+              <span>•</span>
+              <span id="stokFreshnessStamp">Sinkron Otomatis</span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+            <!-- Precise iOS Native Toggle Switch -->
+            <label class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-ios-card border border-ios-separator/60 text-xs font-semibold text-ios-text cursor-pointer select-none shadow-sm" for="toggleEmptyStock">
+              <span class="text-[11.5px]">Sembunyikan Kosong</span>
+              <div class="relative inline-flex items-center">
+                <input id="toggleEmptyStock" onchange="window.WarehouseApp.filterStok()" class="sr-only peer" type="checkbox" />
+                <div class="w-8 h-4 bg-ios-separator rounded-full peer peer-checked:bg-ios-green peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all relative"></div>
+              </div>
+            </label>
+
+            <!-- Export Button (Admin Only) -->
+            <button id="btnDownloadCsv" onclick="window.WarehouseApp.downloadStokCSV()" class="h-8 px-3.5 rounded-xl bg-ios-card text-ios-blue text-xs font-bold flex items-center gap-1.5 border border-ios-separator/60 shadow-sm ios-press" type="button">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+              <span>CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stock Search Bar -->
+        <div class="relative flex items-center">
+          <span class="material-symbols-outlined absolute left-3.5 text-ios-text-ter text-[19px] pointer-events-none">search</span>
+          <input id="searchStok" oninput="window.WarehouseApp.handleStokInput(this.value)" class="w-full h-10 pl-11 pr-24 rounded-xl bg-ios-card border border-ios-separator/60 text-ios-text placeholder:text-ios-text-ter text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ios-blue/30 shadow-sm" placeholder="Ketik SKU atau nama barang..." type="text" />
+          <button onclick="window.WarehouseApp.openScanner('stok')" class="absolute right-2 h-7 px-2.5 bg-ios-blue/15 text-ios-blue rounded-lg text-xs font-bold flex items-center gap-1 ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px]">barcode_scanner</span>
+            <span>Scan</span>
+          </button>
+        </div>
+
+        <!-- Quick Status Filter Chips -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs font-semibold">
+          <button id="btnFilterStokAll" onclick="window.WarehouseApp.setStokStatusFilter('all')" class="stok-filter-chip h-7 px-3 rounded-full bg-ios-card text-ios-text font-bold border border-ios-separator/70 shadow-sm shrink-0 ios-press" type="button">Semua</button>
+          <button id="btnFilterStokOptimal" onclick="window.WarehouseApp.setStokStatusFilter('optimal')" class="stok-filter-chip h-7 px-3 rounded-full bg-ios-card-sub text-ios-text-sec font-semibold border border-ios-separator/40 shrink-0 ios-press" type="button">Aman (&gt;20)</button>
+          <button id="btnFilterStokRestok" onclick="window.WarehouseApp.setStokStatusFilter('restok')" class="stok-filter-chip h-7 px-3 rounded-full bg-ios-card-sub text-ios-text-sec font-semibold border border-ios-separator/40 shrink-0 ios-press" type="button">Restok (&le;20)</button>
+          <button id="btnFilterStokHabis" onclick="window.WarehouseApp.setStokStatusFilter('habis')" class="stok-filter-chip h-7 px-3 rounded-full bg-ios-card-sub text-ios-text-sec font-semibold border border-ios-separator/40 shrink-0 ios-press" type="button">Habis (0)</button>
+        </div>
+
+        <!-- Inventory Metrics Grid (Admin Only) -->
+        <div id="stockMetricsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div class="bg-ios-card p-3.5 rounded-2xl border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between">
+            <span class="text-[10px] uppercase tracking-wider text-ios-text-ter font-bold">Valuasi HPP</span>
+            <span id="metricValuasiHpp" class="text-sm sm:text-base font-extrabold font-mono text-ios-text mt-1.5 truncate">Rp 0</span>
+          </div>
+          <div class="bg-ios-card p-3.5 rounded-2xl border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between">
+            <span class="text-[10px] uppercase tracking-wider text-ios-green font-bold">Aman (&gt;20)</span>
+            <span id="metricStokOptimal" class="text-sm sm:text-base font-extrabold font-mono text-ios-green mt-1.5">0 SKU</span>
+          </div>
+          <div class="bg-ios-card p-3.5 rounded-2xl border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between">
+            <span class="text-[10px] uppercase tracking-wider text-ios-orange font-bold">Restok (&le;20)</span>
+            <span id="metricPerluRestok" class="text-sm sm:text-base font-extrabold font-mono text-ios-orange mt-1.5">0 SKU</span>
+          </div>
+          <div class="bg-ios-card p-3.5 rounded-2xl border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between">
+            <span class="text-[10px] uppercase tracking-wider text-ios-red font-bold">Habis (0)</span>
+            <span id="metricHabisTotal" class="text-sm sm:text-base font-extrabold font-mono text-ios-red mt-1.5">0 SKU</span>
+          </div>
+        </div>
+
+        <!-- Stock Cards Feed Grid -->
+        <div id="stokContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 w-full"></div>
+      </section>
+
+      <!-- =========================================================================
+           VIEW 3: RUANG KERJA PICKING (ACTIVE TASK ROOM)
+           ========================================================================= -->
+      <section id="view-picking" class="view-panel hidden flex-col gap-4 w-full">
+        <!-- Picking Top Header -->
+        <div class="flex items-center justify-between gap-2.5">
+          <button onclick="window.WarehouseApp.kembaliDariPicking()" class="h-9 px-3.5 rounded-xl bg-ios-card text-ios-blue font-bold text-xs flex items-center gap-1 border border-ios-separator/60 shadow-sm ios-press" type="button">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Kembali</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="window.WarehouseApp.openScanner('picking')" class="h-9 px-3.5 rounded-xl bg-ios-blue text-white font-bold text-xs flex items-center gap-1.5 shadow-sm ios-press" type="button">
+              <span class="material-symbols-outlined text-[16px]">barcode_scanner</span>
+              <span>Scan SKU (+1)</span>
+            </button>
+            <button onclick="window.WarehouseApp.konfirmasiBatalTugas(window.WarehouseApp.getActivePickingOrderId())" class="h-9 px-3 rounded-xl bg-ios-red/15 text-ios-red font-semibold text-xs border border-ios-red/25 ios-press" type="button" title="Batalkan Tugas Ini">
+              <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Picking Target Card -->
+        <div class="p-4 rounded-2xl bg-ios-card border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="min-w-0">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-ios-blue">Tugas Penyiapan Aktif</span>
+              <h2 id="pickingOrderHeaderTitle" class="text-sm sm:text-base font-extrabold text-ios-text truncate mt-0.5">#ORD-XXXXX</h2>
+            </div>
+            <div class="text-right shrink-0">
+              <span id="pickingSummaryUnits" class="text-xs sm:text-sm font-mono font-bold text-ios-blue block">0 / 0 Pcs</span>
+              <span id="pickingSummarySKU" class="text-[10px] text-ios-green font-bold uppercase">0 SKU Siap</span>
+            </div>
+          </div>
+          <div class="w-full h-2 rounded-full bg-ios-separator/50 overflow-hidden">
+            <div id="pickingOverallProgressBar" class="h-full bg-ios-green transition-all duration-300 ease-out" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Picking List Container -->
+        <div id="pickingItemsListContainer" class="flex flex-col gap-2.5"></div>
+
+        <!-- Picking Bottom Actions Dock -->
+        <div class="p-3 rounded-2xl bg-ios-card border border-ios-separator/60 flex items-center gap-2.5 shadow-sm">
+          <button onclick="window.WarehouseApp.simpanProgressPicking(false)" class="flex-1 h-11 rounded-xl bg-ios-card-sub text-ios-text text-xs font-bold border border-ios-separator/60 ios-press" type="button">
+            Simpan Sementara
+          </button>
+          <button onclick="window.WarehouseApp.simpanProgressPicking(true)" class="flex-1 h-11 rounded-xl bg-ios-green text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm ios-press" type="button">
+            <span class="material-symbols-outlined text-[17px]">local_shipping</span>
+            <span>Selesai &amp; Kirim</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =========================================================================
+           VIEW 4: PENGATURAN SHEET & ENGINE (SUPER ADMIN ONLY)
+           ========================================================================= -->
+      <section id="view-setting" class="view-panel hidden flex-col gap-4 w-full">
+        <div class="px-1">
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-ios-text">Pengaturan Sistem</h1>
+          <p class="text-xs text-ios-text-ter font-medium mt-0.5">Konfigurasi Database Spreadsheet &amp; Akses Engine.</p>
+        </div>
+
+        <div class="bg-ios-card rounded-2xl border border-ios-separator/60 p-4 sm:p-5 flex flex-col gap-3.5 shadow-ios-card dark:shadow-ios-card-dark">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-ios-green text-[20px]">table_chart</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ios-text">Lembar Kerja Google Sheets</h3>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-ios-text-sec" for="selectStockSheet">Master Sheet Stok Gudang</label>
+            <select id="selectStockSheet" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue">
+              <option value="" disabled selected>Memuat daftar sheet...</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <span class="text-xs font-bold text-ios-text-sec">Sheet Pesanan Toko Terpantau</span>
+            <div id="checkboxOrderSheets" class="space-y-1.5 max-h-44 overflow-y-auto p-2.5 rounded-xl bg-ios-card-sub border border-ios-separator/40 text-xs"></div>
+          </div>
+          
+          <!-- Pengaturan Printer Thermal -->
+          <div class="flex flex-col gap-1.5 mt-2 pt-3 border-t border-ios-separator/40">
+            <label class="text-xs font-bold text-ios-text-sec" for="inputPrinterName">Nama Printer Thermal (QZ Tray)</label>
+            <input id="inputPrinterName" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Contoh: MINIPOS" type="text" />
+            <p class="text-[10px] text-ios-text-ter">Pastikan nama sama dengan di Devices & Printers Windows.</p>
+          </div>
+
+          <button onclick="window.WarehouseApp.saveSheetConfig()" class="h-10 px-4 rounded-xl bg-ios-blue text-white font-bold text-xs flex items-center justify-center gap-1.5 ios-press self-end shadow-sm mt-1" type="button">
+            <span class="material-symbols-outlined text-[15px]">save</span>
+            <span>Simpan Pengaturan</span>
+          </button>
+        </div>
+
+        <div class="bg-ios-card rounded-2xl border border-ios-separator/60 p-4 sm:p-5 flex flex-col gap-3 shadow-ios-card dark:shadow-ios-card-dark">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-ios-orange text-[20px]">storage</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ios-text">Penyimpanan &amp; Cache Lokal</h3>
+          </div>
+          <div class="flex items-center gap-2.5 pt-1">
+            <button onclick="window.WarehouseApp.clearAppCache()" class="flex-1 h-10 rounded-xl bg-ios-red/15 text-ios-red text-xs font-bold border border-ios-red/25 ios-press" type="button">
+              Bersihkan Cache
+            </button>
+            <button onclick="window.WarehouseApp.processOfflineQueue(true)" class="flex-1 h-10 rounded-xl bg-ios-blue text-white text-xs font-bold shadow-sm ios-press" type="button">
+              Kirim Antrean Offline
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification Preferences -->
+        <div class="bg-ios-card rounded-2xl border border-ios-separator/60 p-4 sm:p-5 flex flex-col gap-3 shadow-ios-card dark:shadow-ios-card-dark">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-ios-blue text-[20px]">notifications</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ios-text">Pemberitahuan</h3>
+          </div>
+          <p class="text-[11px] text-ios-text-ter">Toast otomatis saat ada pesanan baru &amp; stok menipis (&le;20). Badge merah di tab Stok mencatat total SKU perlu restok.</p>
+          <label class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-ios-card-sub border border-ios-separator/50 cursor-pointer select-none" for="toggleNotifMute">
+            <span class="flex flex-col">
+              <span class="text-xs font-bold text-ios-text">Aktifkan Notifikasi</span>
+              <span class="text-[10px] text-ios-text-ter">Matikan jika terlalu berisik</span>
+            </span>
+            <div class="relative inline-flex items-center shrink-0">
+              <input id="toggleNotifMute" onchange="window.WarehouseApp.toggleNotifMute(this.checked)" class="sr-only peer" type="checkbox" checked />
+              <div class="w-9 h-5 bg-ios-separator rounded-full peer peer-checked:bg-ios-green peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all relative"></div>
+            </div>
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav id="bottomTabBar" class="fixed bottom-0 left-0 w-full z-40 bg-ios-bar/90 ios-blur border-t border-ios-separator/60 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 no-print transition-all">
+      <div class="max-w-md mx-auto px-6 flex items-center justify-around">
+        <button onclick="window.WarehouseApp.switchMainTab('order')" id="tabNavOrder" class="nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-blue ios-press" type="button">
+          <span class="material-symbols-outlined text-[22px]">view_list</span>
+          <span class="text-[10px] font-bold">Pesanan</span>
+        </button>
+        <button onclick="window.WarehouseApp.switchMainTab('stok')" id="tabNavStok" class="nav-dock-btn relative flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press" type="button">
+          <span class="relative inline-flex">
+            <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+            <span id="tabStokBadge" class="hidden absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-ios-orange text-white text-[9px] font-extrabold leading-4 text-center ios-press">0</span>
+          </span>
+          <span class="text-[10px] font-bold">Stok</span>
+        </button>
+        <button onclick="window.WarehouseApp.switchMainTab('setting')" id="tabNavSetting" class="nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press" type="button">
+          <span class="material-symbols-outlined text-[22px]">settings</span>
+          <span class="text-[10px] font-bold">Setelan</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- =========================================================================
+         MODALS & SHEETS (PRECISE DIALOGS)
+         ========================================================================= -->
+
+    <!-- Login Modal -->
+    <div id="modalLoginAwal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs p-5 rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl flex flex-col gap-3.5">
+        <div class="text-center">
+          <div class="w-10 h-10 rounded-2xl bg-ios-blue/15 text-ios-blue flex items-center justify-center mx-auto border border-ios-blue/25 mb-2">
+            <span class="material-symbols-outlined text-[22px]">lock</span>
+          </div>
+          <h3 class="text-base font-extrabold text-ios-text">Floor Gudang</h3>
+          <p class="text-[11px] text-ios-text-ter mt-0.5">Masuk menggunakan akun terdaftar</p>
+        </div>
+        <div id="loginErrorMsg" class="hidden p-2 rounded-xl bg-ios-red/15 text-ios-red text-xs font-semibold text-center border border-ios-red/25"></div>
+        <form onsubmit="window.WarehouseApp.handleInitialLogin(event); return false;" class="flex flex-col gap-2.5 w-full">
+          <div class="flex flex-col gap-2.5">
+            <input id="loginUsername" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Username" type="text" />
+            <input id="loginPassword" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Password" type="password" />
+          </div>
+          <button id="btnLoginSubmit" class="h-10 rounded-xl bg-ios-blue text-white font-bold text-xs shadow-md ios-press mt-1" type="submit">
+            Masuk
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="modalKonfirmasiLogout" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs p-5 rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl flex flex-col gap-3 text-center">
+        <h4 class="text-sm font-extrabold text-ios-text">Keluar dari Sesi?</h4>
+        <p class="text-[11px] text-ios-text-ter">Pastikan semua tugas aktif telah tersimpan.</p>
+        <div class="flex gap-2.5 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalKonfirmasiLogout')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Batal</button>
+          <button onclick="window.WarehouseApp.eksekusiLogout()" class="flex-1 h-9 rounded-xl bg-ios-red text-white text-xs font-bold ios-press" type="button">Keluar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanner Modal -->
+    <div id="modalScanner" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 ios-blur hidden">
+      <div class="w-full max-w-sm rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl flex flex-col overflow-hidden">
+        <div class="p-3.5 flex items-center justify-between border-b border-ios-separator/50">
+          <span class="text-xs font-bold text-ios-text">Pemindai Barcode Kamera</span>
+          <button onclick="window.WarehouseApp.closeScanner()" class="w-7 h-7 rounded-full bg-ios-card-sub text-ios-text flex items-center justify-center ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px]">close</span>
+          </button>
+        </div>
+        <div class="p-4 flex flex-col gap-2.5 items-center">
+          <div id="reader" class="w-full aspect-square rounded-2xl overflow-hidden bg-black/30 border border-ios-separator/60"></div>
+          <button id="btnToggleFlash" onclick="window.WarehouseApp.toggleFlash()" class="hidden h-8 px-3.5 rounded-full bg-ios-card-sub text-ios-text text-xs font-bold flex items-center gap-1 border border-ios-separator/60 ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px] text-ios-orange">flash_on</span>
+            <span id="textFlash">Senter</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Takeover Modal -->
+    <div id="modalAmbilAlihTugas" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs p-5 rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl flex flex-col gap-3">
+        <h4 class="text-sm font-extrabold text-ios-text">Ambil Alih Penyiapan</h4>
+        <div class="p-3 rounded-xl bg-ios-card-sub text-xs flex flex-col gap-1.5 border border-ios-separator/40">
+          <div class="flex justify-between"><span class="text-ios-text-ter">Order:</span><span id="ambilAlihModalOrderId" class="font-mono font-bold text-ios-blue">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">Picker Sebelumnya:</span><span id="ambilAlihModalPrevPicker" class="font-bold text-ios-text">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">Terkumpul:</span><span id="ambilAlihModalProgressText" class="font-mono font-bold text-ios-green">-</span></div>
+        </div>
+        <div class="flex gap-2.5 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalAmbilAlihTugas')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Batal</button>
+          <button onclick="window.WarehouseApp.eksekusiAmbilAlih()" class="flex-1 h-9 rounded-xl bg-ios-blue text-white text-xs font-bold ios-press" type="button">Ambil Alih</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset/Cancel Task Modal -->
+    <div id="modalBatalTugas" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs p-5 rounded-3xl bg-ios-card border border-ios-red/40 shadow-2xl flex flex-col gap-3">
+        <h4 class="text-sm font-extrabold text-ios-text">Batalkan Penugasan</h4>
+        <p class="text-[11px] text-ios-text-ter leading-relaxed">Tugas akan kembali ke antrean Pending dan progres item direset ke 0 Pcs.</p>
+        <div class="p-2.5 rounded-xl bg-ios-red/10 text-xs flex flex-col gap-1.5 border border-ios-red/20">
+          <div class="flex justify-between"><span class="text-ios-text-ter">Order:</span><span id="batalModalOrderId" class="font-mono font-bold text-ios-red">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">Toko:</span><span id="batalModalStoreName" class="font-bold text-ios-text">-</span></div>
+        </div>
+        <div class="flex gap-2.5 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalBatalTugas')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Kembali</button>
+          <button onclick="window.WarehouseApp.eksekusiBatalTugas()" class="flex-1 h-9 rounded-xl bg-ios-red text-white text-xs font-bold ios-press" type="button">Reset 0%</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finish Picking Modal -->
+    <div id="modalKonfirmasiSelesaiPicking" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs p-5 rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl flex flex-col gap-3">
+        <h4 class="text-sm font-extrabold text-ios-text">Verifikasi Kesiapan Barang</h4>
+        <div class="p-3 rounded-xl bg-ios-card-sub text-xs flex flex-col gap-1.5 border border-ios-separator/40">
+          <div class="flex justify-between"><span class="text-ios-text-ter">Pesanan:</span><span id="confirmModalOrderId" class="font-mono font-bold text-ios-blue">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">Toko:</span><span id="confirmModalStoreName" class="font-bold text-ios-text">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">SKU Siap:</span><span id="confirmModalSkuSummary" class="font-mono font-bold text-ios-green">-</span></div>
+          <div class="flex justify-between"><span class="text-ios-text-ter">Total Unit:</span><span id="confirmModalUnitSummary" class="font-mono font-bold text-ios-text">-</span></div>
+          <div id="confirmModalWarningBox" class="hidden mt-1 p-2 rounded-lg bg-ios-red/15 text-ios-red text-[11px] font-bold">
+            Peringatan: Kuantitas barang belum lengkap!
+          </div>
+        </div>
+        <div class="flex gap-2.5 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalKonfirmasiSelesaiPicking')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Periksa Lagi</button>
+          <button onclick="window.WarehouseApp.eksekusiSelesaiDanKirim()" class="flex-1 h-9 rounded-xl bg-ios-green text-white text-xs font-bold ios-press" type="button">Ya, Kirim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Status Action Sheet (Admin) -->
+    <div id="modalStatus" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between pb-1">
+          <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Ubah Status</h4>
+          <span id="statusModalOrderId" class="font-mono font-bold text-ios-blue text-xs">-</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <button onclick="window.WarehouseApp.executeStatusUpdate('Pending')" class="h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold flex items-center justify-between ios-press" type="button">
+            <span>Pending</span><span class="material-symbols-outlined text-[15px]">hourglass_top</span>
+          </button>
+          <button onclick="window.WarehouseApp.executeStatusUpdate('Diproses')" class="h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold flex items-center justify-between ios-press" type="button">
+            <span>Diproses</span><span class="material-symbols-outlined text-[15px] text-ios-blue">package_2</span>
+          </button>
+          <button onclick="window.WarehouseApp.executeStatusUpdate('Dikirim')" class="h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold flex items-center justify-between ios-press" type="button">
+            <span>Dikirim</span><span class="material-symbols-outlined text-[15px] text-ios-orange">local_shipping</span>
+          </button>
+          <button onclick="window.WarehouseApp.executeStatusUpdate('Selesai')" class="h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold flex items-center justify-between ios-press" type="button">
+            <span>Selesai</span><span class="material-symbols-outlined text-[15px] text-ios-green">check_circle</span>
+          </button>
+          <button onclick="window.WarehouseApp.executeStatusUpdate('Dibatalkan')" class="h-9 px-3.5 rounded-xl bg-ios-red/15 text-ios-red text-xs font-semibold flex items-center justify-between ios-press" type="button">
+            <span>Dibatalkan</span><span class="material-symbols-outlined text-[15px]">cancel</span>
+          </button>
+        </div>
+        <button onclick="window.WarehouseApp.closeModal('modalStatus')" class="h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold mt-1 border border-ios-separator/50 ios-press" type="button">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Resi Modal -->
+    <div id="modalKodeUnik" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3">
+        <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Nomor Resi / Mutasi</h4>
+        <input id="inputKodeUnik" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-center font-mono font-bold text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Ketik nomor resi..." type="text" />
+        <div class="flex gap-2.5 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalKodeUnik')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Batal</button>
+          <button onclick="window.WarehouseApp.confirmDikirimStatus()" class="flex-1 h-9 rounded-xl bg-ios-blue text-white text-xs font-bold ios-press" type="button">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Single Slot Modal -->
+    <div id="modalPrintSlot" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3">
+        <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Pilih Posisi Slot Stiker A4</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="window.WarehouseApp.executePrint(1)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 1<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kiri Atas</span></button>
+          <button onclick="window.WarehouseApp.executePrint(2)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 2<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kanan Atas</span></button>
+          <button onclick="window.WarehouseApp.executePrint(3)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 3<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kiri Tengah</span></button>
+          <button onclick="window.WarehouseApp.executePrint(4)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 4<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kanan Tengah</span></button>
+          <button onclick="window.WarehouseApp.executePrint(5)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 5<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kiri Bawah</span></button>
+          <button onclick="window.WarehouseApp.executePrint(6)" class="p-2.5 rounded-xl bg-ios-card-sub text-center text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Slot 6<br><span class="text-[9.5px] text-ios-text-ter font-normal">Kanan Bawah</span></button>
+        </div>
+        <button onclick="window.WarehouseApp.closeModal('modalPrintSlot')" class="h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Batch Print Modal -->
+    <div id="modalBatchPrintPreview" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-sm rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3 max-h-[82vh] overflow-y-auto">
+        <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Cetak Batch Pesanan A4</h4>
+        <div id="batchPrintAllocSummary" class="p-3 rounded-2xl bg-ios-card-sub text-xs flex flex-col gap-2 border border-ios-separator/40"></div>
+        <div class="flex items-center justify-end gap-2 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalBatchPrintPreview')" class="h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Batal</button>
+          <button onclick="window.WarehouseApp.eksekusiCetakBatchPintar()" class="h-9 px-4 rounded-xl bg-ios-blue text-white text-xs font-bold flex items-center gap-1.5 shadow-sm ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px]">print</span>
+            <span>Cetak Dokumen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Super Admin Auth Modal -->
+    <div id="modalAuthSuperAdmin" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3">
+        <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Otorisasi Super Admin</h4>
+        <div id="superAdminAuthError" class="hidden p-2 rounded-xl bg-ios-red/15 text-ios-red text-[11px] font-bold"></div>
+        <input id="inputSuperAdminUser" class="w-full h-9 px-3 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/50" placeholder="Username Super Admin" type="text" />
+        <input id="inputSuperAdminPass" class="w-full h-9 px-3 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/50" placeholder="Password Super Admin" type="password" />
+        <div class="flex gap-2 mt-1">
+          <button onclick="window.WarehouseApp.closeModal('modalAuthSuperAdmin')" class="flex-1 h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press" type="button">Batal</button>
+          <button onclick="window.WarehouseApp.verifyAndSaveSuperAdmin()" class="flex-1 h-9 rounded-xl bg-ios-blue text-white text-xs font-bold ios-press" type="button">Verifikasi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKU Detail Inspection Modal (iOS Action Sheet) -->
+    <div id="modalStokDetail" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-sm rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3.5">
+        <div class="flex items-center justify-between pb-1 border-b border-ios-separator/40">
+          <div class="flex items-center gap-2">
+            <span id="detailSkuCode" class="font-mono font-extrabold text-xs text-ios-blue bg-ios-card-sub px-2.5 py-0.5 rounded-lg border border-ios-separator/50">-</span>
+            <span id="detailSkuStatus" class="px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-ios-green/15 text-ios-green">Aman</span>
+          </div>
+          <button onclick="window.WarehouseApp.closeModal('modalStokDetail')" class="w-7 h-7 rounded-full bg-ios-card-sub text-ios-text flex items-center justify-center ios-press" type="button">
+            <span class="material-symbols-outlined text-[15px]">close</span>
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-ios-text-ter">Nama Barang</span>
+          <span id="detailSkuName" class="font-extrabold text-sm text-ios-text leading-snug">-</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-ios-card-sub border border-ios-separator/40 font-mono text-xs">
+          <div>
+            <span class="text-[10px] text-ios-text-ter font-sans uppercase font-bold block">Sisa Fisik</span>
+            <span id="detailSkuQty" class="font-extrabold text-sm text-ios-text mt-0.5 block">0 Unit</span>
+          </div>
+          <div id="detailValuasiRow">
+            <span class="text-[10px] text-ios-text-ter font-sans uppercase font-bold block">Valuasi HPP</span>
+            <span id="detailSkuValuasi" class="font-extrabold text-sm text-ios-blue mt-0.5 block">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Pricing Grid (Admin Only) -->
+        <div id="detailPricingBox" class="flex flex-col gap-1.5 p-3 rounded-2xl bg-ios-card-sub border border-ios-separator/40 text-xs font-mono">
+          <div class="flex justify-between items-center py-0.5 border-b border-ios-separator/30">
+            <span class="text-ios-text-ter font-sans">Harga Retail</span>
+            <span id="detailSkuRetail" class="font-bold text-ios-text">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center py-0.5 border-b border-ios-separator/30">
+            <span class="text-ios-text-ter font-sans">Harga Grosir</span>
+            <span id="detailSkuGrosir" class="font-semibold text-ios-text-sec">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center py-0.5 border-b border-ios-separator/30">
+            <span class="text-ios-text-ter font-sans">HPP (Modal)</span>
+            <span id="detailSkuHpp" class="font-semibold text-ios-text-ter">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center py-0.5">
+            <span class="text-ios-text-ter font-sans">Diskon</span>
+            <span id="detailSkuDiskon" class="font-bold text-ios-purple">0%</span>
+          </div>
+        </div>
+
+        <button onclick="window.WarehouseApp.closeModal('modalStokDetail')" class="w-full h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-bold border border-ios-separator/50 ios-press" type="button">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-[90%] max-w-xs"></div>
+
+    <audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+    <!-- Camera QR/Barcode Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <!-- QZ Tray Thermal Printer Library (TAMBAHAN) -->
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2.4/qz-tray.min.js"></script>
+
+    <script>
+      const DEFAULT_CONFIG = {
+        gasUrl: 'https://script.google.com/macros/s/AKfycbzY3xtviFis2qsTvAVYhlp7h3r_PrCsNGWDxB_CbRJk8AM9iSplhxJRKiXlaYORHcK0/exec',
+        apiToken: 'GudangSecretToken_2026_SecureKey'
+      };
+
+      const IDB_CONFIG = { dbName: 'WarehouseControlDB_v3', dbVersion: 1, storeName: 'keyval' };
+
+      // Encapsulated State Management
+      const AppState = {
+        config: safeStorageGet('appHybridConfig_v3', DEFAULT_CONFIG),
+        currentUser: safeStorageGet('warehouse_user', null),
+        thermalPrinterName: safeStorageGet('warehouse_printer_name', 'MINIPOS'), // TAMBAHAN
+        globalOrders: [],
+        globalStok: [],
+        currentOrderFilter: 'Pending',
+        activePickingOrder: null,
+        selectedOrderIds: new Set(),
+        currentScanTarget: 'order',
+        html5QrcodeScanner: null,
+        isFlashOn: false,
+        currentPrintOrderId: null,
+        currentStatusOrderId: null,
+        currentStatusSheet: '',
+        pendingAmbilAlihOrderId: null,
+        pendingBatalOrderId: null,
+        pendingBatchPages: [],
+        offlineActionQueue: safeStorageGet('offline_action_queue', []),
+        currentStokStatusFilter: 'all',
+        lastSeenOrderIds: new Set(),
+        lastSeenLowStock: new Set(),
+        notifMuted: safeStorageGet('warehouse_notif_muted', false),
+
+        // Getter untuk mengambil nama berdasarkan user saat ini
+        get namaPicker() {
+          return this.currentUser ? (this.currentUser.name || this.currentUser.username) : '';
+        }
+      };
+
+      /* Smooth & Purposeful Motion Controller (GSAP 3) */
+      const Motion = {
+        counter(elId, targetVal, isCurrency = false, suffix = '') {
+          const el = document.getElementById(elId);
+          if (!el) return;
+          if (typeof gsap === 'undefined') {
+            el.innerText = isCurrency ? formatRupiah(targetVal) : `${targetVal}${suffix}`;
+            return;
+          }
+          const startVal = parseFloat(el.getAttribute('data-val') || 0);
+          el.setAttribute('data-val', targetVal);
+          const obj = { val: startVal };
+          gsap.to(obj, {
+            val: targetVal,
+            duration: 0.65,
+            ease: 'power2.out',
+            onUpdate: () => {
+              el.innerText = isCurrency ? formatRupiah(Math.round(obj.val)) : `${Math.round(obj.val)}${suffix}`;
+            }
+          });
+        },
+        staggerCards(selector) {
+          if (typeof gsap === 'undefined') return;
+          gsap.fromTo(selector, 
+            { opacity: 0, y: 12, scale: 0.985 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.32, stagger: 0.035, ease: 'power2.out' }
+          );
+        },
+        viewEnter(el) {
+          if (!el || typeof gsap === 'undefined') return;
+          gsap.fromTo(el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power2.out' });
+        }
+      };
+
+      function initTheme() {
+        const savedTheme = safeStorageGet('warehouse_theme', 'dark');
+        const isDark = savedTheme !== 'light';
+        document.documentElement.classList.toggle('dark', isDark);
+        updateThemeUI(isDark);
+      }
+
+      function updateThemeUI(isDark) {
+        const icon = document.getElementById('themeToggleIcon');
+        if (icon) icon.innerText = isDark ? 'light_mode' : 'dark_mode';
+      }
+
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        safeStorageSet('warehouse_theme', isDark ? 'dark' : 'light');
+        updateThemeUI(isDark);
+        showToast(isDark ? "Mode Gelap" : "Mode Terang", "Preferensi tema telah disimpan.");
+      }
+
+      function safeStorageGet(key, fallback = null) {
+        try {
+          const item = localStorage.getItem(key);
+          return item !== null ? JSON.parse(item) : fallback;
+        } catch (e) {
+          return fallback;
+        }
+      }
+
+      function safeStorageSet(key, val) {
+        try {
+          localStorage.setItem(key, JSON.stringify(val));
+        } catch (e) {}
+      }
+
+      function openIndexedDB() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject(new Error("IndexedDB tidak tersedia"));
+          const req = indexedDB.open(IDB_CONFIG.dbName, IDB_CONFIG.dbVersion);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(IDB_CONFIG.storeName)) {
+              db.createObjectStore(IDB_CONFIG.storeName);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function idbGet(key, fallback = null) {
+        try {
+          const db = await openIndexedDB();
+          return new Promise((resolve) => {
+            const tx = db.transaction(IDB_CONFIG.storeName, 'readonly');
+            const req = tx.objectStore(IDB_CONFIG.storeName).get(key);
+            req.onsuccess = () => resolve(req.result !== undefined ? req.result : fallback);
+            req.onerror = () => resolve(fallback);
+          });
+        } catch (e) {
+          return safeStorageGet(key, fallback);
+        }
+      }
+
+      async function idbSet(key, val) {
+        try {
+          const db = await openIndexedDB();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(IDB_CONFIG.storeName, 'readwrite');
+            const req = tx.objectStore(IDB_CONFIG.storeName).put(val, key);
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+          });
+        } catch (e) {
+          safeStorageSet(key, val);
+          return false;
+        }
+      }
+
+      function escapeHTML(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function formatRupiah(angka) {
+        if (angka === null || angka === undefined || isNaN(angka)) return 'Rp 0';
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+      }
+
+      function formatPersen(val) {
+        if (val === null || val === undefined || val === '') return '0%';
+        let num = parseFloat(String(val).replace('%', '').trim());
+        if (isNaN(num)) return '0%';
+        return `${num % 1 === 0 ? num : num.toFixed(1)}%`;
+      }
+
+      function getUserRole() {
+        return AppState.currentUser ? String(AppState.currentUser.role || 'picker').toLowerCase().trim() : '';
+      }
+
+      function isPicker() {
+        const r = getUserRole();
+        return r === 'picker' || r === 'karyawan';
+      }
+
+      function isAdmin() {
+        const r = getUserRole();
+        return r === 'admin' || r === 'superadmin' || r === 'super admin';
+      }
+
+      function isSuperAdmin() {
+        const r = getUserRole();
+        return r === 'superadmin' || r === 'super admin';
+      }
+
+      function updateSessionUI() {
+        const uNameEl = document.getElementById('headerUserName');
+        const uRoleEl = document.getElementById('headerUserRole');
+
+        if (AppState.currentUser) {
+          if (uNameEl) uNameEl.innerText = AppState.currentUser.name || AppState.currentUser.username;
+          if (uRoleEl) uRoleEl.innerText = (AppState.currentUser.role || 'PICKER').toUpperCase();
+        } else {
+          if (uNameEl) uNameEl.innerText = 'Belum Masuk';
+          if (uRoleEl) uRoleEl.innerText = 'LOCKED';
+        }
+
+        applyUserRoleAccess();
+      }
+
+      function applyUserRoleAccess() {
+        const pickerMode = isPicker();
+        const metricsBox = document.getElementById('stockMetricsContainer');
+        const btnCsv = document.getElementById('btnDownloadCsv');
+        const tabSetting = document.getElementById('tabNavSetting');
+
+        if (metricsBox) metricsBox.style.display = pickerMode ? 'none' : 'grid';
+        if (btnCsv) btnCsv.style.display = pickerMode ? 'none' : 'inline-flex';
+        if (tabSetting) tabSetting.style.display = pickerMode ? 'none' : 'flex';
+      }
+
+      async function handleInitialLogin(event) {
+        if (event) event.preventDefault();
+        const uInp = document.getElementById('loginUsername');
+        const pInp = document.getElementById('loginPassword');
+        const errEl = document.getElementById('loginErrorMsg');
+        const btn = document.getElementById('btnLoginSubmit');
+
+        const user = (uInp?.value || '').trim();
+        const pass = (pInp?.value || '').trim();
+
+        if (!user || !pass) {
+          if (errEl) { errEl.innerText = "Masukkan username dan password!"; errEl.classList.remove('hidden'); }
+          return;
+        }
+
+        if (btn) {
+          btn.disabled = true;
+          btn.innerText = 'Memverifikasi...';
+        }
+
+        try {
+          const res = await fetchAPI('loginUser', { username: user, password: pass });
+          if (res && res.success && res.user) {
+            AppState.currentUser = res.user;
+            AppState.currentUser._sessionPass = pass;
+            
+            safeStorageSet('warehouse_user', { username: AppState.currentUser.username, name: AppState.currentUser.name, role: AppState.currentUser.role });
+            updateSessionUI();
+            closeModal('modalLoginAwal');
+            showToast("Login Berhasil", `Selamat bertugas, ${AppState.namaPicker}`);
+            loadAdminData(true);
+          } else {
+            if (errEl) {
+              errEl.innerText = (res && res.message) || "Kredensial salah atau tidak terdaftar.";
+              errEl.classList.remove('hidden');
+            }
+          }
+        } catch (e) {
+          if (errEl) {
+            errEl.innerText = "Gagal memproses login: " + e.message;
+            errEl.classList.remove('hidden');
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = 'Masuk';
+          }
+        }
+      }
+
+      function logoutPengguna() {
+        openModal('modalKonfirmasiLogout');
+      }
+
+      function eksekusiLogout() {
+        closeModal('modalKonfirmasiLogout');
+        AppState.currentUser = null;
+        localStorage.removeItem('warehouse_user');
+        sessionStorage.clear();
+        updateSessionUI();
+        switchMainTab('order');
+        openModal('modalLoginAwal');
+        showToast("Sesi Berakhir", "Anda telah keluar.");
+      }
+
+      async function fetchAPI(action, params = {}) {
+        const formData = new URLSearchParams();
+        formData.append('action', action);
+        formData.append('token', AppState.config.apiToken || DEFAULT_CONFIG.apiToken);
+        for (const k in params) {
+          formData.append(k, params[k]);
+        }
+        const url = AppState.config.gasUrl || DEFAULT_CONFIG.gasUrl;
+        const res = await fetch(url, { method: 'POST', body: formData });
+        return await res.json();
+      }
+
+      function setSyncIndicator(active) {
+        const bar = document.getElementById('silentSyncBar');
+        const icon = document.getElementById('refreshIcon');
+        if (bar) bar.style.width = active ? '100%' : '0%';
+        if (icon) {
+          if (active) icon.classList.add('animate-spin');
+          else icon.classList.remove('animate-spin');
+        }
+      }
+
+      function enqueueOfflineAction(payload, action = 'updateStatusPesanan') {
+        AppState.offlineActionQueue.push({ id: Date.now(), action, payload });
+        safeStorageSet('offline_action_queue', AppState.offlineActionQueue);
+        updateOutboxUI();
+      }
+
+      function updateOutboxUI() {
+        const banner = document.getElementById('outboxBanner');
+        const text = document.getElementById('outboxBannerText');
+        if (banner && text) {
+          if (AppState.offlineActionQueue.length > 0) {
+            banner.classList.remove('hidden');
+            banner.classList.add('flex');
+            text.innerText = `${AppState.offlineActionQueue.length} aksi menunggu sinyal pulih...`;
+          } else {
+            banner.classList.add('hidden');
+            banner.classList.remove('flex');
+          }
+        }
+      }
+
+      async function processOfflineQueue(manual = false) {
+        if (!navigator.onLine || AppState.offlineActionQueue.length === 0) {
+          if (manual) showToast("Antrean Kosong", "Semua data telah tersinkron.");
+          return;
+        }
+
+        const queueCopy = [...AppState.offlineActionQueue];
+        let sentCount = 0;
+
+        for (const item of queueCopy) {
+          try {
+            const res = await fetchAPI(item.action || 'updateStatusPesanan', item.payload);
+            if (res && res.success) {
+              AppState.offlineActionQueue = AppState.offlineActionQueue.filter(q => q.id !== item.id);
+              safeStorageSet('offline_action_queue', AppState.offlineActionQueue);
+              sentCount++;
+            }
+          } catch (e) {
+            break;
+          }
+        }
+
+        updateOutboxUI();
+        if (sentCount > 0) {
+          showToast("Sinkronisasi Selesai", `${sentCount} aksi offline terkirim.`);
+          loadAdminData(false);
+        }
+      }
+
+      window.addEventListener('online', () => {
+        const dot = document.getElementById('liveStatusDot');
+        const txt = document.getElementById('liveStatusText');
+        if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-ios-green animate-pulse';
+        if (txt) { txt.innerText = 'Online'; txt.className = 'text-ios-green font-bold uppercase'; }
+        processOfflineQueue();
+      });
+
+      window.addEventListener('offline', () => {
+        const dot = document.getElementById('liveStatusDot');
+        const txt = document.getElementById('liveStatusText');
+        if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-ios-red';
+        if (txt) { txt.innerText = 'Offline'; txt.className = 'text-ios-red font-bold uppercase'; }
+        showToast("Offline", "Koneksi terputus. Data disimpan di lokal.");
+      });
+
+      function switchMainTab(tabName) {
+        if (tabName === 'setting' && isPicker()) {
+          showToast("Akses Terbatas", "Role Picker tidak memiliki izin ke Pengaturan.", true);
+          return;
+        }
+
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.nav-dock-btn').forEach(btn => {
+          btn.className = 'nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press';
+        });
+
+        const targetView = document.getElementById(`view-${tabName}`);
+        const targetBtn = document.getElementById(`tabNav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+        const bottomNav = document.getElementById('bottomTabBar');
+
+        if (bottomNav) {
+          bottomNav.style.display = tabName === 'picking' ? 'none' : 'block';
+        }
+
+        if (targetView) {
+          targetView.classList.remove('hidden');
+          if (tabName === 'picking') targetView.classList.add('flex');
+          Motion.viewEnter(targetView);
+        }
+
+        if (targetBtn) {
+          targetBtn.className = 'nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-blue ios-press';
+        }
+
+        if (tabName === 'setting') loadSetupConfig();
+        if (tabName === 'stok') filterStok(true);
+        window.scrollTo(0, 0);
+      }
+
+      async function loadAdminData(showSpinner = false, announce = false) {
+        setSyncIndicator(true);
+        try {
+          const res = await fetchAPI('getAdminData');
+          setSyncIndicator(false);
+          if (res && res.success) {
+            AppState.globalStok = res.stok || [];
+            AppState.globalOrders = res.orders || [];
+
+            idbSet('cached_stok', AppState.globalStok);
+            idbSet('cached_orders', AppState.globalOrders);
+
+            recordFreshness();
+            renderOrders();
+            filterStok(true);
+            runNotificationScan({ quiet: !announce });
+            if (showSpinner) showToast("Tersinkron", "Data pesanan dan stok diperbarui.");
+          } else {
+            throw new Error((res && res.message) || "Gagal memuat data dari Spreadsheet.");
+          }
+        } catch (err) {
+          setSyncIndicator(false);
+          const cachedS = await idbGet('cached_stok', null);
+          const cachedO = await idbGet('cached_orders', null);
+          if (cachedS) AppState.globalStok = cachedS;
+          if (cachedO) AppState.globalOrders = cachedO;
+          renderOrders();
+          filterStok(true);
+          if (showSpinner) showToast("Mode Offline", "Menampilkan data lokal tersimpan.");
+        }
+      }
+
+      function recordFreshness() {
+        const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        const stamp = document.getElementById('headerSyncTimestamp');
+        const stokStamp = document.getElementById('stokFreshnessStamp');
+        if (stamp) stamp.innerText = `${timeStr} WIB`;
+        if (stokStamp) stokStamp.innerText = `Sinkron ${timeStr}`;
+      }
+
+      // --- Notification Engine (stok menipis & pesanan baru) ---
+      function getLowStockIds() {
+        const ids = new Set();
+        (AppState.globalStok || []).forEach(it => {
+          if ((Number(it.stok) || 0) <= 20) ids.add(String(it.id).trim());
+        });
+        return ids;
+      }
+
+      function updateStokBadge() {
+        const badge = document.getElementById('tabStokBadge');
+        if (!badge) return;
+        const low = getLowStockIds();
+        const count = low.size;
+        if (count > 0) {
+          badge.innerText = count > 99 ? '99+' : String(count);
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      function loadNotificationSnapshot() {
+        const o = safeStorageGet('warehouse_seen_orders', null);
+        const s = safeStorageGet('warehouse_seen_lowstock', null);
+        if (Array.isArray(o)) AppState.lastSeenOrderIds = new Set(o);
+        if (Array.isArray(s)) AppState.lastSeenLowStock = new Set(s);
+      }
+
+      function persistNotificationSnapshot() {
+        safeStorageSet('warehouse_seen_orders', [...AppState.lastSeenOrderIds]);
+        safeStorageSet('warehouse_seen_lowstock', [...AppState.lastSeenLowStock]);
+      }
+
+      function runNotificationScan(opts = {}) {
+        if (AppState.notifMuted) { updateStokBadge(); return; }
+        const quiet = opts.quiet !== false; 
+
+        // --- Pesanan baru ---
+        const currentOrderIds = new Set((AppState.globalOrders || []).map(o => String(o.idPesanan).trim()).filter(Boolean));
+        if (quiet) {
+          const freshOrderIds = [...currentOrderIds].filter(id => !AppState.lastSeenOrderIds.has(id));
+          if (freshOrderIds.length > 0) {
+            const n = freshOrderIds.length;
+            const sample = (AppState.globalOrders.find(o => String(o.idPesanan).trim() === freshOrderIds[0]) || {});
+            const title = n === 1 ? `Pesanan Baru ${sample.idPesanan || ''}` : `${n} Pesanan Baru Masuk`;
+            const msg = n === 1 ? `Toko: ${sample.namaToko || '-'}` : `Ada ${n} pesanan menunggu di antrean.`;
+            showToast(title, msg);
+          }
+        }
+        AppState.lastSeenOrderIds = currentOrderIds;
+
+        // --- Stok menipis ---
+        const currentLow = getLowStockIds();
+        if (quiet) {
+          const newlyLow = [...currentLow].filter(id => !AppState.lastSeenLowStock.has(id));
+          if (newlyLow.length > 0) {
+            const names = newlyLow.slice(0, 3).map(id => {
+              const it = (AppState.globalStok || []).find(x => String(x.id).trim() === id);
+              return it ? (it.nama || it.id) : id;
+            });
+            const extra = newlyLow.length - names.length;
+            const tail = extra > 0 ? ` +${extra} lainnya` : '';
+            const title = newlyLow.length === 1 ? 'Stok Menipis' : `${newlyLow.length} Stok Menipis`;
+            const msg = names.join(', ') + tail;
+            showToast(title, msg, false);
+          }
+        }
+        AppState.lastSeenLowStock = currentLow;
+
+        persistNotificationSnapshot();
+        updateStokBadge();
+      }
+
+      function setNotifMuted(muted) {
+        AppState.notifMuted = muted;
+        safeStorageSet('warehouse_notif_muted', muted);
+        if (muted) showToast('Notifikasi Dimatikan', 'Toast stok & pesanan baru nonaktif.');
+        else { showToast('Notifikasi Aktif', 'Anda akan dapat peringatan stok & pesanan baru.'); }
+      }
+
+      function toggleNotifMute(isChecked) {
+        setNotifMuted(!isChecked);
+      }
+
+      function syncNotifToggleUI() {
+        const cb = document.getElementById('toggleNotifMute');
+        if (cb) cb.checked = !AppState.notifMuted;
+      }
+
+      function setOrderFilter(filterName) {
+        AppState.currentOrderFilter = filterName;
+        document.querySelectorAll('.filter-order-btn').forEach(btn => {
+          const f = btn.getAttribute('data-filter');
+          if (f === filterName) {
+            btn.className = 'filter-order-btn flex-1 min-w-[70px] h-8 rounded-xl bg-ios-card text-ios-text font-bold shadow-sm flex items-center justify-center gap-1 transition-all ios-press';
+          } else {
+            btn.className = 'filter-order-btn flex-1 min-w-[70px] h-8 rounded-xl text-ios-text-sec flex items-center justify-center gap-1 transition-all ios-press';
+          }
+        });
+        renderOrders();
+      }
+
+      function renderOrders() {
+        const container = document.getElementById('orderContainer');
+        if (!container) return;
+
+        const myName = String(AppState.namaPicker || '').trim().toLowerCase();
+        let orders = [...(AppState.globalOrders || [])];
+
+        let cSemua = orders.length;
+        let cSaya = 0, cPending = 0, cDiproses = 0, cDikirim = 0, cSelesai = 0, cBatal = 0;
+
+        orders.forEach(o => {
+          const st = String(o.status || 'Pending').toLowerCase();
+          const p = String(o.picker || '').toLowerCase();
+          if (p && myName && p === myName && st === 'diproses') cSaya++;
+          if (st === 'pending') cPending++;
+          else if (st === 'diproses') cDiproses++;
+          else if (st === 'dikirim') cDikirim++;
+          else if (st === 'selesai') cSelesai++;
+          else if (st === 'dibatalkan') cBatal++;
+        });
+
+        const setCnt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setCnt('cntFilterSemua', cSemua);
+        setCnt('cntFilterSaya', cSaya);
+        setCnt('cntFilterPending', cPending);
+        setCnt('cntFilterDiproses', cDiproses);
+        setCnt('cntFilterDikirim', cDikirim);
+        setCnt('cntFilterSelesai', cSelesai);
+        setCnt('cntFilterDibatalkan', cBatal);
+
+        const subEl = document.getElementById('orderCountSubtitle');
+        if (subEl) subEl.innerText = `${cPending} Pending • ${cDiproses} Sedang Disiapkan`;
+
+        if (AppState.currentOrderFilter === 'Tugas Saya') {
+          orders = orders.filter(o => String(o.status || '').toLowerCase() === 'diproses' && String(o.picker || '').toLowerCase() === myName);
+        } else if (AppState.currentOrderFilter !== 'Semua') {
+          orders = orders.filter(o => String(o.status || 'Pending').toLowerCase() === AppState.currentOrderFilter.toLowerCase());
+        }
+
+        const searchVal = (document.getElementById('searchOrder')?.value || '').toLowerCase().trim();
+        if (searchVal) {
+          const keywords = searchVal.split(/\s+/).filter(Boolean);
+          orders = orders.filter(o => {
+            const haystack = `${o.idPesanan || ''} ${o.namaToko || ''} ${(o.items || []).map(i => `${i.idBarang} ${i.namaBarang}`).join(' ')}`.toLowerCase();
+            return keywords.every(k => haystack.includes(k));
+          });
+        }
+
+        if (orders.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full py-12 text-center text-ios-text-ter flex flex-col items-center justify-center bg-ios-card rounded-2xl border border-ios-separator/60">
+              <span class="material-symbols-outlined text-[40px] text-ios-text-ter mb-1">inbox</span>
+              <span class="font-bold text-xs text-ios-text">Tidak ada pesanan cocok</span>
+              <p class="text-[11px] text-ios-text-ter mt-0.5">Filter atau kata kunci saat ini kosong.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = orders.map(order => renderSingleOrderCard(order, myName)).join('');
+        updateBatchBarUI();
+        Motion.staggerCards('.order-card-tile');
+      }
+
+      function renderSingleOrderCard(order, myName) {
+        const id = escapeHTML(order.idPesanan);
+        const store = escapeHTML(order.namaToko);
+        const status = order.status || 'Pending';
+        const picker = String(order.picker || '').trim();
+        const isSelected = AppState.selectedOrderIds.has(order.idPesanan);
+        const items = order.items || [];
+
+        let totalTarget = 0, totalSiap = 0;
+        items.forEach(it => {
+          totalTarget += Number(it.jumlah) || 0;
+          totalSiap += Number(it.disiapkan) || 0;
+        });
+        const pct = totalTarget > 0 ? Math.min(100, Math.floor((totalSiap / totalTarget) * 100)) : 0;
+
+        let statusBadge = '';
+        if (status === 'Pending') statusBadge = `<span class="px-2.5 py-1 rounded-full bg-ios-card-sub border border-ios-separator/60 text-ios-text text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">hourglass_top</span>Pending</span>`;
+        else if (status === 'Diproses') statusBadge = `<span class="px-2.5 py-1 rounded-full bg-ios-blue/15 text-ios-blue text-[10px] font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-ios-blue animate-pulse"></span>Diproses</span>`;
+        else if (status === 'Dikirim') statusBadge = `<span class="px-2.5 py-1 rounded-full bg-ios-orange/15 text-ios-orange text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">local_shipping</span>Dikirim</span>`;
+        else if (status === 'Selesai') statusBadge = `<span class="px-2.5 py-1 rounded-full bg-ios-green/15 text-ios-green text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">check_circle</span>Selesai</span>`;
+        else statusBadge = `<span class="px-2.5 py-1 rounded-full bg-ios-red/15 text-ios-red text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">cancel</span>Batal</span>`;
+
+        let actionBtns = '';
+        const isMyTask = picker && myName && picker.toLowerCase() === myName.toLowerCase();
+
+        if (status === 'Pending') {
+          actionBtns = `
+            <button onclick="window.WarehouseApp.ambilTugasPicker('${order.idPesanan}')" class="h-8 px-3.5 rounded-xl bg-ios-blue text-white text-xs font-bold ios-press shadow-sm" type="button">
+              Ambil Tugas
+            </button>
+          `;
+        } else if (status === 'Diproses') {
+          if (isMyTask) {
+            actionBtns = `
+              <div class="flex items-center gap-1.5">
+                <button onclick="window.WarehouseApp.konfirmasiBatalTugas('${order.idPesanan}')" class="h-8 px-2.5 rounded-xl bg-ios-card-sub text-ios-red text-xs border border-ios-separator/60 ios-press" type="button" title="Batalkan">
+                  <span class="material-symbols-outlined text-[15px]">restart_alt</span>
+                </button>
+                <button onclick="window.WarehouseApp.bukaPickingRoom('${order.idPesanan}')" class="h-8 px-3.5 rounded-xl bg-ios-green text-white text-xs font-bold flex items-center gap-1 shadow-sm ios-press" type="button">
+                  <span class="material-symbols-outlined text-[15px]">edit_document</span>
+                  <span>Lanjutkan</span>
+                </button>
+              </div>
+            `;
+          } else {
+            actionBtns = `
+              <button onclick="window.WarehouseApp.konfirmasiAmbilAlih('${order.idPesanan}')" class="h-8 px-3 rounded-xl bg-ios-card-sub text-ios-blue text-xs font-bold border border-ios-separator/60 ios-press" type="button">
+                Ambil Alih
+              </button>
+            `;
+          }
+        }
+
+        let adminBtn = '';
+        if (isAdmin() && status !== 'Selesai') {
+          adminBtn = `
+            <button onclick="window.WarehouseApp.openStatusModal('${escapeHTML(order.sheetName)}', '${order.idPesanan}')" class="h-8 px-2.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 ios-press" type="button" title="Ubah Status">
+              <span class="material-symbols-outlined text-[15px]">tune</span>
+            </button>
+          `;
+        }
+
+        return `
+          <div class="order-card-tile rounded-2xl bg-ios-card border ${isSelected ? 'border-ios-blue ring-2 ring-ios-blue/30' : 'border-ios-separator/60'} shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between overflow-hidden">
+            <div class="p-3.5 sm:p-4 flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-2.5">
+                <div class="flex items-start gap-2.5 min-w-0">
+                  <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="window.WarehouseApp.toggleOrderSelection('${order.idPesanan}', this.checked)" class="w-4 h-4 mt-0.5 accent-ios-blue cursor-pointer shrink-0" />
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="font-mono font-extrabold text-xs text-ios-blue">#${id}</span>
+                      <span class="text-[9.5px] text-ios-text-ter font-semibold px-2 py-0.2 rounded-md bg-ios-card-sub border border-ios-separator/40 truncate max-w-[130px]">${escapeHTML(order.sheetName || 'Toko')}</span>
+                    </div>
+                    <span class="font-bold text-xs sm:text-sm text-ios-text truncate mt-0.5">${store}</span>
+                    <span class="text-[10.5px] text-ios-text-ter mt-0.5">${escapeHTML(order.tanggal || '')}</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  ${statusBadge}
+                  <button onclick="window.WarehouseApp.openPrintModal('${order.idPesanan}')" class="w-8 h-8 rounded-full bg-ios-card-sub text-ios-blue flex items-center justify-center border border-ios-separator/40 ios-press" type="button" title="Cetak Stiker A4">
+                    <span class="material-symbols-outlined text-[16px]">print</span>
+                  </button>
+                  <button onclick="window.WarehouseApp.cetakThermal('${order.idPesanan}')" class="w-8 h-8 rounded-full bg-ios-orange/15 text-ios-orange flex items-center justify-center border border-ios-orange/30 ios-press" type="button" title="Cetak Struk Thermal">
+                    <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Items List -->
+              <div class="rounded-xl bg-ios-card-sub p-2 border border-ios-separator/40">
+                <table class="w-full text-left text-xs">
+                  <tbody>
+                    ${items.map(it => {
+                      const req = Number(it.jumlah) || 0;
+                      const done = Number(it.disiapkan) || 0;
+                      const isFull = done >= req && req > 0;
+                      return `
+                        <tr class="border-b border-ios-separator/20 last:border-0">
+                          <td class="py-1.5 pr-2 min-w-0">
+                            <span class="font-mono font-bold text-ios-blue text-[10.5px] block leading-none">${escapeHTML(it.idBarang)}</span>
+                            <span class="text-ios-text text-xs truncate max-w-[190px] sm:max-w-[320px] block leading-tight mt-0.5">${escapeHTML(it.namaBarang)}</span>
+                          </td>
+                          <td class="py-1.5 text-right font-mono whitespace-nowrap pl-2">
+                            <span class="${isFull ? 'text-ios-green font-bold' : 'text-ios-text-ter font-medium'}">${done} / ${req} Pcs</span>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Progress Line -->
+              <div class="flex flex-col gap-1">
+                <div class="w-full h-1.5 rounded-full bg-ios-separator/50 overflow-hidden">
+                  <div class="h-full bg-ios-green transition-all duration-300" style="width: ${pct}%;"></div>
+                </div>
+                <div class="flex justify-between text-[10.5px] text-ios-text-ter font-medium">
+                  <span>Siap: <strong class="text-ios-text font-mono">${totalSiap}/${totalTarget} Pcs</strong></span>
+                  <span class="font-mono text-ios-blue font-bold">${pct}%</span>
+                </div>
+              </div>
+
+              ${order.catatan ? `
+                <div class="p-2.5 rounded-xl bg-ios-card-sub text-[11px] text-ios-text-sec border border-ios-separator/30">
+                  <strong class="text-ios-orange">Catatan:</strong> ${escapeHTML(order.catatan)}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="px-3.5 sm:px-4 py-2.5 bg-ios-card-sub/60 flex items-center justify-between gap-2 border-t border-ios-separator/40 flex-wrap">
+              <span class="text-[11px] text-ios-text-ter truncate max-w-[160px]">
+                Picker: <strong class="text-ios-text">${escapeHTML(picker || '-')}</strong>
+              </span>
+              <div class="flex items-center gap-1.5 shrink-0 ml-auto">
+                ${adminBtn}
+                ${actionBtns}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function toggleOrderSelection(orderId, checked) {
+        if (checked) AppState.selectedOrderIds.add(orderId);
+        else AppState.selectedOrderIds.delete(orderId);
+        updateBatchBarUI();
+      }
+
+      function toggleSelectAllOrders() {
+        if (AppState.selectedOrderIds.size > 0) {
+          AppState.selectedOrderIds.clear();
+        } else {
+          (AppState.globalOrders || []).forEach(o => AppState.selectedOrderIds.add(o.idPesanan));
+        }
+        renderOrders();
+        updateBatchBarUI();
+      }
+
+      function clearOrderSelection() {
+        AppState.selectedOrderIds.clear();
+        renderOrders();
+        updateBatchBarUI();
+      }
+
+      function updateBatchBarUI() {
+        const bar = document.getElementById('batchSelectionBar');
+        const countTxt = document.getElementById('batchSelectedCount');
+        const count = AppState.selectedOrderIds.size;
+        if (bar && countTxt) {
+          bar.classList.toggle('hidden', count === 0);
+          countTxt.innerText = count;
+        }
+      }
+
+      function handleOrderInput() {
+        renderOrders();
+      }
+
+      function handleStokInput() {
+        filterStok(false);
+      }
+
+      function setStokStatusFilter(filterKey) {
+        AppState.currentStokStatusFilter = filterKey;
+        const chips = {
+          all: document.getElementById('btnFilterStokAll'),
+          optimal: document.getElementById('btnFilterStokOptimal'),
+          restok: document.getElementById('btnFilterStokRestok'),
+          habis: document.getElementById('btnFilterStokHabis')
+        };
+
+        for (const [key, btn] of Object.entries(chips)) {
+          if (!btn) continue;
+          if (key === filterKey) {
+            btn.className = 'stok-filter-chip h-7 px-3 rounded-full bg-ios-card text-ios-text font-bold border border-ios-separator/70 shadow-sm shrink-0 ios-press';
+          } else {
+            btn.className = 'stok-filter-chip h-7 px-3 rounded-full bg-ios-card-sub text-ios-text-sec font-semibold border border-ios-separator/40 shrink-0 ios-press';
+          }
+        }
+
+        filterStok(false);
+      }
+
+      function openStokDetailModal(skuId) {
+        const item = (AppState.globalStok || []).find(it => String(it.id).trim() === String(skuId).trim());
+        if (!item) return;
+
+        const codeEl = document.getElementById('detailSkuCode');
+        const nameEl = document.getElementById('detailSkuName');
+        const statusEl = document.getElementById('detailSkuStatus');
+        const qtyEl = document.getElementById('detailSkuQty');
+        const valuasiEl = document.getElementById('detailSkuValuasi');
+        const pricingBox = document.getElementById('detailPricingBox');
+        const valuasiRow = document.getElementById('detailValuasiRow');
+        const retEl = document.getElementById('detailSkuRetail');
+        const groEl = document.getElementById('detailSkuGrosir');
+        const hppEl = document.getElementById('detailSkuHpp');
+        const discEl = document.getElementById('detailSkuDiskon');
+
+        const qty = Number(item.stok) || 0;
+        const hpp = Number(item.hpp) || 0;
+        const totalVal = qty * hpp;
+
+        if (codeEl) codeEl.innerText = item.id;
+        if (nameEl) nameEl.innerText = item.nama;
+        if (qtyEl) qtyEl.innerText = `${qty} Unit`;
+        if (valuasiEl) valuasiEl.innerText = formatRupiah(totalVal);
+
+        if (statusEl) {
+          if (qty <= 0) {
+            statusEl.innerText = 'Habis';
+            statusEl.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-ios-red/15 text-ios-red';
+          } else if (qty <= 20) {
+            statusEl.innerText = 'Restok';
+            statusEl.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-ios-orange/15 text-ios-orange';
+          } else {
+            statusEl.innerText = 'Aman';
+            statusEl.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-ios-green/15 text-ios-green';
+          }
+        }
+
+        const isPickerRole = isPicker();
+        if (pricingBox) pricingBox.style.display = isPickerRole ? 'none' : 'flex';
+        if (valuasiRow) valuasiRow.style.display = isPickerRole ? 'none' : 'block';
+
+        if (!isPickerRole) {
+          if (retEl) retEl.innerText = formatRupiah(item.hargaRetail);
+          if (groEl) groEl.innerText = formatRupiah(item.hargaGrosir);
+          if (hppEl) hppEl.innerText = formatRupiah(item.hpp);
+          if (discEl) discEl.innerText = formatPersen(item.diskon);
+        }
+
+        openModal('modalStokDetail');
+      }
+
+      function filterStok(updateKPI = false) {
+        const rawInput = (document.getElementById('searchStok')?.value || '').toLowerCase().trim();
+        const hideEmpty = document.getElementById('toggleEmptyStock')?.checked || false;
+        const keywords = rawInput.split(/\s+/).filter(Boolean);
+
+        let hasil = AppState.globalStok || [];
+
+        if (updateKPI) {
+          let totalValuasi = 0, countOptimal = 0, countPerluRestok = 0, countHabis = 0;
+          (AppState.globalStok || []).forEach(item => {
+            const qty = Number(item.stok) || 0;
+            const hpp = Number(item.hpp) || 0;
+            totalValuasi += (qty * hpp);
+            if (qty > 20) countOptimal++;
+            else if (qty > 0 && qty <= 20) countPerluRestok++;
+            else if (qty <= 0) countHabis++;
+          });
+
+          Motion.counter('metricValuasiHpp', totalValuasi, true);
+          Motion.counter('metricStokOptimal', countOptimal, false, ' SKU');
+          Motion.counter('metricPerluRestok', countPerluRestok, false, ' SKU');
+          Motion.counter('metricHabisTotal', countHabis, false, ' SKU');
+        }
+
+        const badgeCnt = document.getElementById('stokCountBadge');
+        if (badgeCnt) badgeCnt.innerText = `${(AppState.globalStok || []).length} SKU Terdata`;
+
+        if (hideEmpty) {
+          hasil = hasil.filter(item => (Number(item.stok) || 0) > 0);
+        }
+
+        if (AppState.currentStokStatusFilter === 'optimal') {
+          hasil = hasil.filter(item => (Number(item.stok) || 0) > 20);
+        } else if (AppState.currentStokStatusFilter === 'restok') {
+          hasil = hasil.filter(item => {
+            const q = Number(item.stok) || 0;
+            return q > 0 && q <= 20;
+          });
+        } else if (AppState.currentStokStatusFilter === 'habis') {
+          hasil = hasil.filter(item => (Number(item.stok) || 0) <= 0);
+        }
+
+        if (keywords.length > 0) {
+          hasil = hasil.filter(item => {
+            const haystack = `${item.id || ''} ${item.nama || ''}`.toLowerCase();
+            return keywords.every(k => haystack.includes(k));
+          });
+        }
+
+        renderStokUI(hasil);
+      }
+
+      function renderStokUI(items) {
+        const container = document.getElementById('stokContainer');
+        if (!container) return;
+
+        const isPickerRole = isPicker();
+
+        if (!items || items.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full py-12 text-center text-ios-text-ter flex flex-col items-center justify-center bg-ios-card rounded-2xl border border-ios-separator/60">
+              <span class="material-symbols-outlined text-[36px] mb-1">search_off</span>
+              <span class="font-bold text-xs text-ios-text">Tidak ada data stok yang cocok</span>
+              <p class="text-[11px] text-ios-text-ter mt-0.5">Coba gunakan kata kunci SKU atau nama lain.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = items.slice(0, 150).map(item => {
+          const qty = Number(item.stok) || 0;
+          let badgeColor = 'bg-ios-green/15 text-ios-green border-ios-green/30';
+          let badgeText = 'Aman';
+          if (qty <= 0) {
+            badgeColor = 'bg-ios-red/15 text-ios-red border-ios-red/30';
+            badgeText = 'Habis';
+          } else if (qty <= 20) {
+            badgeColor = 'bg-ios-orange/15 text-ios-orange border-ios-orange/30';
+            badgeText = 'Restok';
+          }
+
+          const adminPills = !isPickerRole ? `
+            <div class="pt-1.5 border-t border-ios-separator/30 flex items-center justify-between text-[9.5px] sm:text-[10.5px] font-mono text-ios-text-ter">
+              <span class="text-ios-text font-bold truncate">${formatRupiah(item.hargaRetail)}</span>
+              <span class="text-ios-purple font-bold shrink-0">${formatPersen(item.diskon)}</span>
+            </div>
+          ` : '';
+
+          return `
+            <div onclick="window.WarehouseApp.openStokDetailModal('${escapeHTML(item.id)}')" class="stok-card-tile p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-ios-card border border-ios-separator/60 shadow-ios-card dark:shadow-ios-card-dark flex flex-col justify-between gap-1.5 hover:border-ios-blue/40 transition-all ios-press cursor-pointer min-h-[96px]">
+              <div class="flex items-center justify-between gap-1">
+                <span class="font-mono font-extrabold text-[10px] sm:text-xs text-ios-blue bg-ios-card-sub px-1.5 py-0.5 rounded border border-ios-separator/40 truncate max-w-[85px] sm:max-w-[120px]">
+                  ${escapeHTML(item.id)}
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[9.5px] sm:text-[10px] font-bold border shrink-0 ${badgeColor}">
+                  ${qty} Pcs
+                </span>
+              </div>
+
+              <div class="flex flex-col min-w-0 my-0.5">
+                <span class="font-bold text-[11px] sm:text-xs text-ios-text line-clamp-2 leading-snug">
+                  ${escapeHTML(item.nama)}
+                </span>
+              </div>
+
+              ${adminPills}
+            </div>
+          `;
+        }).join('');
+
+        Motion.staggerCards('.stok-card-tile');
+      }
+
+      function downloadStokCSV() {
+        if (isPicker()) return;
+        if (!AppState.globalStok || AppState.globalStok.length === 0) {
+          showToast("Data Kosong", "Belum ada data untuk diunduh.", true);
+          return;
+        }
+
+        const headers = ["No", "Kode SKU", "Nama Barang", "Harga Retail", "Harga Grosir", "HPP", "Diskon", "Sisa Stok"];
+        const rows = AppState.globalStok.map((it, idx) => [
+          idx + 1,
+          `"${(it.id || '').replace(/"/g, '""')}"`,
+          `"${(it.nama || '').replace(/"/g, '""')}"`,
+          it.hargaRetail || 0,
+          it.hargaGrosir || 0,
+          it.hpp || 0,
+          `"${(it.diskon || '').replace(/"/g, '""')}"`,
+          it.stok || 0
+        ]);
+
+        const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Stok_Gudang_${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      async function ambilTugasPicker(orderId) {
+        if (!AppState.namaPicker) {
+          openModal('modalLoginAwal');
+          return;
+        }
+
+        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
+        if (!order) return;
+
+        if ((order.status || 'Pending') !== 'Pending' || (order.picker && order.picker !== AppState.namaPicker)) {
+          showToast("Tugas Tidak Tersedia", "Hanya pesanan Pending yang dapat diambil.", true);
+          return;
+        }
+
+        order.status = 'Diproses';
+        order.picker = AppState.namaPicker;
+        (order.items || []).forEach(it => {
+          if (it.disiapkan === undefined || it.disiapkan === null) it.disiapkan = 0;
+        });
+
+        renderOrders();
+        idbSet('cached_orders', AppState.globalOrders);
+
+        const payload = {
+          sheetName: order.sheetName,
+          idPesanan: order.idPesanan,
+          pickerName: AppState.namaPicker,
+          itemsProgress: JSON.stringify(order.items || []),
+          isSelesai: 'false'
+        };
+
+        if (navigator.onLine) {
+          fetchAPI('updateProgressPesanan', payload).catch(() => enqueueOfflineAction(payload, 'updateProgressPesanan'));
+        } else {
+          enqueueOfflineAction(payload, 'updateProgressPesanan');
+        }
+
+        showToast("Tugas Diambil", `Mulai penyiapan #${order.idPesanan}`);
+        bukaPickingRoom(orderId);
+      }
+
+      function bukaPickingRoom(orderId) {
+        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
+        if (!order) return;
+
+        AppState.activePickingOrder = order;
+        switchMainTab('picking');
+
+        const titleEl = document.getElementById('pickingOrderHeaderTitle');
+        if (titleEl) titleEl.innerText = `#${escapeHTML(order.idPesanan)} - ${escapeHTML(order.namaToko)}`;
+
+        renderPickingItems();
+        kalkulasiPickingProgress();
+      }
+
+      function kembaliDariPicking() {
+        AppState.activePickingOrder = null;
+        switchMainTab('order');
+      }
+
+      function renderPickingItems() {
+        const container = document.getElementById('pickingItemsListContainer');
+        if (!container || !AppState.activePickingOrder) return;
+
+        container.innerHTML = (AppState.activePickingOrder.items || []).map((item, idx) => {
+          const target = Number(item.jumlah) || 0;
+          const siap = Number(item.disiapkan) || 0;
+          const isDone = siap >= target && target > 0;
+
+          return `
+            <div class="picking-item-tile p-3.5 sm:p-4 rounded-2xl bg-ios-card border ${isDone ? 'border-ios-green/40 bg-ios-green/5' : 'border-ios-separator/60'} shadow-sm flex items-center justify-between gap-3">
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-mono font-bold text-xs text-ios-blue">${escapeHTML(item.idBarang)}</span>
+                  ${isDone ? '<span class="px-2 py-0.2 rounded-md bg-ios-green text-white text-[9px] font-bold">LENGKAP</span>' : ''}
+                </div>
+                <span class="font-bold text-xs sm:text-sm text-ios-text truncate mt-1">${escapeHTML(item.namaBarang)}</span>
+                <span class="text-xs text-ios-text-ter mt-0.5">Target: <strong class="text-ios-text font-mono">${target} Pcs</strong></span>
+              </div>
+
+              <div class="flex items-center rounded-xl bg-ios-card-sub border border-ios-separator/60 overflow-hidden shrink-0 shadow-inner">
+                <button onclick="window.WarehouseApp.adjustPickingItemQty(${idx}, -1)" class="w-9 h-9 flex items-center justify-center font-bold text-base text-ios-text hover:bg-ios-separator/40 ios-press" type="button">-</button>
+                <input type="number" min="0" max="${target}" value="${siap}" onchange="window.WarehouseApp.setPickingItemQtyDirect(${idx}, this.value)" class="w-11 h-9 text-center font-mono font-bold text-xs bg-transparent text-ios-blue focus:outline-none" />
+                <button onclick="window.WarehouseApp.adjustPickingItemQty(${idx}, 1)" class="w-9 h-9 flex items-center justify-center font-bold text-base text-ios-blue hover:bg-ios-separator/40 ios-press" type="button">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        Motion.staggerCards('.picking-item-tile');
+      }
+
+      function adjustPickingItemQty(idx, delta) {
+        if (!AppState.activePickingOrder || !AppState.activePickingOrder.items[idx]) return;
+        const item = AppState.activePickingOrder.items[idx];
+        const target = Number(item.jumlah) || 0;
+        let current = Number(item.disiapkan) || 0;
+        current = Math.max(0, Math.min(target, current + delta));
+        item.disiapkan = current;
+
+        renderPickingItems();
+        kalkulasiPickingProgress();
+      }
+
+      function setPickingItemQtyDirect(idx, val) {
+        if (!AppState.activePickingOrder || !AppState.activePickingOrder.items[idx]) return;
+        const item = AppState.activePickingOrder.items[idx];
+        const target = Number(item.jumlah) || 0;
+        let num = parseInt(val, 10);
+        if (isNaN(num) || num < 0) num = 0;
+        if (num > target) num = target;
+        item.disiapkan = num;
+
+        renderPickingItems();
+        kalkulasiPickingProgress();
+      }
+
+      function kalkulasiPickingProgress() {
+        if (!AppState.activePickingOrder) return;
+        let totalTarget = 0, totalSiap = 0, skuLengkap = 0;
+        const items = AppState.activePickingOrder.items || [];
+
+        items.forEach(it => {
+          const t = Number(it.jumlah) || 0;
+          const s = Number(it.disiapkan) || 0;
+          totalTarget += t;
+          totalSiap += s;
+          if (s >= t && t > 0) skuLengkap++;
+        });
+
+        const pct = totalTarget > 0 ? Math.floor((totalSiap / totalTarget) * 100) : 0;
+        const fillBar = document.getElementById('pickingOverallProgressBar');
+        const summaryUnits = document.getElementById('pickingSummaryUnits');
+        const summarySKU = document.getElementById('pickingSummarySKU');
+
+        if (fillBar) fillBar.style.width = `${Math.min(100, pct)}%`;
+        if (summaryUnits) summaryUnits.innerText = `${totalSiap} / ${totalTarget} Pcs`;
+        if (summarySKU) summarySKU.innerText = `${skuLengkap} / ${items.length} SKU Siap`;
+      }
+
+      function simpanProgressPicking(tandaiSelesai = false) {
+        if (!AppState.activePickingOrder) return;
+
+        let totalTarget = 0, totalSiap = 0, skuLengkap = 0;
+        const items = AppState.activePickingOrder.items || [];
+
+        items.forEach(it => {
+          const t = Number(it.jumlah) || 0;
+          const s = Number(it.disiapkan) || 0;
+          totalTarget += t;
+          totalSiap += s;
+          if (s >= t && t > 0) skuLengkap++;
+        });
+
+        if (tandaiSelesai) {
+          const idEl = document.getElementById('confirmModalOrderId');
+          const storeEl = document.getElementById('confirmModalStoreName');
+          const skuEl = document.getElementById('confirmModalSkuSummary');
+          const unitEl = document.getElementById('confirmModalUnitSummary');
+          const warnEl = document.getElementById('confirmModalWarningBox');
+
+          if (idEl) idEl.innerText = `#${AppState.activePickingOrder.idPesanan}`;
+          if (storeEl) storeEl.innerText = AppState.activePickingOrder.namaToko;
+          if (skuEl) skuEl.innerText = `${skuLengkap} / ${items.length} SKU`;
+          if (unitEl) unitEl.innerText = `${totalSiap} / ${totalTarget} Pcs`;
+
+          if (warnEl) warnEl.classList.toggle('hidden', totalSiap >= totalTarget);
+          openModal('modalKonfirmasiSelesaiPicking');
+          return;
+        }
+
+        const payload = {
+          sheetName: AppState.activePickingOrder.sheetName,
+          idPesanan: AppState.activePickingOrder.idPesanan,
+          pickerName: AppState.namaPicker,
+          itemsProgress: JSON.stringify(items),
+          isSelesai: 'false'
+        };
+
+        idbSet('cached_orders', AppState.globalOrders);
+        renderOrders();
+
+        if (navigator.onLine) {
+          setSyncIndicator(true);
+          fetchAPI('updateProgressPesanan', payload).then(res => {
+            setSyncIndicator(false);
+            if (res && res.success) showToast("Tersimpan", "Progres penyiapan diperbarui.");
+            else enqueueOfflineAction(payload, 'updateProgressPesanan');
+          }).catch(() => {
+            setSyncIndicator(false);
+            enqueueOfflineAction(payload, 'updateProgressPesanan');
+          });
+        } else {
+          enqueueOfflineAction(payload, 'updateProgressPesanan');
+          showToast("Offline", "Progres disimpan di antrean lokal.");
+        }
+      }
+
+      async function eksekusiSelesaiDanKirim() {
+        closeModal('modalKonfirmasiSelesaiPicking');
+        if (!AppState.activePickingOrder) return;
+
+        AppState.activePickingOrder.status = 'Dikirim';
+        const items = AppState.activePickingOrder.items || [];
+        const payload = {
+          sheetName: AppState.activePickingOrder.sheetName,
+          idPesanan: AppState.activePickingOrder.idPesanan,
+          pickerName: AppState.namaPicker,
+          itemsProgress: JSON.stringify(items),
+          isSelesai: 'true'
+        };
+
+        idbSet('cached_orders', AppState.globalOrders);
+        renderOrders();
+
+        if (navigator.onLine) {
+          setSyncIndicator(true);
+          fetchAPI('updateProgressPesanan', payload).then(() => {
+            setSyncIndicator(false);
+            showToast("Pesanan Dikirim", `#${AppState.activePickingOrder?.idPesanan} siap diberangkatkan.`);
+            kembaliDariPicking();
+          }).catch(() => {
+            setSyncIndicator(false);
+            enqueueOfflineAction(payload, 'updateProgressPesanan');
+            kembaliDariPicking();
+          });
+        } else {
+          enqueueOfflineAction(payload, 'updateProgressPesanan');
+          kembaliDariPicking();
+        }
+      }
+
+      function konfirmasiAmbilAlih(orderId) {
+        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
+        if (!order) return;
+
+        AppState.pendingAmbilAlihOrderId = orderId;
+        let totalTarget = 0, totalSiap = 0;
+        (order.items || []).forEach(it => {
+          totalTarget += Number(it.jumlah) || 0;
+          totalSiap += Number(it.disiapkan) || 0;
+        });
+
+        const idEl = document.getElementById('ambilAlihModalOrderId');
+        const prevEl = document.getElementById('ambilAlihModalPrevPicker');
+        const txtEl = document.getElementById('ambilAlihModalProgressText');
+
+        if (idEl) idEl.innerText = `#${order.idPesanan}`;
+        if (prevEl) prevEl.innerText = order.picker || '-';
+        if (txtEl) txtEl.innerText = `${totalSiap} / ${totalTarget} Pcs`;
+
+        openModal('modalAmbilAlihTugas');
+      }
+
+      async function eksekusiAmbilAlih() {
+        closeModal('modalAmbilAlihTugas');
+        if (!AppState.pendingAmbilAlihOrderId) return;
+
+        const order = AppState.globalOrders.find(o => o.idPesanan === AppState.pendingAmbilAlihOrderId);
+        if (!order) return;
+
+        order.picker = AppState.namaPicker;
+        order.status = 'Diproses';
+
+        idbSet('cached_orders', AppState.globalOrders);
+        renderOrders();
+
+        const payload = { sheetName: order.sheetName, idPesanan: order.idPesanan, newPickerName: AppState.namaPicker };
+        if (navigator.onLine) {
+          fetchAPI('gantiPickerPesanan', payload).catch(() => enqueueOfflineAction(payload, 'gantiPickerPesanan'));
+        } else {
+          enqueueOfflineAction(payload, 'gantiPickerPesanan');
+        }
+
+        showToast("Ambil Alih", `Melanjutkan tugas #${order.idPesanan}`);
+        bukaPickingRoom(order.idPesanan);
+      }
+
+      function konfirmasiBatalTugas(orderId) {
+        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
+        if (!order) return;
+
+        AppState.pendingBatalOrderId = orderId;
+        const idEl = document.getElementById('batalModalOrderId');
+        const storeEl = document.getElementById('batalModalStoreName');
+        if (idEl) idEl.innerText = `#${order.idPesanan}`;
+        if (storeEl) storeEl.innerText = order.namaToko;
+
+        openModal('modalBatalTugas');
+      }
+
+      async function eksekusiBatalTugas() {
+        closeModal('modalBatalTugas');
+        if (!AppState.pendingBatalOrderId) return;
+
+        const order = AppState.globalOrders.find(o => o.idPesanan === AppState.pendingBatalOrderId);
+        if (!order) return;
+
+        order.status = 'Pending';
+        order.picker = '';
+        (order.items || []).forEach(it => { it.disiapkan = 0; });
+
+        idbSet('cached_orders', AppState.globalOrders);
+        renderOrders();
+
+        const payload = { sheetName: order.sheetName, idPesanan: order.idPesanan };
+        if (navigator.onLine) {
+          fetchAPI('batalkanAmbilTugas', payload).catch(() => enqueueOfflineAction(payload, 'batalkanAmbilTugas'));
+        } else {
+          enqueueOfflineAction(payload, 'batalkanAmbilTugas');
+        }
+
+        showToast("Tugas Direset", `#${order.idPesanan} kembali ke status Pending.`);
+        if (AppState.activePickingOrder && AppState.activePickingOrder.idPesanan === order.idPesanan) {
+          kembaliDariPicking();
+        }
+      }
+
+      function openScanner(target = 'order') {
+        AppState.currentScanTarget = target;
+        openModal('modalScanner');
+
+        setTimeout(() => {
+          const readerEl = document.getElementById('reader');
+          if (readerEl) readerEl.innerHTML = '';
+          const flashBtn = document.getElementById('btnToggleFlash');
+          if (flashBtn) flashBtn.classList.add('hidden');
+          AppState.isFlashOn = false;
+
+          try {
+            if (!AppState.html5QrcodeScanner) {
+              AppState.html5QrcodeScanner = new Html5Qrcode("reader");
+            }
+            AppState.html5QrcodeScanner.start(
+              { facingMode: "environment" },
+              { fps: 15, qrbox: { width: 220, height: 220 } },
+              onScanSuccess,
+              () => {}
+            ).then(() => {
+              const video = document.querySelector('#reader video');
+              if (video && video.srcObject) {
+                const track = video.srcObject.getVideoTracks()[0];
+                if (track && typeof track.getCapabilities === 'function' && track.getCapabilities().torch) {
+                  if (flashBtn) flashBtn.classList.remove('hidden');
+                }
+              }
+            }).catch(err => {
+              showToast("Kamera Gagal", "Izin akses kamera diperlukan.", true);
+              closeScanner();
+            });
+          } catch (e) {
+            closeScanner();
+          }
+        }, 250);
+      }
+
+      function closeScanner() {
+        if (AppState.html5QrcodeScanner && AppState.html5QrcodeScanner.isScanning) {
+          AppState.html5QrcodeScanner.stop().then(() => closeModal('modalScanner')).catch(() => closeModal('modalScanner'));
+        } else {
+          closeModal('modalScanner');
+        }
+      }
+
+      async function toggleFlash() {
+        if (AppState.html5QrcodeScanner && AppState.html5QrcodeScanner.isScanning) {
+          try {
+            AppState.isFlashOn = !AppState.isFlashOn;
+            await AppState.html5QrcodeScanner.applyVideoConstraints({ advanced: [{ torch: AppState.isFlashOn }] });
+            const txt = document.getElementById('textFlash');
+            if (txt) txt.innerText = AppState.isFlashOn ? 'Matikan Senter' : 'Senter';
+          } catch (e) {
+            AppState.isFlashOn = !AppState.isFlashOn;
+          }
+        }
+      }
+
+      function onScanSuccess(decodedText) {
+        const sound = document.getElementById('notifSound');
+        if (sound) sound.play().catch(() => {});
+        closeScanner();
+
+        const code = (decodedText || '').trim();
+        if (AppState.currentScanTarget === 'order') {
+          const inp = document.getElementById('searchOrder');
+          if (inp) { inp.value = code; renderOrders(); }
+        } else if (AppState.currentScanTarget === 'stok') {
+          const inp = document.getElementById('searchStok');
+          if (inp) { inp.value = code; filterStok(); }
+        } else if (AppState.currentScanTarget === 'picking' && AppState.activePickingOrder) {
+          const clean = code.toLowerCase();
+          const foundIdx = (AppState.activePickingOrder.items || []).findIndex(it => (it.idBarang || '').toLowerCase().trim() === clean);
+
+          if (foundIdx !== -1) {
+            adjustPickingItemQty(foundIdx, 1);
+            showToast("Scan Sukses", `+1 ${AppState.activePickingOrder.items[foundIdx].namaBarang}`);
+          } else {
+            showToast("SKU Tidak Ada", `Barcode ${code} bukan bagian dari pesanan ini.`, true);
+          }
+        }
+      }
+
+      function openStatusModal(sheetName, orderId) {
+        AppState.currentStatusOrderId = orderId;
+        AppState.currentStatusSheet = sheetName;
+        const idEl = document.getElementById('statusModalOrderId');
+        if (idEl) idEl.innerText = `#${orderId}`;
+        openModal('modalStatus');
+      }
+
+      async function executeStatusUpdate(newStatus) {
+        if (newStatus === 'Dikirim') {
+          closeModal('modalStatus');
+          const inp = document.getElementById('inputKodeUnik');
+          if (inp) inp.value = '';
+          openModal('modalKodeUnik');
+          return;
+        }
+
+        closeModal('modalStatus');
+        const order = AppState.globalOrders.find(o => o.idPesanan === AppState.currentStatusOrderId);
+        if (order) order.status = newStatus;
+
+        renderOrders();
+        idbSet('cached_orders', AppState.globalOrders);
+
+        const payload = {
+          sheetName: AppState.currentStatusSheet || order?.sheetName,
+          idPesanan: AppState.currentStatusOrderId,
+          newStatus: newStatus,
+          kodeUnik: ''
+        };
+
+        if (navigator.onLine) {
+          setSyncIndicator(true);
+          fetchAPI('updateStatusPesanan', payload).then(() => {
+            setSyncIndicator(false);
+            showToast("Status Diperbarui", `#${AppState.currentStatusOrderId} -> ${newStatus}`);
+          }).catch(() => {
+            setSyncIndicator(false);
+            enqueueOfflineAction(payload, 'updateStatusPesanan');
+          });
+        } else {
+          enqueueOfflineAction(payload, 'updateStatusPesanan');
+        }
+      }
+
+      async function confirmDikirimStatus() {
+        const inp = document.getElementById('inputKodeUnik');
+        const kode = (inp?.value || '').trim();
+
+        closeModal('modalKodeUnik');
+        const order = AppState.globalOrders.find(o => o.idPesanan === AppState.currentStatusOrderId);
+        if (order) order.status = 'Dikirim';
+
+        renderOrders();
+        idbSet('cached_orders', AppState.globalOrders);
+
+        const payload = {
+          sheetName: AppState.currentStatusSheet || order?.sheetName,
+          idPesanan: AppState.currentStatusOrderId,
+          newStatus: 'Dikirim',
+          kodeUnik: kode
+        };
+
+        if (navigator.onLine) {
+          setSyncIndicator(true);
+          fetchAPI('updateStatusPesanan', payload).then(() => {
+            setSyncIndicator(false);
+            showToast("Pesanan Dikirim", `#${AppState.currentStatusOrderId}`);
+          }).catch(() => {
+            setSyncIndicator(false);
+            enqueueOfflineAction(payload, 'updateStatusPesanan');
+          });
+        } else {
+          enqueueOfflineAction(payload, 'updateStatusPesanan');
+        }
+      }
+
+      function openPrintModal(orderId) {
+        AppState.currentPrintOrderId = orderId;
+        openModal('modalPrintSlot');
+      }
+
+      function executePrint(slotNumber) {
+        closeModal('modalPrintSlot');
+        const order = AppState.globalOrders.find(o => o.idPesanan === AppState.currentPrintOrderId);
+        if (!order) return;
+
+        const rowStart = Math.ceil(slotNumber / 2);
+        const colStart = (slotNumber % 2 === 0) ? 2 : 1;
+        const gridAreaCode = `${rowStart} / ${colStart} / ${rowStart + 1} / ${colStart + 1}`;
+
+        const itemRows = (order.items || []).map((it, i) => `
+          <tr>
+            <td style="text-align:center; font-weight:bold; padding:3px 4px; border-bottom:1px dashed #ccc;">${i + 1}</td>
+            <td style="font-weight:bold; padding:3px 4px; border-bottom:1px dashed #ccc; font-family:monospace;">${escapeHTML(it.idBarang)}</td>
+            <td style="padding:3px 4px; border-bottom:1px dashed #ccc; text-transform:uppercase;">${escapeHTML(it.namaBarang)}</td>
+            <td style="text-align:center; font-weight:bold; padding:3px 4px; border-bottom:1px dashed #ccc;">${it.jumlah || 0}</td>
+          </tr>
+        `).join('');
+
+        const printHTML = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Label Pengiriman #${order.idPesanan}</title>
+              <style>
+                @page { size: A4 portrait; margin: 0; }
+                body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; background: #fff; }
+                .a4-page { width: 210mm; height: 297mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding: 8mm; gap: 4mm; box-sizing: border-box; }
+                .card-container { grid-area: ${gridAreaCode}; border: 1.5px dashed #000; border-radius: 6px; padding: 5mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; font-size: 9.5px; }
+                .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
+                .table-items { width: 100%; border-collapse: collapse; font-size: 9px; margin-top: 4px; }
+                .signature { width: 100%; text-align: center; font-size: 8px; margin-top: 6px; }
+                .sign-line { border-bottom: 1px dashed #000; height: 16px; width: 80%; margin: 2px auto 0; display: block; }
+              </style>
+            </head>
+            <body>
+              <div class="a4-page">
+                <div class="card-container">
+                  <div class="header">
+                    <h3 style="margin:0; font-size:12px;">PAKET GUDANG: #${order.idPesanan}</h3>
+                    <h4 style="margin:2px 0 0; font-size:10.5px;">Penerima: ${order.namaToko}</h4>
+                  </div>
+                  <div>
+                    <div><strong>Waktu:</strong> ${order.tanggal}</div>
+                    ${order.catatan ? `<div><strong>Catatan:</strong> ${order.catatan}</div>` : ''}
+                    <table class="table-items">
+                      <thead>
+                        <tr style="border-bottom:1px solid #000;">
+                          <th style="width:20px;">No</th>
+                          <th>SKU</th>
+                          <th>Nama Barang</th>
+                          <th style="width:30px; text-align:center;">Qty</th>
+                        </tr>
+                      </thead>
+                      <tbody>${itemRows}</tbody>
+                    </table>
+                  </div>
+                  <table class="signature">
+                    <tr>
+                      <td style="width:50%;">Picker: ${order.picker || '-'}<span class="sign-line"></span></td>
+                      <td style="width:50%;">Kurir Ekspedisi<span class="sign-line"></span></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <script>
+                setTimeout(() => { window.print(); window.close(); }, 300);
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const printWin = window.open('', '_blank');
+        if (!printWin) {
+          showToast("Pop-up Diblokir", "Izinkan pop-up di browser untuk mencetak.", true);
+          return;
+        }
+        printWin.document.open();
+        printWin.document.write(printHTML);
+        printWin.document.close();
+      }
+
+      function bukaModalBatchPrint() {
+        if (AppState.selectedOrderIds.size === 0) {
+          showToast("Pilih Pesanan", "Pilih minimal 1 pesanan untuk dicetak.");
+          return;
+        }
+
+        const selectedOrders = (AppState.globalOrders || []).filter(o => AppState.selectedOrderIds.has(o.idPesanan));
+        const ordersWithHeight = selectedOrders.map(o => {
+          const itemCount = (o.items || []).length;
+          const hasNote = Boolean(o.catatan);
+          const estHeight = 36 + (itemCount * 6.5) + (hasNote ? 12 : 0);
+          return { order: o, estHeight };
+        });
+
+        const MAX_COL_HEIGHT = 270;
+        const pages = [];
+        let curPage = { col1: [], col2: [], h1: 0, h2: 0 };
+
+        ordersWithHeight.forEach(item => {
+          if (curPage.h1 + item.estHeight <= MAX_COL_HEIGHT) {
+            curPage.col1.push(item);
+            curPage.h1 += item.estHeight;
+          } else if (curPage.h2 + item.estHeight <= MAX_COL_HEIGHT) {
+            curPage.col2.push(item);
+            curPage.h2 += item.estHeight;
+          } else {
+            pages.push(curPage);
+            curPage = { col1: [item], col2: [], h1: item.estHeight, h2: 0 };
+          }
+        });
+        if (curPage.col1.length > 0 || curPage.col2.length > 0) {
+          pages.push(curPage);
+        }
+
+        AppState.pendingBatchPages = pages;
+
+        const summaryEl = document.getElementById('batchPrintAllocSummary');
+        if (summaryEl) {
+          summaryEl.innerHTML = `
+            <div class="flex items-center justify-between font-bold text-ios-text border-b border-ios-separator/30 pb-2">
+              <span>Total ${selectedOrders.length} Pesanan</span>
+              <span class="text-ios-blue font-mono text-sm">${pages.length} Lembar A4</span>
+            </div>
+            <div class="flex flex-col gap-1.5 mt-2">
+              ${pages.map((p, pIdx) => `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-ios-card text-xs border border-ios-separator/40">
+                  <span class="font-bold text-ios-text">Lembar ${pIdx + 1}</span>
+                  <span class="text-ios-text-ter font-mono">${p.col1.length + p.col2.length} Order (Kiri: ${p.col1.length}, Kanan: ${p.col2.length})</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        openModal('modalBatchPrintPreview');
+      }
+
+      function eksekusiCetakBatchPintar() {
+        closeModal('modalBatchPrintPreview');
+        if (!AppState.pendingBatchPages || AppState.pendingBatchPages.length === 0) return;
+
+        const pagesHTML = AppState.pendingBatchPages.map((page, pIdx) => {
+          const renderCol = (items) => items.map(item => {
+            const o = item.order;
+            const rows = (o.items || []).map((it, i) => `
+              <tr>
+                <td style="text-align:center; font-weight:bold; padding:2px 3px; border-bottom:1px dashed #ddd;">${i + 1}</td>
+                <td style="font-weight:bold; padding:2px 3px; border-bottom:1px dashed #ddd; font-family:monospace;">${escapeHTML(it.idBarang)}</td>
+                <td style="padding:2px 3px; border-bottom:1px dashed #ddd; text-transform:uppercase;">${escapeHTML(it.namaBarang)}</td>
+                <td style="text-align:center; font-weight:bold; padding:2px 3px; border-bottom:1px dashed #ddd;">${it.jumlah || 0}</td>
+              </tr>
+            `).join('');
+
+            return `
+              <div class="batch-card" style="border:1.5px solid #000; border-radius:5px; padding:3.5mm; margin-bottom:3.5mm; font-size:8.5px; break-inside:avoid;">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #000; padding-bottom:2px; margin-bottom:2px;">
+                  <strong style="font-size:10px;">#${o.idPesanan}</strong>
+                  <span style="font-weight:bold;">${o.namaToko}</span>
+                </div>
+                <div style="font-size:8px; margin-bottom:2px;">Waktu: ${o.tanggal} ${o.picker ? `| Picker: <strong>${o.picker}</strong>` : ''}</div>
+                ${o.catatan ? `<div style="font-size:7.5px; background:#f4f4f4; padding:2px 3px; border-radius:3px; margin-bottom:2px;">Catatan: ${o.catatan}</div>` : ''}
+                <table style="width:100%; border-collapse:collapse; font-size:8px;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #000;">
+                      <th style="width:14px;">No</th>
+                      <th>SKU</th>
+                      <th>Barang</th>
+                      <th style="width:20px; text-align:center;">Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody>${rows}</tbody>
+                </table>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="a4-batch-page">
+              <div class="batch-page-header">
+                <span>Pusat Kendali Gudang - Manifest Batch</span>
+                <span>Halaman ${pIdx + 1} dari ${AppState.pendingBatchPages.length}</span>
+              </div>
+              <div class="batch-columns-container">
+                <div class="batch-col">${renderCol(page.col1)}</div>
+                <div class="batch-col">${renderCol(page.col2)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const fullHTML = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Cetak Batch Pesanan</title>
+              <style>
+                @page { size: A4 portrait; margin: 8mm; }
+                body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; background: #fff; }
+                .a4-batch-page { width: 100%; min-height: 275mm; page-break-after: always; display: flex; flex-direction: column; }
+                .a4-batch-page:last-child { page-break-after: auto; }
+                .batch-page-header { display: flex; justify-content: space-between; font-size: 8px; font-weight: bold; border-bottom: 1px solid #999; padding-bottom: 2mm; margin-bottom: 3mm; color: #555; }
+                .batch-columns-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; flex-grow: 1; }
+                .batch-col { display: flex; flex-direction: column; }
+              </style>
+            </head>
+            <body>
+              ${pagesHTML}
+              <script>
+                setTimeout(() => { window.print(); window.close(); }, 350);
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const pWin = window.open('', '_blank');
+        if (!pWin) {
+          showToast("Pop-up Diblokir", "Izinkan jendela pop-up di browser untuk mencetak.", true);
+          return;
+        }
+        pWin.document.open();
+        pWin.document.write(fullHTML);
+        pWin.document.close();
+      }
+      
+      // --- TAMBAHAN: FUNGSI CETAK THERMAL ---
+      function cetakThermal(orderId) {
+        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
+        if (!order) return;
+
+        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+
+        showToast("Menghubungkan...", "Mengirim data ke printer thermal.");
+
+        qz.websocket.connect().then(() => {
+          return qz.printers.find(AppState.thermalPrinterName);
+        }).then((printer) => {
+          var config = qz.configs.create(printer);
+          var data = [];
+          
+          // --- ESC/POS Command Start ---
+          data.push('\x1B\x40'); // Init/Reset Printer
+          
+          // Header (Center Align)
+          data.push('\x1B\x61\x01'); 
+          data.push('PUSAT KENDALI GUDANG\n');
+          data.push('MANIFEST PESANAN\n');
+          
+          // Info Order (Left Align)
+          data.push('\x1B\x61\x00'); 
+          data.push('--------------------------------\n');
+          data.push(`ID Order: #${order.idPesanan}\n`);
+          data.push(`Toko    : ${order.namaToko}\n`);
+          data.push(`Tanggal : ${order.tanggal || '-'}\n`);
+          data.push(`Picker  : ${order.picker || '-'}\n`);
+          data.push(`Dicetak : ${printTime}\n`);
+          data.push('--------------------------------\n');
+          
+          // Items
+          let totalQty = 0;
+          (order.items || []).forEach(it => {
+            // Batasi panjang nama barang agar tidak turun baris berantakan (maks 32 char)
+            const nama = (it.namaBarang || '').substring(0, 32);
+            data.push(`${nama}\n`);
+            data.push(`${it.idBarang}  ->  Qty: ${it.jumlah}\n\n`);
+            totalQty += (Number(it.jumlah) || 0);
+          });
+          
+          // Footer
+          data.push('--------------------------------\n');
+          data.push(`Total Item: ${totalQty} Pcs\n`);
+          
+          if(order.catatan) {
+            data.push('\x1B\x61\x01'); // Center
+            data.push(`\n[CATATAN]\n${order.catatan}\n`);
+          }
+
+          // Kertas Kosong & AUTOCUT
+          data.push('\x0A\x0A\x0A\x0A\x0A'); // Feed 5 line
+          data.push('\x1D\x56\x00');         // Full Cut (GS V 0)
+
+          return qz.print(config, data);
+        }).then(() => {
+          showToast("Print Sukses", "Struk berhasil dicetak & dipotong.");
+          return qz.websocket.disconnect();
+        }).catch((err) => {
+          console.error(err);
+          showToast("Print Gagal", "Pastikan aplikasi QZ Tray aktif dan nama printer sesuai di Setelan.", true);
+          if (qz.websocket.isActive()) qz.websocket.disconnect();
+        });
+      }
+
+      function cetakBatchThermal() {
+        if (AppState.selectedOrderIds.size === 0) {
+          showToast("Pilih Pesanan", "Pilih minimal 1 pesanan untuk dicetak.");
+          return;
+        }
+
+        const selectedOrders = (AppState.globalOrders || []).filter(o => AppState.selectedOrderIds.has(o.idPesanan));
+        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+        
+        showToast("Menghubungkan...", `Mengirim ${selectedOrders.length} pesanan ke printer thermal.`);
+
+        qz.websocket.connect().then(() => {
+          return qz.printers.find(AppState.thermalPrinterName);
+        }).then((printer) => {
+          var config = qz.configs.create(printer);
+          var data = [];
+          
+          selectedOrders.forEach(order => {
+            // --- ESC/POS Command Start ---
+            data.push('\x1B\x40'); // Init/Reset Printer
+            
+            // Header (Center Align)
+            data.push('\x1B\x61\x01'); 
+            data.push('PUSAT KENDALI GUDANG\n');
+            data.push('MANIFEST PESANAN\n');
+            
+            // Info Order (Left Align)
+            data.push('\x1B\x61\x00'); 
+            data.push('--------------------------------\n');
+            data.push(`ID Order: #${order.idPesanan}\n`);
+            data.push(`Toko    : ${order.namaToko}\n`);
+            data.push(`Tanggal : ${order.tanggal || '-'}\n`);
+            data.push(`Picker  : ${order.picker || '-'}\n`);
+            data.push(`Dicetak : ${printTime}\n`);
+            data.push('--------------------------------\n');
+            
+            // Items
+            let totalQty = 0;
+            (order.items || []).forEach(it => {
+              const nama = (it.namaBarang || '').substring(0, 32);
+              data.push(`${nama}\n`);
+              data.push(`${it.idBarang}  ->  Qty: ${it.jumlah}\n\n`);
+              totalQty += (Number(it.jumlah) || 0);
+            });
+            
+            // Footer
+            data.push('--------------------------------\n');
+            data.push(`Total Item: ${totalQty} Pcs\n`);
+            
+            if(order.catatan) {
+              data.push('\x1B\x61\x01'); // Center
+              data.push(`\n[CATATAN]\n${order.catatan}\n`);
+            }
+
+            // Kertas Kosong & AUTOCUT untuk setiap struk
+            data.push('\x0A\x0A\x0A\x0A\x0A'); // Feed 5 line
+            data.push('\x1D\x56\x00');         // Full Cut (GS V 0)
+          });
+
+          return qz.print(config, data);
+        }).then(() => {
+          showToast("Print Sukses", `${selectedOrders.length} struk berhasil dicetak berurutan.`);
+          return qz.websocket.disconnect();
+        }).catch((err) => {
+          console.error(err);
+          showToast("Print Gagal", "Pastikan aplikasi QZ Tray aktif dan nama printer sesuai di Setelan.", true);
+          if (qz.websocket.isActive()) qz.websocket.disconnect();
+        });
+      }
+
+      async function loadSetupConfig() {
+        try {
+          const res = await fetchAPI('getSetupData');
+          if (res && res.success) {
+            setupFormPengaturan(res.allSheets, res.savedStockSheet, res.savedOrderSheets);
+          }
+        } catch (e) {
+          console.warn("Setup load error:", e);
+        }
+      }
+
+      function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
+        const selectStock = document.getElementById('selectStockSheet');
+        const checkContainer = document.getElementById('checkboxOrderSheets');
+        const inpPrinter = document.getElementById('inputPrinterName'); // TAMBAHAN PRINTER
+
+        if (selectStock) {
+          selectStock.innerHTML = (allSheets || []).map(s => `
+            <option value="${escapeHTML(s)}" ${s === savedStockSheet ? 'selected' : ''}>${escapeHTML(s)}</option>
+          `).join('');
+        }
+
+        if (checkContainer) {
+          checkContainer.innerHTML = (allSheets || []).map(s => `
+            <label class="flex items-center justify-between p-2 rounded-xl bg-ios-card hover:bg-ios-separator/30 cursor-pointer border border-ios-separator/30">
+              <div class="flex items-center gap-2.5">
+                <input type="checkbox" value="${escapeHTML(s)}" ${(savedOrderSheets || []).includes(s) ? 'checked' : ''} class="order-sheet-chk w-4 h-4 accent-ios-blue cursor-pointer" />
+                <span class="font-semibold text-ios-text text-xs">${escapeHTML(s)}</span>
+              </div>
+            </label>
+          `).join('');
+        }
+        
+        // Render current printer name
+        if (inpPrinter) inpPrinter.value = AppState.thermalPrinterName || '';
+      }
+
+      function saveSheetConfig() {
+        if (!isSuperAdmin() || !AppState.currentUser?._sessionPass) {
+          const inpUser = document.getElementById('inputSuperAdminUser');
+          if (inpUser && isSuperAdmin()) {
+            inpUser.value = AppState.currentUser?.username || '';
+          }
+          openModal('modalAuthSuperAdmin');
+          return;
+        }
+        eksekusiSimpanSheet(AppState.currentUser?.username, AppState.currentUser?._sessionPass);
+      }
+
+      async function eksekusiSimpanSheet(username, password) {
+        const stockSheet = document.getElementById('selectStockSheet')?.value;
+        const checkedSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked')).map(c => c.value);
+        const printerName = document.getElementById('inputPrinterName')?.value.trim(); // TAMBAHAN PRINTER
+
+        if (!stockSheet || checkedSheets.length === 0) {
+          showToast("Perhatian", "Pilih Sheet Stok dan minimal 1 sheet pesanan toko!", true);
+          return;
+        }
+        
+        // Simpan Printer
+        if(printerName) {
+            AppState.thermalPrinterName = printerName;
+            safeStorageSet('warehouse_printer_name', printerName);
+        }
+
+        setSyncIndicator(true);
+        try {
+          const res = await fetchAPI('verifyAndSaveSettings', {
+            username: username,
+            password: password,
+            stockSheet: stockSheet,
+            orderSheetsArray: JSON.stringify(checkedSheets)
+          });
+          setSyncIndicator(false);
+          if (res && res.success) {
+            showToast("Sukses", "Konfigurasi sistem berhasil disimpan.");
+            loadAdminData(true);
+          } else {
+            showToast("Gagal", (res && res.message) || "Otorisasi Super Admin gagal.", true);
+          }
+        } catch (e) {
+          setSyncIndicator(false);
+          showToast("Error", e.message, true);
+        }
+      }
+
+      function verifyAndSaveSuperAdmin() {
+        const u = document.getElementById('inputSuperAdminUser')?.value.trim();
+        const p = document.getElementById('inputSuperAdminPass')?.value.trim();
+        const err = document.getElementById('superAdminAuthError');
+
+        if (!u || !p) {
+          if (err) { err.innerText = "Masukkan username & password!"; err.classList.remove('hidden'); }
+          return;
+        }
+
+        closeModal('modalAuthSuperAdmin');
+        eksekusiSimpanSheet(u, p);
+      }
+
+      async function clearAppCache() {
+        localStorage.removeItem('cached_stok');
+        localStorage.removeItem('cached_orders');
+        localStorage.removeItem('offline_action_queue');
+        localStorage.removeItem('warehouse_seen_orders');
+        localStorage.removeItem('warehouse_seen_lowstock');
+        localStorage.removeItem('warehouse_notif_muted');
+        // Catatan: kita tidak menghapus warehouse_printer_name dan user agar tidak repot login ulang
+
+        try {
+          const db = await openIndexedDB();
+          const tx = db.transaction(IDB_CONFIG.storeName, 'readwrite');
+          tx.objectStore(IDB_CONFIG.storeName).clear();
+        } catch (e) {}
+
+        AppState.globalOrders = [];
+        AppState.globalStok = [];
+        AppState.offlineActionQueue = [];
+        AppState.lastSeenOrderIds = new Set();
+        AppState.lastSeenLowStock = new Set();
+        AppState.notifMuted = false;
+        syncNotifToggleUI();
+        renderOrders();
+        filterStok(true);
+        updateStokBadge();
+        updateOutboxUI();
+        showToast("Cache Bersih", "Memori lokal telah dikosongkan.");
+      }
+
+      function openModal(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) {
+          m.classList.remove('hidden');
+          const box = m.querySelector('.rounded-3xl, .rounded-2xl');
+          if (box && typeof gsap !== 'undefined') {
+            gsap.fromTo(box, { y: 22, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.2)' });
+          }
+        }
+      }
+
+      function closeModal(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) m.classList.add('hidden');
+      }
+
+      function showToast(title, msg, isError = false) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `p-3 rounded-2xl ${isError ? 'bg-ios-red text-white' : 'bg-ios-card text-ios-text border border-ios-separator/70'} shadow-xl flex items-center gap-2.5 pointer-events-auto w-full text-xs`;
+        toast.innerHTML = `
+          <span class="material-symbols-outlined text-[17px] ${isError ? 'text-white' : 'text-ios-blue'} shrink-0">${isError ? 'error' : 'check_circle'}</span>
+          <div class="flex flex-col min-w-0">
+            <span class="font-bold truncate leading-tight">${escapeHTML(title)}</span>
+            <span class="text-[10.5px] opacity-80 truncate leading-tight mt-0.5">${escapeHTML(msg)}</span>
+          </div>
+        `;
+
+        container.appendChild(toast);
+        if (typeof gsap !== 'undefined') {
+          gsap.fromTo(toast, { y: -12, opacity: 0, scale: 0.95 }, { y: 0, opacity: 1, scale: 1, duration: 0.28, ease: 'back.out(1.2)' });
+          setTimeout(() => {
+            gsap.to(toast, { opacity: 0, y: -8, duration: 0.22, onComplete: () => toast.remove() });
+          }, 3000);
+        } else {
+          setTimeout(() => toast.remove(), 3200);
+        }
+      }
+
+      window.WarehouseApp = {
+        initTheme,
+        toggleTheme,
+        switchMainTab,
+        handleInitialLogin,
+        logoutPengguna,
+        eksekusiLogout,
+        setOrderFilter,
+        handleOrderInput,
+        handleStokInput,
+        setStokStatusFilter,
+        openStokDetailModal,
+        openScanner,
+        closeScanner,
+        toggleFlash,
+        filterStok,
+        downloadStokCSV,
+        ambilTugasPicker,
+        bukaPickingRoom,
+        kembaliDariPicking,
+        adjustPickingItemQty,
+        setPickingItemQtyDirect,
+        simpanProgressPicking,
+        eksekusiSelesaiDanKirim,
+        konfirmasiAmbilAlih,
+        eksekusiAmbilAlih,
+        konfirmasiBatalTugas,
+        eksekusiBatalTugas,
+        getActivePickingOrderId: () => AppState.activePickingOrder ? AppState.activePickingOrder.idPesanan : '',
+        openStatusModal,
+        executeStatusUpdate,
+        confirmDikirimStatus,
+        toggleSelectAllOrders,
+        toggleOrderSelection,
+        clearOrderSelection,
+        bukaModalBatchPrint,
+        eksekusiCetakBatchPintar,
+        cetakBatchThermal,
+        openPrintModal,
+        executePrint,
+        cetakThermal,       // <--- TAMBAHAN FUNGSI TEREKSPOS
+        saveSheetConfig,
+        verifyAndSaveSuperAdmin,
+        clearAppCache,
+        toggleNotifMute,
+        syncNotifToggleUI,
+        updateStokBadge,
+        processOfflineQueue,
+        loadAdminData,
+        openModal,
+        closeModal
+      };
+
+      window.onload = async function() {
+        initTheme();
+        updateSessionUI();
+        updateOutboxUI();
+        loadNotificationSnapshot();
+        syncNotifToggleUI();
+
+        const idbO = await idbGet('cached_orders', null);
+        const idbS = await idbGet('cached_stok', null);
+        if (idbO) AppState.globalOrders = idbO;
+        if (idbS) AppState.globalStok = idbS;
+
+        if (AppState.globalOrders.length > 0) renderOrders();
+        if (AppState.globalStok.length > 0) { filterStok(true); updateStokBadge(); }
+
+        if (!AppState.currentUser) {
+          openModal('modalLoginAwal');
+        } else {
+          // First load = silent baseline (no toast for pre-existing data)
+          loadAdminData(false, false);
+        }
+
+        setInterval(() => {
+          if (navigator.onLine && AppState.currentUser && !AppState.activePickingOrder) {
+            loadAdminData(false, true); // polling announces diffs as toasts
+          }
+        }, 30000);
+      };
+    </script>
+  </body>
+</html>
