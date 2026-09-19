@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
-    <title>Order Manager - DA</title>
+    <title>Pusat Kendali Gudang</title>
     
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
@@ -159,11 +159,12 @@
             <span class="material-symbols-outlined text-[19px]">warehouse</span>
           </div>
           <div class="flex flex-col min-w-0">
-            <span class="font-bold text-[14.5px] leading-tight tracking-tight truncate">Duta Abadi</span>
+            <span class="font-bold text-[14.5px] leading-tight tracking-tight truncate">Kendali Gudang</span>
             <div class="flex items-center gap-1.5 text-[10px] mt-0.5">
               <span id="liveStatusDot" class="w-1.5 h-1.5 rounded-full bg-ios-green shrink-0 animate-pulse"></span>
               <span id="liveStatusText" class="text-ios-green font-bold uppercase tracking-wider">Online</span>
               <span class="text-ios-text-ter">•</span>
+              <!-- Jam Realtime -->
               <span id="headerSyncTimestamp" class="text-ios-text-ter font-mono truncate">Menghubungkan...</span>
             </div>
           </div>
@@ -427,11 +428,44 @@
             <div id="checkboxOrderSheets" class="space-y-1.5 max-h-44 overflow-y-auto p-2.5 rounded-xl bg-ios-card-sub border border-ios-separator/40 text-xs"></div>
           </div>
           
-          <!-- Pengaturan Printer Thermal -->
-          <div class="flex flex-col gap-1.5 mt-2 pt-3 border-t border-ios-separator/40">
-            <label class="text-xs font-bold text-ios-text-sec" for="inputPrinterName">Nama Printer Thermal (QZ Tray)</label>
-            <input id="inputPrinterName" class="w-full h-10 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Contoh: MINIPOS" type="text" />
-            <p class="text-[10px] text-ios-text-ter">Pastikan nama sama dengan di Devices & Printers Windows.</p>
+          <!-- Pengaturan Printer Thermal Multi-Mode -->
+          <div class="flex flex-col gap-2.5 mt-2 pt-3 border-t border-ios-separator/40">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-ios-orange text-[18px]">receipt_long</span>
+                <span class="text-xs font-bold text-ios-text-sec">Konfigurasi Printer Struk Thermal</span>
+              </div>
+              <button onclick="window.WarehouseApp.testPrintThermal()" class="h-7 px-2.5 rounded-lg bg-ios-orange/15 text-ios-orange border border-ios-orange/30 text-[11px] font-bold flex items-center gap-1 ios-press" type="button">
+                <span class="material-symbols-outlined text-[13px]">play_arrow</span>
+                <span>Test Print</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="flex flex-col gap-1">
+                <label class="font-bold text-ios-text-sec text-[11px]" for="selectThermalMode">Metode Cetak Thermal</label>
+                <select id="selectThermalMode" onchange="window.WarehouseApp.onThermalSettingChange()" class="w-full h-9 px-2.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue">
+                  <option value="browser">Universal (Browser / Driver POS) - Rekomendasi</option>
+                  <option value="rawbt">RawBT App (Khusus Android)</option>
+                  <option value="bluetooth">Bluetooth Langsung (Web Bluetooth)</option>
+                  <option value="qz">QZ Tray Engine (PC ESC/POS)</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="font-bold text-ios-text-sec text-[11px]" for="selectThermalWidth">Lebar Kertas Struk</label>
+                <select id="selectThermalWidth" onchange="window.WarehouseApp.onThermalSettingChange()" class="w-full h-9 px-2.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue">
+                  <option value="58mm">58mm (Ukuran Standar Kecil / Mini POS)</option>
+                  <option value="80mm">80mm (Ukuran Lebar / Kasir Besar)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="qzPrinterNameContainer" class="flex flex-col gap-1">
+              <label class="text-[11px] font-bold text-ios-text-sec" for="inputPrinterName">Nama Printer Thermal (Khusus QZ Tray)</label>
+              <input id="inputPrinterName" class="w-full h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Contoh: POS-58 atau MINIPOS" type="text" />
+              <p class="text-[10px] text-ios-text-ter">Jika menggunakan QZ Tray, samakan nama dengan di Devices &amp; Printers Windows.</p>
+            </div>
           </div>
 
           <button onclick="window.WarehouseApp.saveSheetConfig()" class="h-10 px-4 rounded-xl bg-ios-blue text-white font-bold text-xs flex items-center justify-center gap-1.5 ios-press self-end shadow-sm mt-1" type="button">
@@ -678,6 +712,68 @@
       </div>
     </div>
 
+    <!-- Thermal Print Action Sheet Modal -->
+    <div id="modalThermalChoice" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
+      <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3">
+        <div class="flex items-center justify-between pb-1 border-b border-ios-separator/40">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-ios-orange text-[20px]">receipt_long</span>
+            <h4 class="text-xs font-extrabold text-ios-text uppercase tracking-wider">Cetak Struk Thermal</h4>
+          </div>
+          <span id="thermalModalOrderId" class="font-mono font-bold text-ios-blue text-xs">-</span>
+        </div>
+
+        <p class="text-[11px] text-ios-text-ter leading-snug">Pilih jalur cetak sesuai printer thermal yang sedang terhubung:</p>
+
+        <div class="flex flex-col gap-2">
+          <button onclick="window.WarehouseApp.runThermalPrintWithMode('browser')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
+            <div>
+              <div class="font-bold text-xs text-ios-text flex items-center gap-1">
+                <span>Universal (Driver / Browser)</span>
+                <span class="px-1.5 py-0.2 rounded bg-ios-green/15 text-ios-green text-[9px] font-extrabold">Stabil</span>
+              </div>
+              <p class="text-[10px] text-ios-text-ter">Langsung cetak ke printer USB/POS (58mm/80mm)</p>
+            </div>
+            <span class="material-symbols-outlined text-ios-blue text-[18px]">print</span>
+          </button>
+
+          <button onclick="window.WarehouseApp.runThermalPrintWithMode('rawbt')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
+            <div>
+              <span class="font-bold text-xs text-ios-text">RawBT Print (Android)</span>
+              <p class="text-[10px] text-ios-text-ter">Kirim data raw ESC/POS via aplikasi RawBT</p>
+            </div>
+            <span class="material-symbols-outlined text-ios-orange text-[18px]">android</span>
+          </button>
+
+          <button onclick="window.WarehouseApp.runThermalPrintWithMode('bluetooth')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
+            <div>
+              <span class="font-bold text-xs text-ios-text">Bluetooth Langsung</span>
+              <p class="text-[10px] text-ios-text-ter">Koneksi Web Bluetooth Chrome tanpa install aplikasi</p>
+            </div>
+            <span class="material-symbols-outlined text-ios-blue text-[18px]">bluetooth</span>
+          </button>
+
+          <button onclick="window.WarehouseApp.runThermalPrintWithMode('qz')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
+            <div>
+              <span class="font-bold text-xs text-ios-text">QZ Tray (PC Desktop)</span>
+              <p class="text-[10px] text-ios-text-ter">Cetak background &amp; autocut via QZ Tray PC</p>
+            </div>
+            <span class="material-symbols-outlined text-ios-text-sec text-[18px]">desktop_windows</span>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between pt-1 border-t border-ios-separator/30 text-[11px]">
+          <span class="text-ios-text-ter">Ukuran Kertas:</span>
+          <div class="flex items-center gap-1.5 font-bold font-mono">
+            <button onclick="window.WarehouseApp.setThermalWidthDirect('58mm')" id="btnWidth58" class="px-2 py-0.5 rounded-lg border text-xs ios-press">58mm</button>
+            <button onclick="window.WarehouseApp.setThermalWidthDirect('80mm')" id="btnWidth80" class="px-2 py-0.5 rounded-lg border text-xs ios-press">80mm</button>
+          </div>
+        </div>
+
+        <button onclick="window.WarehouseApp.closeModal('modalThermalChoice')" class="h-9 rounded-xl bg-ios-card-sub text-ios-text text-xs font-semibold border border-ios-separator/50 ios-press mt-0.5" type="button">Tutup</button>
+      </div>
+    </div>
+
     <!-- Super Admin Auth Modal -->
     <div id="modalAuthSuperAdmin" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
       <div class="w-full max-w-xs rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3">
@@ -753,7 +849,7 @@
     <!-- Camera QR/Barcode Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     
-    <!-- QZ Tray Thermal Printer Library (TAMBAHAN) -->
+    <!-- QZ Tray Thermal Printer Library -->
     <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2.4/qz-tray.min.js"></script>
 
     <script>
@@ -764,11 +860,14 @@
 
       const IDB_CONFIG = { dbName: 'WarehouseControlDB_v3', dbVersion: 1, storeName: 'keyval' };
 
-      // Encapsulated State Management
       const AppState = {
         config: safeStorageGet('appHybridConfig_v3', DEFAULT_CONFIG),
         currentUser: safeStorageGet('warehouse_user', null),
-        thermalPrinterName: safeStorageGet('warehouse_printer_name', 'MINIPOS'), // TAMBAHAN
+        thermalPrinterName: safeStorageGet('warehouse_printer_name', 'MINIPOS'),
+        thermalMode: safeStorageGet('warehouse_thermal_mode', 'browser'), // 'browser' | 'rawbt' | 'bluetooth' | 'qz'
+        thermalPaperWidth: safeStorageGet('warehouse_thermal_width', '58mm'), // '58mm' | '80mm'
+        activeThermalOrderId: null,
+        isBatchThermal: false,
         globalOrders: [],
         globalStok: [],
         currentOrderFilter: 'Pending',
@@ -789,13 +888,11 @@
         lastSeenLowStock: new Set(),
         notifMuted: safeStorageGet('warehouse_notif_muted', false),
 
-        // Getter untuk mengambil nama berdasarkan user saat ini
         get namaPicker() {
           return this.currentUser ? (this.currentUser.name || this.currentUser.username) : '';
         }
       };
 
-      /* Smooth & Purposeful Motion Controller (GSAP 3) */
       const Motion = {
         counter(elId, targetVal, isCurrency = false, suffix = '') {
           const el = document.getElementById(elId);
@@ -1195,10 +1292,21 @@
 
       function recordFreshness() {
         const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        const stamp = document.getElementById('headerSyncTimestamp');
         const stokStamp = document.getElementById('stokFreshnessStamp');
-        if (stamp) stamp.innerText = `${timeStr} WIB`;
         if (stokStamp) stokStamp.innerText = `Sinkron ${timeStr}`;
+      }
+
+      function startLiveClock() {
+        setInterval(() => {
+          const stamp = document.getElementById('headerSyncTimestamp');
+          if (stamp) {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            stamp.innerText = `${h}:${m}:${s} WIB`;
+          }
+        }, 1000);
       }
 
       // --- Notification Engine (stok menipis & pesanan baru) ---
@@ -2474,142 +2582,401 @@
         pWin.document.write(fullHTML);
         pWin.document.close();
       }
-      
-      // --- TAMBAHAN: FUNGSI CETAK THERMAL ---
+
+      // --- SISTEM CETAK STRUK THERMAL UNIVERSAL ---
+
+      function updateThermalModalWidthButtons() {
+        const w58 = document.getElementById('btnWidth58');
+        const w80 = document.getElementById('btnWidth80');
+        const is58 = AppState.thermalPaperWidth === '58mm';
+        if (w58) {
+          w58.className = is58 
+            ? 'px-2.5 py-0.5 rounded-lg bg-ios-blue text-white border-ios-blue font-bold text-xs' 
+            : 'px-2.5 py-0.5 rounded-lg bg-ios-card-sub text-ios-text-ter border-ios-separator/60 text-xs';
+        }
+        if (w80) {
+          w80.className = !is58 
+            ? 'px-2.5 py-0.5 rounded-lg bg-ios-blue text-white border-ios-blue font-bold text-xs' 
+            : 'px-2.5 py-0.5 rounded-lg bg-ios-card-sub text-ios-text-ter border-ios-separator/60 text-xs';
+        }
+      }
+
+      function setThermalWidthDirect(width) {
+        AppState.thermalPaperWidth = width;
+        safeStorageSet('warehouse_thermal_width', width);
+        const sel = document.getElementById('selectThermalWidth');
+        if (sel) sel.value = width;
+        updateThermalModalWidthButtons();
+        showToast("Lebar Kertas", `Kertas thermal diatur ke ${width}`);
+      }
+
+      function openThermalChoiceModal(orderId, isBatch = false) {
+        AppState.activeThermalOrderId = orderId;
+        AppState.isBatchThermal = isBatch;
+        const idEl = document.getElementById('thermalModalOrderId');
+        if (idEl) {
+          idEl.innerText = isBatch ? `Batch (${AppState.selectedOrderIds.size} Order)` : `#${orderId}`;
+        }
+        updateThermalModalWidthButtons();
+        openModal('modalThermalChoice');
+      }
+
       function cetakThermal(orderId) {
-        const order = AppState.globalOrders.find(o => o.idPesanan === orderId);
-        if (!order) return;
-
-        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
-
-        showToast("Menghubungkan...", "Mengirim data ke printer thermal.");
-
-        qz.websocket.connect().then(() => {
-          return qz.printers.find(AppState.thermalPrinterName);
-        }).then((printer) => {
-          var config = qz.configs.create(printer);
-          var data = [];
-          
-          // --- ESC/POS Command Start ---
-          data.push('\x1B\x40'); // Init/Reset Printer
-          
-          // Header (Center Align)
-          data.push('\x1B\x61\x01'); 
-          data.push('PUSAT KENDALI GUDANG\n');
-          data.push('MANIFEST PESANAN\n');
-          
-          // Info Order (Left Align)
-          data.push('\x1B\x61\x00'); 
-          data.push('--------------------------------\n');
-          data.push(`ID Order: #${order.idPesanan}\n`);
-          data.push(`Toko    : ${order.namaToko}\n`);
-          data.push(`Tanggal : ${order.tanggal || '-'}\n`);
-          data.push(`Picker  : ${order.picker || '-'}\n`);
-          data.push(`Dicetak : ${printTime}\n`);
-          data.push('--------------------------------\n');
-          
-          // Items
-          let totalQty = 0;
-          (order.items || []).forEach(it => {
-            // Batasi panjang nama barang agar tidak turun baris berantakan (maks 32 char)
-            const nama = (it.namaBarang || '').substring(0, 32);
-            data.push(`${nama}\n`);
-            data.push(`${it.idBarang}  ->  Qty: ${it.jumlah}\n\n`);
-            totalQty += (Number(it.jumlah) || 0);
-          });
-          
-          // Footer
-          data.push('--------------------------------\n');
-          data.push(`Total Item: ${totalQty} Pcs\n`);
-          
-          if(order.catatan) {
-            data.push('\x1B\x61\x01'); // Center
-            data.push(`\n[CATATAN]\n${order.catatan}\n`);
-          }
-
-          // Kertas Kosong & AUTOCUT
-          data.push('\x0A\x0A\x0A\x0A\x0A'); // Feed 5 line
-          data.push('\x1D\x56\x00');         // Full Cut (GS V 0)
-
-          return qz.print(config, data);
-        }).then(() => {
-          showToast("Print Sukses", "Struk berhasil dicetak & dipotong.");
-          return qz.websocket.disconnect();
-        }).catch((err) => {
-          console.error(err);
-          showToast("Print Gagal", "Pastikan aplikasi QZ Tray aktif dan nama printer sesuai di Setelan.", true);
-          if (qz.websocket.isActive()) qz.websocket.disconnect();
-        });
+        // Jika sudah memilih metode spesifik selain default dialog, bisa langsung eksekusi atau buka modal
+        openThermalChoiceModal(orderId, false);
       }
 
       function cetakBatchThermal() {
         if (AppState.selectedOrderIds.size === 0) {
-          showToast("Pilih Pesanan", "Pilih minimal 1 pesanan untuk dicetak.");
+          showToast("Pilih Pesanan", "Pilih minimal 1 pesanan untuk dicetak thermal.");
+          return;
+        }
+        openThermalChoiceModal(null, true);
+      }
+
+      function runThermalPrintWithMode(mode) {
+        closeModal('modalThermalChoice');
+        const isBatch = AppState.isBatchThermal;
+        const orderId = AppState.activeThermalOrderId;
+
+        let targetOrders = [];
+        if (isBatch) {
+          targetOrders = (AppState.globalOrders || []).filter(o => AppState.selectedOrderIds.has(o.idPesanan));
+        } else {
+          const o = AppState.globalOrders.find(it => it.idPesanan === orderId);
+          if (o) targetOrders = [o];
+        }
+
+        if (targetOrders.length === 0) {
+          showToast("Data Kosong", "Tidak ada data pesanan yang dipilih.", true);
           return;
         }
 
-        const selectedOrders = (AppState.globalOrders || []).filter(o => AppState.selectedOrderIds.has(o.idPesanan));
+        if (mode === 'browser') {
+          printThermalBrowser(targetOrders, AppState.thermalPaperWidth || '58mm');
+        } else if (mode === 'rawbt') {
+          printThermalRawBT(targetOrders);
+        } else if (mode === 'bluetooth') {
+          printThermalBluetooth(targetOrders);
+        } else if (mode === 'qz') {
+          printThermalQZTray(targetOrders);
+        }
+      }
+
+      function printThermalBrowser(orders, paperWidth = '58mm') {
         const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
-        
-        showToast("Menghubungkan...", `Mengirim ${selectedOrders.length} pesanan ke printer thermal.`);
+        const widthVal = paperWidth === '80mm' ? '72mm' : '48mm'; // print printable area width
 
-        qz.websocket.connect().then(() => {
-          return qz.printers.find(AppState.thermalPrinterName);
-        }).then((printer) => {
-          var config = qz.configs.create(printer);
-          var data = [];
-          
-          selectedOrders.forEach(order => {
-            // --- ESC/POS Command Start ---
-            data.push('\x1B\x40'); // Init/Reset Printer
-            
-            // Header (Center Align)
-            data.push('\x1B\x61\x01'); 
-            data.push('PUSAT KENDALI GUDANG\n');
-            data.push('MANIFEST PESANAN\n');
-            
-            // Info Order (Left Align)
-            data.push('\x1B\x61\x00'); 
-            data.push('--------------------------------\n');
-            data.push(`ID Order: #${order.idPesanan}\n`);
-            data.push(`Toko    : ${order.namaToko}\n`);
-            data.push(`Tanggal : ${order.tanggal || '-'}\n`);
-            data.push(`Picker  : ${order.picker || '-'}\n`);
-            data.push(`Dicetak : ${printTime}\n`);
-            data.push('--------------------------------\n');
-            
-            // Items
-            let totalQty = 0;
-            (order.items || []).forEach(it => {
-              const nama = (it.namaBarang || '').substring(0, 32);
-              data.push(`${nama}\n`);
-              data.push(`${it.idBarang}  ->  Qty: ${it.jumlah}\n\n`);
-              totalQty += (Number(it.jumlah) || 0);
-            });
-            
-            // Footer
-            data.push('--------------------------------\n');
-            data.push(`Total Item: ${totalQty} Pcs\n`);
-            
-            if(order.catatan) {
-              data.push('\x1B\x61\x01'); // Center
-              data.push(`\n[CATATAN]\n${order.catatan}\n`);
-            }
+        const receiptsHTML = orders.map((order, idx) => {
+          let totalQty = 0;
+          const itemsHTML = (order.items || []).map(it => {
+            const qty = Number(it.jumlah) || 0;
+            totalQty += qty;
+            return `
+              <div style="margin-bottom: 4px; border-bottom: 1px dotted #ccc; padding-bottom: 2px;">
+                <div style="font-weight: bold; font-size: 11px; word-break: break-word;">${escapeHTML(it.namaBarang)}</div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #222;">
+                  <span style="font-family: monospace;">[${escapeHTML(it.idBarang)}]</span>
+                  <span style="font-weight: bold; font-family: monospace;">Qty: ${qty} Pcs</span>
+                </div>
+              </div>
+            `;
+          }).join('');
 
-            // Kertas Kosong & AUTOCUT untuk setiap struk
-            data.push('\x0A\x0A\x0A\x0A\x0A'); // Feed 5 line
-            data.push('\x1D\x56\x00');         // Full Cut (GS V 0)
+          return `
+            <div class="receipt-box" style="${idx > 0 ? 'page-break-before: always; margin-top: 15px;' : ''}">
+              <div style="text-align: center; margin-bottom: 6px;">
+                <div style="font-weight: 800; font-size: 13px; letter-spacing: 0.5px;">PUSAT KENDALI GUDANG</div>
+                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase;">MANIFEST PENGIRIMAN</div>
+              </div>
+              <div style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 4px 0; margin-bottom: 6px; font-size: 10px; line-height: 1.35;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>ID ORDER:</span>
+                  <strong style="font-family: monospace; font-size: 11px;">#${order.idPesanan}</strong>
+                </div>
+                <div>TOKO : <strong>${escapeHTML(order.namaToko)}</strong></div>
+                <div>WAKTU: ${order.tanggal || '-'}</div>
+                <div>PICKER: <strong>${escapeHTML(order.picker || '-')}</strong></div>
+                <div>CETAK: ${printTime}</div>
+              </div>
+
+              <div style="margin-bottom: 6px;">
+                ${itemsHTML}
+              </div>
+
+              <div style="border-top: 1px dashed #000; padding-top: 4px; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+                <span>TOTAL BARANG:</span>
+                <span style="font-family: monospace;">${totalQty} Pcs</span>
+              </div>
+
+              ${order.catatan ? `
+                <div style="margin-top: 6px; padding: 3px; border: 1px dashed #555; font-size: 9.5px; word-break: break-word;">
+                  <strong>CATATAN:</strong> ${escapeHTML(order.catatan)}
+                </div>
+              ` : ''}
+
+              <div style="text-align: center; font-size: 8.5px; margin-top: 8px; color: #444;">
+                <div>- Simpan tanda bukti ini untuk manifest -</div>
+                <div style="letter-spacing: 2px; margin-top: 2px;">*** SELESAI ***</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const fullHTML = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>Cetak Struk Thermal</title>
+              <style>
+                @page {
+                  size: ${paperWidth} auto;
+                  margin: 0;
+                }
+                @media print {
+                  html, body {
+                    width: ${paperWidth};
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: #fff !important;
+                    color: #000 !important;
+                  }
+                  .receipt-box {
+                    width: 100% !important;
+                    box-sizing: border-box;
+                    padding: 3mm 2.5mm !important;
+                  }
+                }
+                body {
+                  margin: 0 auto;
+                  padding: 8px;
+                  width: ${widthVal};
+                  font-family: 'Courier New', Courier, monospace, sans-serif;
+                  background: #fff;
+                  color: #000;
+                  font-size: 10.5px;
+                  line-height: 1.25;
+                }
+                .receipt-box {
+                  width: 100%;
+                  box-sizing: border-box;
+                }
+              </style>
+            </head>
+            <body>
+              ${receiptsHTML}
+              <script>
+                window.onload = function() {
+                  setTimeout(() => {
+                    window.print();
+                    setTimeout(() => window.close(), 600);
+                  }, 250);
+                };
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const pWin = window.open('', '_blank', 'width=380,height=600');
+        if (!pWin) {
+          showToast("Pop-up Diblokir", "Izinkan pop-up browser untuk mencetak struk thermal.", true);
+          return;
+        }
+        pWin.document.open();
+        pWin.document.write(fullHTML);
+        pWin.document.close();
+        showToast("Membuka Struk", `Mempersiapkan dialog cetak (${paperWidth})...`);
+      }
+
+      function generateEscPosCommands(orders) {
+        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+        let escpos = "";
+
+        orders.forEach(order => {
+          escpos += '\x1B\x40'; // Init printer
+          escpos += '\x1B\x61\x01'; // Center align
+          escpos += 'PUSAT KENDALI GUDANG\n';
+          escpos += 'MANIFEST PENGIRIMAN\n';
+          escpos += '\x1B\x61\x00'; // Left align
+          escpos += '--------------------------------\n';
+          escpos += `ID Order: #${order.idPesanan}\n`;
+          escpos += `Toko    : ${order.namaToko}\n`;
+          escpos += `Tanggal : ${order.tanggal || '-'}\n`;
+          escpos += `Picker  : ${order.picker || '-'}\n`;
+          escpos += `Dicetak : ${printTime}\n`;
+          escpos += '--------------------------------\n';
+
+          let totalQty = 0;
+          (order.items || []).forEach(it => {
+            const nama = (it.namaBarang || '').substring(0, 32);
+            escpos += `${nama}\n`;
+            escpos += `${it.idBarang}  -> Qty: ${it.jumlah}\n\n`;
+            totalQty += (Number(it.jumlah) || 0);
           });
 
-          return qz.print(config, data);
+          escpos += '--------------------------------\n';
+          escpos += `Total Item: ${totalQty} Pcs\n`;
+
+          if (order.catatan) {
+            escpos += '\x1B\x61\x01';
+            escpos += `\n[CATATAN]\n${order.catatan}\n`;
+          }
+
+          escpos += '\x0A\x0A\x0A\x0A'; 
+          escpos += '\x1D\x56\x00'; // Autocut
+        });
+
+        return escpos;
+      }
+
+      function printThermalRawBT(orders) {
+        showToast("RawBT", `Mengirim ${orders.length} struk ke RawBT...`);
+        const escpos = generateEscPosCommands(orders);
+
+        try {
+          const base64Data = btoa(unescape(encodeURIComponent(escpos)));
+          const intentUrl = "intent:" + base64Data + "#Intent;scheme=rawb64;package=ru.a402d.rawbtprinter;end;";
+          window.location.assign(intentUrl);
+        } catch (e) {
+          showToast("Gagal RawBT", "Tidak dapat membuat instruksi RawBT. Beralih ke mode Universal.", true);
+          printThermalBrowser(orders, AppState.thermalPaperWidth);
+        }
+      }
+
+      async function printThermalBluetooth(orders) {
+        if (!navigator.bluetooth) {
+          showToast("Bluetooth Tidak Didukung", "Gunakan Chrome di Android atau beralih ke Mode Universal.", true);
+          printThermalBrowser(orders, AppState.thermalPaperWidth);
+          return;
+        }
+
+        try {
+          showToast("Mencari Printer", "Pilih printer Bluetooth thermal pada pop-up...");
+          const device = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [
+              '000018f0-0000-1000-8000-00805f9b34fb',
+              'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+              '0000ff00-0000-1000-8000-00805f9b34fb',
+              '49535343-fe7d-4ae5-8fa9-9fafd205e455'
+            ]
+          });
+
+          if (!device.gatt) throw new Error("GATT tidak tersedia");
+          const server = await device.gatt.connect();
+          
+          let characteristic = null;
+          const services = await server.getPrimaryServices();
+          for (const service of services) {
+            try {
+              const chars = await service.getCharacteristics();
+              for (const c of chars) {
+                if (c.properties.write || c.properties.writeWithoutResponse) {
+                  characteristic = c;
+                  break;
+                }
+              }
+              if (characteristic) break;
+            } catch (e) {}
+          }
+
+          if (!characteristic) {
+            throw new Error("Karakteristik write Bluetooth printer tidak ditemukan.");
+          }
+
+          const escpos = generateEscPosCommands(orders);
+          const encoder = new TextEncoder();
+          const data = encoder.encode(escpos);
+
+          // Kirim per chunk 100 bytes (standar MTU Bluetooth LE)
+          const CHUNK_SIZE = 100;
+          for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+            const chunk = data.slice(i, i + CHUNK_SIZE);
+            if (characteristic.properties.writeWithoutResponse) {
+              await characteristic.writeValueWithoutResponse(chunk);
+            } else {
+              await characteristic.writeValue(chunk);
+            }
+          }
+
+          showToast("Print Sukses", "Data struk berhasil dikirim via Bluetooth.");
+          if (device.gatt.connected) device.gatt.disconnect();
+        } catch (err) {
+          console.error("Bluetooth print error:", err);
+          showToast("Bluetooth Batal/Gagal", "Membuka struk dalam Mode Universal...");
+          printThermalBrowser(orders, AppState.thermalPaperWidth);
+        }
+      }
+
+      function printThermalQZTray(orders) {
+        if (typeof qz === 'undefined') {
+          showToast("QZ Tray Error", "Library QZ Tray tidak termuat. Gunakan Mode Universal.", true);
+          printThermalBrowser(orders, AppState.thermalPaperWidth);
+          return;
+        }
+
+        const escpos = generateEscPosCommands(orders);
+        showToast("QZ Tray", "Menghubungkan ke aplikasi QZ Tray di PC...");
+
+        qz.websocket.connect().then(() => {
+          return qz.printers.find(AppState.thermalPrinterName || 'MINIPOS');
+        }).then((printer) => {
+          var config = qz.configs.create(printer);
+          return qz.print(config, [escpos]);
         }).then(() => {
-          showToast("Print Sukses", `${selectedOrders.length} struk berhasil dicetak berurutan.`);
+          showToast("Print Sukses", "Struk berhasil dicetak & dipotong.");
           return qz.websocket.disconnect();
         }).catch((err) => {
-          console.error(err);
-          showToast("Print Gagal", "Pastikan aplikasi QZ Tray aktif dan nama printer sesuai di Setelan.", true);
-          if (qz.websocket.isActive()) qz.websocket.disconnect();
+          console.warn("QZ Tray connect failed:", err);
+          showToast("QZ Tray Tidak Aktif", "QZ Tray belum berjalan di PC. Beralih ke Mode Universal.", true);
+          printThermalBrowser(orders, AppState.thermalPaperWidth);
+          if (qz.websocket && qz.websocket.isActive()) qz.websocket.disconnect();
         });
+      }
+
+      function testPrintThermal() {
+        const sampleOrder = {
+          idPesanan: 'TEST-001',
+          namaToko: 'TOKO CONTOH TEST PRINT',
+          tanggal: new Date().toISOString().slice(0, 10),
+          picker: AppState.namaPicker || 'Operator Gudang',
+          catatan: 'Uji coba hasil cetak printer thermal berhasil!',
+          items: [
+            { idBarang: 'SKU-SAMPLE-1', namaBarang: 'Barang Uji Coba A', jumlah: 2 },
+            { idBarang: 'SKU-SAMPLE-2', namaBarang: 'Barang Uji Coba B', jumlah: 5 }
+          ]
+        };
+
+        const mode = AppState.thermalMode || 'browser';
+        if (mode === 'browser') {
+          printThermalBrowser([sampleOrder], AppState.thermalPaperWidth || '58mm');
+        } else if (mode === 'rawbt') {
+          printThermalRawBT([sampleOrder]);
+        } else if (mode === 'bluetooth') {
+          printThermalBluetooth([sampleOrder]);
+        } else if (mode === 'qz') {
+          printThermalQZTray([sampleOrder]);
+        }
+      }
+
+      function onThermalSettingChange() {
+        const selMode = document.getElementById('selectThermalMode')?.value;
+        const selWidth = document.getElementById('selectThermalWidth')?.value;
+        const qzContainer = document.getElementById('qzPrinterNameContainer');
+
+        if (selMode) {
+          AppState.thermalMode = selMode;
+          safeStorageSet('warehouse_thermal_mode', selMode);
+        }
+        if (selWidth) {
+          AppState.thermalPaperWidth = selWidth;
+          safeStorageSet('warehouse_thermal_width', selWidth);
+        }
+
+        if (qzContainer) {
+          qzContainer.style.display = selMode === 'qz' ? 'flex' : 'none';
+        }
       }
 
       async function loadSetupConfig() {
@@ -2626,7 +2993,9 @@
       function setupFormPengaturan(allSheets, savedStockSheet, savedOrderSheets) {
         const selectStock = document.getElementById('selectStockSheet');
         const checkContainer = document.getElementById('checkboxOrderSheets');
-        const inpPrinter = document.getElementById('inputPrinterName'); // TAMBAHAN PRINTER
+        const inpPrinter = document.getElementById('inputPrinterName');
+        const selMode = document.getElementById('selectThermalMode');
+        const selWidth = document.getElementById('selectThermalWidth');
 
         if (selectStock) {
           selectStock.innerHTML = (allSheets || []).map(s => `
@@ -2645,8 +3014,10 @@
           `).join('');
         }
         
-        // Render current printer name
         if (inpPrinter) inpPrinter.value = AppState.thermalPrinterName || '';
+        if (selMode) selMode.value = AppState.thermalMode || 'browser';
+        if (selWidth) selWidth.value = AppState.thermalPaperWidth || '58mm';
+        onThermalSettingChange();
       }
 
       function saveSheetConfig() {
@@ -2664,14 +3035,13 @@
       async function eksekusiSimpanSheet(username, password) {
         const stockSheet = document.getElementById('selectStockSheet')?.value;
         const checkedSheets = Array.from(document.querySelectorAll('.order-sheet-chk:checked')).map(c => c.value);
-        const printerName = document.getElementById('inputPrinterName')?.value.trim(); // TAMBAHAN PRINTER
+        const printerName = document.getElementById('inputPrinterName')?.value.trim();
 
         if (!stockSheet || checkedSheets.length === 0) {
           showToast("Perhatian", "Pilih Sheet Stok dan minimal 1 sheet pesanan toko!", true);
           return;
         }
         
-        // Simpan Printer
         if(printerName) {
             AppState.thermalPrinterName = printerName;
             safeStorageSet('warehouse_printer_name', printerName);
@@ -2719,7 +3089,6 @@
         localStorage.removeItem('warehouse_seen_orders');
         localStorage.removeItem('warehouse_seen_lowstock');
         localStorage.removeItem('warehouse_notif_muted');
-        // Catatan: kita tidak menghapus warehouse_printer_name dan user agar tidak repot login ulang
 
         try {
           const db = await openIndexedDB();
@@ -2822,7 +3191,12 @@
         cetakBatchThermal,
         openPrintModal,
         executePrint,
-        cetakThermal,       // <--- TAMBAHAN FUNGSI TEREKSPOS
+        cetakThermal,
+        openThermalChoiceModal,
+        runThermalPrintWithMode,
+        setThermalWidthDirect,
+        testPrintThermal,
+        onThermalSettingChange,
         saveSheetConfig,
         verifyAndSaveSuperAdmin,
         clearAppCache,
@@ -2841,6 +3215,7 @@
         updateOutboxUI();
         loadNotificationSnapshot();
         syncNotifToggleUI();
+        startLiveClock(); // <--- Menjalankan Jam Realtime di App Bar
 
         const idbO = await idbGet('cached_orders', null);
         const idbS = await idbGet('cached_stok', null);
