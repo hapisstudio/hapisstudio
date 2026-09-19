@@ -133,7 +133,6 @@
 
   <body class="bg-ios-bg text-ios-text min-h-screen selection:bg-ios-blue/25">
 
-    <!-- Top iOS Header Bar -->
     <header class="fixed top-0 left-0 w-full z-50 bg-ios-bar/90 ios-blur border-b border-ios-separator/60 no-print transition-colors">
       <!-- Silent Sync Track Indicator -->
       <div class="w-full h-[2px] bg-transparent overflow-hidden">
@@ -171,6 +170,13 @@
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
+          <!-- Persistent Bluetooth Auto-Print Action Pill -->
+          <button id="btnConnectBluetooth" onclick="window.WarehouseApp.toggleBluetoothPrinter()" class="h-8 px-2.5 rounded-full bg-ios-card-sub text-ios-text flex items-center gap-1.5 ios-press border border-ios-separator/60" type="button" title="Sambungkan Minipos MP-80UBX">
+            <span id="btStatusIcon" class="material-symbols-outlined text-[16px] text-ios-text-ter">bluetooth</span>
+            <span id="btStatusText" class="text-[10.5px] font-bold hidden sm:inline text-ios-text-sec">Hubungkan Minipos</span>
+            <span id="btStatusDot" class="w-1.5 h-1.5 rounded-full bg-ios-separator"></span>
+          </button>
+
           <button onclick="window.WarehouseApp.toggleTheme()" aria-label="Ganti Tema" class="w-8 h-8 rounded-full bg-ios-card-sub text-ios-text flex items-center justify-center ios-press border border-ios-separator/60" type="button" title="Ganti Mode Tema">
             <span id="themeToggleIcon" class="material-symbols-outlined text-[17px] text-ios-blue">light_mode</span>
           </button>
@@ -228,7 +234,6 @@
           </button>
         </div>
 
-        <!-- Search Order Bar -->
         <div class="flex items-center gap-2.5">
           <div class="relative flex-1 flex items-center">
             <span class="material-symbols-outlined absolute left-3.5 text-ios-text-ter text-[18px] pointer-events-none">search</span>
@@ -274,7 +279,7 @@
       </section>
 
       <!-- =========================================================================
-           VIEW 2: STOK GUDANG (INVENTORY & PRICING HUB) - COMPACT CARD DESIGN
+           VIEW 2: STOK GUDANG (INVENTORY & PRICING HUB)
            ========================================================================= -->
       <section id="view-stok" class="view-panel hidden flex-col gap-4 w-full">
         <!-- Stock Header Title & Quick Controls -->
@@ -407,7 +412,7 @@
       <section id="view-setting" class="view-panel hidden flex-col gap-4 w-full">
         <div class="px-1">
           <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-ios-text">Pengaturan Sistem</h1>
-          <p class="text-xs text-ios-text-ter font-medium mt-0.5">Konfigurasi Database Spreadsheet &amp; Akses Engine.</p>
+          <p class="text-xs text-ios-text-ter font-medium mt-0.5">Konfigurasi Database Spreadsheet, Printer, &amp; Otomasi.</p>
         </div>
 
         <div class="bg-ios-card rounded-2xl border border-ios-separator/60 p-4 sm:p-5 flex flex-col gap-3.5 shadow-ios-card dark:shadow-ios-card-dark">
@@ -433,7 +438,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-ios-orange text-[18px]">receipt_long</span>
-                <span class="text-xs font-bold text-ios-text-sec">Konfigurasi Printer Struk Thermal</span>
+                <span class="text-xs font-bold text-ios-text-sec">Konfigurasi Printer Minipos MP-80UBX</span>
               </div>
               <button onclick="window.WarehouseApp.testPrintThermal()" class="h-7 px-2.5 rounded-lg bg-ios-orange/15 text-ios-orange border border-ios-orange/30 text-[11px] font-bold flex items-center gap-1 ios-press" type="button">
                 <span class="material-symbols-outlined text-[13px]">play_arrow</span>
@@ -445,26 +450,52 @@
               <div class="flex flex-col gap-1">
                 <label class="font-bold text-ios-text-sec text-[11px]" for="selectThermalMode">Metode Cetak Thermal</label>
                 <select id="selectThermalMode" onchange="window.WarehouseApp.onThermalSettingChange()" class="w-full h-9 px-2.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue">
-                  <option value="browser">Universal (Browser / Driver POS) - Rekomendasi</option>
+                  <option value="bluetooth">Bluetooth Langsung (Rekomendasi Auto-Print Minipos)</option>
+                  <option value="browser">Universal (Browser / Driver POS)</option>
                   <option value="rawbt">RawBT App (Khusus Android)</option>
-                  <option value="bluetooth">Bluetooth Langsung (Web Bluetooth)</option>
-                  <option value="qz">QZ Tray Engine (PC ESC/POS)</option>
+                  <option value="qz">QZ Tray Engine (PC Desktop)</option>
                 </select>
               </div>
 
               <div class="flex flex-col gap-1">
                 <label class="font-bold text-ios-text-sec text-[11px]" for="selectThermalWidth">Lebar Kertas Struk</label>
                 <select id="selectThermalWidth" onchange="window.WarehouseApp.onThermalSettingChange()" class="w-full h-9 px-2.5 rounded-xl bg-ios-card-sub text-ios-text text-xs border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue">
-                  <option value="58mm">58mm (Ukuran Standar Kecil / Mini POS)</option>
-                  <option value="80mm">80mm (Ukuran Lebar / Kasir Besar)</option>
+                  <option value="80mm" selected>80mm (Standar Minipos MP-80UBX Lebar)</option>
+                  <option value="58mm">58mm (Ukuran Standar Mini POS Kecil)</option>
                 </select>
               </div>
             </div>
 
-            <div id="qzPrinterNameContainer" class="flex flex-col gap-1">
+            <!-- Auto-Print Toggle Switch -->
+            <label class="flex items-center justify-between gap-3 p-3 rounded-xl bg-ios-card-sub border border-ios-separator/50 cursor-pointer select-none mt-1" for="toggleAutoPrintBluetooth">
+              <span class="flex flex-col">
+                <span class="text-xs font-bold text-ios-text flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-ios-green text-[16px]">bolt</span>
+                  <span>Auto-Print Pesanan Baru (Bluetooth)</span>
+                </span>
+                <span class="text-[10px] text-ios-text-ter">Cetak &amp; potong kertas (*autocut*) otomatis seketika saat ada order masuk tanpa klik konfirmasi</span>
+              </span>
+              <div class="relative inline-flex items-center shrink-0">
+                <input id="toggleAutoPrintBluetooth" onchange="window.WarehouseApp.toggleAutoPrintSwitch(this.checked)" class="sr-only peer" type="checkbox" checked />
+                <div class="w-9 h-5 bg-ios-separator rounded-full peer peer-checked:bg-ios-green peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all relative"></div>
+              </div>
+            </label>
+
+            <!-- Tombol Pengujian Langsung Auto-Print -->
+            <div class="p-3 rounded-xl bg-ios-blue/10 border border-ios-blue/25 flex items-center justify-between gap-2">
+              <div class="flex flex-col">
+                <span class="text-xs font-bold text-ios-blue">Uji Coba Auto-Print</span>
+                <span class="text-[10.5px] text-ios-text-ter">Simulasi ada order baru masuk untuk memastikan auto-print &amp; autocut bekerja</span>
+              </div>
+              <button onclick="window.WarehouseApp.simulasiOrderBaruAutoPrint()" class="h-8 px-3 rounded-lg bg-ios-blue text-white text-xs font-bold shrink-0 ios-press shadow-sm" type="button">
+                Simulasikan
+              </button>
+            </div>
+
+            <div id="qzPrinterNameContainer" class="hidden flex-col gap-1">
               <label class="text-[11px] font-bold text-ios-text-sec" for="inputPrinterName">Nama Printer Thermal (Khusus QZ Tray)</label>
-              <input id="inputPrinterName" class="w-full h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Contoh: POS-58 atau MINIPOS" type="text" />
-              <p class="text-[10px] text-ios-text-ter">Jika menggunakan QZ Tray, samakan nama dengan di Devices &amp; Printers Windows.</p>
+              <input id="inputPrinterName" class="w-full h-9 px-3.5 rounded-xl bg-ios-card-sub text-ios-text text-xs font-mono border border-ios-separator/60 focus:outline-none focus:ring-2 focus:ring-ios-blue" placeholder="Contoh: MINIPOS atau POS-80" type="text" />
+              <p class="text-[10px] text-ios-text-ter">Jika menggunakan QZ Tray di PC, samakan nama dengan di Devices &amp; Printers Windows.</p>
             </div>
           </div>
 
@@ -498,8 +529,8 @@
           <p class="text-[11px] text-ios-text-ter">Toast otomatis saat ada pesanan baru &amp; stok menipis (&le;20). Badge merah di tab Stok mencatat total SKU perlu restok.</p>
           <label class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-ios-card-sub border border-ios-separator/50 cursor-pointer select-none" for="toggleNotifMute">
             <span class="flex flex-col">
-              <span class="text-xs font-bold text-ios-text">Aktifkan Notifikasi</span>
-              <span class="text-[10px] text-ios-text-ter">Matikan jika terlalu berisik</span>
+              <span class="text-xs font-bold text-ios-text">Aktifkan Notifikasi Suara &amp; Toast</span>
+              <span class="text-[10px] text-ios-text-ter">Peringatan langsung saat ada aktivitas pesanan</span>
             </span>
             <div class="relative inline-flex items-center shrink-0">
               <input id="toggleNotifMute" onchange="window.WarehouseApp.toggleNotifMute(this.checked)" class="sr-only peer" type="checkbox" checked />
@@ -530,10 +561,6 @@
         </button>
       </div>
     </nav>
-
-    <!-- =========================================================================
-         MODALS & SHEETS (PRECISE DIALOGS)
-         ========================================================================= -->
 
     <!-- Login Modal -->
     <div id="modalLoginAwal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ios-blur hidden">
@@ -697,7 +724,7 @@
       </div>
     </div>
 
-    <!-- Batch Print Modal -->
+    <!-- Batch Print Modal A4 -->
     <div id="modalBatchPrintPreview" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 ios-blur hidden">
       <div class="w-full max-w-sm rounded-3xl bg-ios-card border border-ios-separator/60 shadow-2xl p-5 flex flex-col gap-3 max-h-[82vh] overflow-y-auto">
         <h4 class="text-xs font-bold text-ios-text uppercase tracking-wider">Cetak Batch Pesanan A4</h4>
@@ -723,9 +750,20 @@
           <span id="thermalModalOrderId" class="font-mono font-bold text-ios-blue text-xs">-</span>
         </div>
 
-        <p class="text-[11px] text-ios-text-ter leading-snug">Pilih jalur cetak sesuai printer thermal yang sedang terhubung:</p>
+        <p class="text-[11px] text-ios-text-ter leading-snug">Pilih jalur cetak sesuai printer Minipos yang sedang terhubung:</p>
 
         <div class="flex flex-col gap-2">
+          <button onclick="window.WarehouseApp.runThermalPrintWithMode('bluetooth')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-blue/40 flex items-center justify-between ios-press" type="button">
+            <div>
+              <div class="font-bold text-xs text-ios-text flex items-center gap-1">
+                <span>Bluetooth Langsung</span>
+                <span class="px-1.5 py-0.2 rounded bg-ios-blue/15 text-ios-blue text-[9px] font-extrabold">Auto-Cut</span>
+              </div>
+              <p class="text-[10px] text-ios-text-ter">Koneksi Web Bluetooth instan (Rekomendasi Minipos)</p>
+            </div>
+            <span class="material-symbols-outlined text-ios-blue text-[18px]">bluetooth</span>
+          </button>
+
           <button onclick="window.WarehouseApp.runThermalPrintWithMode('browser')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
             <div>
               <div class="font-bold text-xs text-ios-text flex items-center gap-1">
@@ -745,14 +783,6 @@
             <span class="material-symbols-outlined text-ios-orange text-[18px]">android</span>
           </button>
 
-          <button onclick="window.WarehouseApp.runThermalPrintWithMode('bluetooth')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
-            <div>
-              <span class="font-bold text-xs text-ios-text">Bluetooth Langsung</span>
-              <p class="text-[10px] text-ios-text-ter">Koneksi Web Bluetooth Chrome tanpa install aplikasi</p>
-            </div>
-            <span class="material-symbols-outlined text-ios-blue text-[18px]">bluetooth</span>
-          </button>
-
           <button onclick="window.WarehouseApp.runThermalPrintWithMode('qz')" class="p-2.5 rounded-xl bg-ios-card-sub hover:bg-ios-separator/40 text-left border border-ios-separator/60 flex items-center justify-between ios-press" type="button">
             <div>
               <span class="font-bold text-xs text-ios-text">QZ Tray (PC Desktop)</span>
@@ -765,8 +795,8 @@
         <div class="flex items-center justify-between pt-1 border-t border-ios-separator/30 text-[11px]">
           <span class="text-ios-text-ter">Ukuran Kertas:</span>
           <div class="flex items-center gap-1.5 font-bold font-mono">
-            <button onclick="window.WarehouseApp.setThermalWidthDirect('58mm')" id="btnWidth58" class="px-2 py-0.5 rounded-lg border text-xs ios-press">58mm</button>
             <button onclick="window.WarehouseApp.setThermalWidthDirect('80mm')" id="btnWidth80" class="px-2 py-0.5 rounded-lg border text-xs ios-press">80mm</button>
+            <button onclick="window.WarehouseApp.setThermalWidthDirect('58mm')" id="btnWidth58" class="px-2 py-0.5 rounded-lg border text-xs ios-press">58mm</button>
           </div>
         </div>
 
@@ -864,8 +894,18 @@
         config: safeStorageGet('appHybridConfig_v3', DEFAULT_CONFIG),
         currentUser: safeStorageGet('warehouse_user', null),
         thermalPrinterName: safeStorageGet('warehouse_printer_name', 'MINIPOS'),
-        thermalMode: safeStorageGet('warehouse_thermal_mode', 'browser'), // 'browser' | 'rawbt' | 'bluetooth' | 'qz'
-        thermalPaperWidth: safeStorageGet('warehouse_thermal_width', '58mm'), // '58mm' | '80mm'
+        thermalMode: safeStorageGet('warehouse_thermal_mode', 'bluetooth'),
+        thermalPaperWidth: safeStorageGet('warehouse_thermal_width', '80mm'),
+        autoPrintBluetooth: safeStorageGet('warehouse_autoprint_bt', true),
+        printedOrderIds: new Set(safeStorageGet('warehouse_printed_orders', [])),
+        inFlightPrintIds: new Set(),
+        
+        // Persistent Web Bluetooth Session State
+        btDevice: null,
+        btServer: null,
+        btCharacteristic: null,
+        isBtConnecting: false,
+
         activeThermalOrderId: null,
         isBatchThermal: false,
         globalOrders: [],
@@ -1273,7 +1313,7 @@
             recordFreshness();
             renderOrders();
             filterStok(true);
-            runNotificationScan({ quiet: !announce });
+            runNotificationScan(!announce);
             if (showSpinner) showToast("Tersinkron", "Data pesanan dan stok diperbarui.");
           } else {
             throw new Error((res && res.message) || "Gagal memuat data dari Spreadsheet.");
@@ -1309,7 +1349,6 @@
         }, 1000);
       }
 
-      // --- Notification Engine (stok menipis & pesanan baru) ---
       function getLowStockIds() {
         const ids = new Set();
         (AppState.globalStok || []).forEach(it => {
@@ -1341,29 +1380,137 @@
       function persistNotificationSnapshot() {
         safeStorageSet('warehouse_seen_orders', [...AppState.lastSeenOrderIds]);
         safeStorageSet('warehouse_seen_lowstock', [...AppState.lastSeenLowStock]);
+        safeStorageSet('warehouse_printed_orders', [...AppState.printedOrderIds]);
       }
 
-      function runNotificationScan(opts = {}) {
-        if (AppState.notifMuted) { updateStokBadge(); return; }
-        const quiet = opts.quiet !== false; 
+      function normalizePrintStatus(order) {
+        if (!order) return 'Belum di Print';
+        if (order.statusPrint) {
+          const s = String(order.statusPrint).trim().toLowerCase();
+          if (s.includes('sudah') || s.includes('printed') || s.includes('selesai')) {
+            return 'Sudah di Print';
+          }
+          return 'Belum di Print';
+        }
+        const st = String(order.status || '').toLowerCase();
+        if (st === 'selesai' || st === 'dikirim' || AppState.printedOrderIds.has(String(order.idPesanan).trim())) {
+          return 'Sudah di Print';
+        }
+        return 'Belum di Print';
+      }
 
-        // --- Pesanan baru ---
-        const currentOrderIds = new Set((AppState.globalOrders || []).map(o => String(o.idPesanan).trim()).filter(Boolean));
-        if (quiet) {
-          const freshOrderIds = [...currentOrderIds].filter(id => !AppState.lastSeenOrderIds.has(id));
-          if (freshOrderIds.length > 0) {
-            const n = freshOrderIds.length;
-            const sample = (AppState.globalOrders.find(o => String(o.idPesanan).trim() === freshOrderIds[0]) || {});
-            const title = n === 1 ? `Pesanan Baru ${sample.idPesanan || ''}` : `${n} Pesanan Baru Masuk`;
-            const msg = n === 1 ? `Toko: ${sample.namaToko || '-'}` : `Ada ${n} pesanan menunggu di antrean.`;
+      async function setOrderPrintStatus(orderIds, newPrintStatus) {
+        const ids = Array.isArray(orderIds) ? orderIds : [orderIds];
+        if (ids.length === 0) return;
+
+        ids.forEach(id => {
+          const cleanId = String(id).trim();
+          if (newPrintStatus === 'Sudah di Print') {
+            AppState.printedOrderIds.add(cleanId);
+          } else {
+            AppState.printedOrderIds.delete(cleanId);
+          }
+
+          const order = (AppState.globalOrders || []).find(o => String(o.idPesanan).trim() === cleanId);
+          if (order) {
+            order.statusPrint = newPrintStatus;
+            const payload = {
+              sheetName: order.sheetName,
+              idPesanan: order.idPesanan,
+              statusPrint: newPrintStatus
+            };
+
+            if (navigator.onLine) {
+              fetchAPI('updateStatusPrint', payload).catch(() => {
+                enqueueOfflineAction(payload, 'updateStatusPrint');
+              });
+            } else {
+              enqueueOfflineAction(payload, 'updateStatusPrint');
+            }
+          }
+        });
+
+        persistNotificationSnapshot();
+        idbSet('cached_orders', AppState.globalOrders);
+        renderOrders();
+      }
+
+      function toggleOrderPrintStatusDirect(orderId, e) {
+        if (e) e.stopPropagation();
+        const order = (AppState.globalOrders || []).find(o => String(o.idPesanan).trim() === String(orderId).trim());
+        if (!order) return;
+        const current = normalizePrintStatus(order);
+        const next = current === 'Sudah di Print' ? 'Belum di Print' : 'Sudah di Print';
+        setOrderPrintStatus(orderId, next);
+        showToast("Status Print Diubah", `#${orderId} -> ${next}`);
+      }
+
+      function runNotificationScan(isInitialLoad = false) {
+        updateStokBadge();
+        const currentOrders = AppState.globalOrders || [];
+        const currentOrderIds = new Set(currentOrders.map(o => String(o.idPesanan).trim()).filter(Boolean));
+
+        if (isInitialLoad) {
+          AppState.lastSeenOrderIds = currentOrderIds;
+          currentOrders.forEach(o => {
+            if (normalizePrintStatus(o) === 'Sudah di Print') {
+              AppState.printedOrderIds.add(String(o.idPesanan).trim());
+            }
+          });
+          persistNotificationSnapshot();
+          return;
+        }
+
+        // Cari pesanan aktif yang status print Kolom K masih "Belum di Print"
+        const unprintedOrders = currentOrders.filter(o => {
+          const st = String(o.status || '').toLowerCase();
+          if (st === 'dibatalkan') return false;
+          const cleanId = String(o.idPesanan).trim();
+          const printStatus = normalizePrintStatus(o);
+          return printStatus === 'Belum di Print' && !AppState.inFlightPrintIds.has(cleanId);
+        });
+
+        // Deteksi pesanan baru untuk notifikasi suara & toast
+        const freshOrderIds = [...currentOrderIds].filter(id => !AppState.lastSeenOrderIds.has(id));
+        if (freshOrderIds.length > 0) {
+          const freshOrders = currentOrders.filter(o => freshOrderIds.includes(String(o.idPesanan).trim()));
+          const n = freshOrders.length;
+          const sample = freshOrders[0] || {};
+          const title = n === 1 ? `Pesanan Baru #${sample.idPesanan || ''}` : `${n} Pesanan Baru Masuk`;
+          const msg = n === 1 ? `Toko: ${sample.namaToko || '-'}` : `Ada ${n} pesanan baru di antrean.`;
+          
+          if (!AppState.notifMuted) {
             showToast(title, msg);
+            const snd = document.getElementById('notifSound');
+            if (snd) snd.play().catch(() => {});
           }
         }
         AppState.lastSeenOrderIds = currentOrderIds;
 
-        // --- Stok menipis ---
-        const currentLow = getLowStockIds();
-        if (quiet) {
+        // Auto-print Bluetooth otomatis ke printer Minipos
+        if (AppState.autoPrintBluetooth && unprintedOrders.length > 0) {
+          unprintedOrders.forEach(o => AppState.inFlightPrintIds.add(String(o.idPesanan).trim()));
+
+          if (AppState.btCharacteristic && AppState.btDevice?.gatt?.connected) {
+            showToast("Auto-Print", `Mencetak otomatis ${unprintedOrders.length} pesanan belum diprint ke Minipos...`);
+            printThermalBluetooth(unprintedOrders, true);
+          } else if (AppState.btDevice) {
+            reconnectBluetoothGatt().then(connected => {
+              if (connected && AppState.btCharacteristic) {
+                showToast("Auto-Print", `Mencetak otomatis ${unprintedOrders.length} pesanan...`);
+                printThermalBluetooth(unprintedOrders, true);
+              } else {
+                unprintedOrders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
+              }
+            });
+          } else {
+            unprintedOrders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
+          }
+        }
+
+        // Peringatan stok menipis
+        if (!AppState.notifMuted) {
+          const currentLow = getLowStockIds();
           const newlyLow = [...currentLow].filter(id => !AppState.lastSeenLowStock.has(id));
           if (newlyLow.length > 0) {
             const names = newlyLow.slice(0, 3).map(id => {
@@ -1373,21 +1520,72 @@
             const extra = newlyLow.length - names.length;
             const tail = extra > 0 ? ` +${extra} lainnya` : '';
             const title = newlyLow.length === 1 ? 'Stok Menipis' : `${newlyLow.length} Stok Menipis`;
-            const msg = names.join(', ') + tail;
-            showToast(title, msg, false);
+            showToast(title, names.join(', ') + tail, false);
           }
+          AppState.lastSeenLowStock = currentLow;
         }
-        AppState.lastSeenLowStock = currentLow;
 
         persistNotificationSnapshot();
-        updateStokBadge();
+      }
+
+      async function reconnectBluetoothGatt() {
+        if (!AppState.btDevice) return false;
+        try {
+          const server = await AppState.btDevice.gatt.connect();
+          const services = await server.getPrimaryServices();
+          let char = null;
+          for (const service of services) {
+            try {
+              const chars = await service.getCharacteristics();
+              for (const c of chars) {
+                if (c.properties.write || c.properties.writeWithoutResponse) {
+                  char = c;
+                  break;
+                }
+              }
+              if (char) break;
+            } catch (e) {}
+          }
+          if (char) {
+            AppState.btServer = server;
+            AppState.btCharacteristic = char;
+            updateBluetoothButtonUI();
+            return true;
+          }
+        } catch (e) {
+          console.warn("GATT auto-reconnect failed:", e);
+        }
+        return false;
+      }
+
+      function simulasiOrderBaruAutoPrint() {
+        const dummyId = `SIM-${Math.floor(1000 + Math.random() * 9000)}`;
+        const dummyOrder = {
+          idPesanan: dummyId,
+          namaToko: 'TOKO SIMULASI AUTO-PRINT',
+          tanggal: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+          picker: AppState.namaPicker || 'Operator Floor',
+          catatan: 'Uji coba Auto-Print & Autocut berhasil!',
+          items: [
+            { idBarang: 'SKU-TES-01', namaBarang: 'Produk Uji Coba Cepat', jumlah: 3 },
+            { idBarang: 'SKU-TES-02', namaBarang: 'Karton Pengaman Tambahan', jumlah: 1 }
+          ]
+        };
+
+        if (!AppState.btCharacteristic || !AppState.btDevice?.gatt?.connected) {
+          showToast("Minipos Belum Konek", "Sambungkan printer via tombol 'Hubungkan Minipos' di bar atas terlebih dahulu.", true);
+          return;
+        }
+
+        showToast("Auto-Print Terpicu", `Mencetak order #${dummyId} tanpa konfirmasi...`);
+        printThermalBluetooth([dummyOrder], true);
       }
 
       function setNotifMuted(muted) {
         AppState.notifMuted = muted;
         safeStorageSet('warehouse_notif_muted', muted);
-        if (muted) showToast('Notifikasi Dimatikan', 'Toast stok & pesanan baru nonaktif.');
-        else { showToast('Notifikasi Aktif', 'Anda akan dapat peringatan stok & pesanan baru.'); }
+        if (muted) showToast('Notifikasi Dimatikan', 'Peringatan stok & pesanan baru nonaktif.');
+        else { showToast('Notifikasi Aktif', 'Peringatan suara & toast diaktifkan.'); }
       }
 
       function toggleNotifMute(isChecked) {
@@ -1397,6 +1595,14 @@
       function syncNotifToggleUI() {
         const cb = document.getElementById('toggleNotifMute');
         if (cb) cb.checked = !AppState.notifMuted;
+        const apCb = document.getElementById('toggleAutoPrintBluetooth');
+        if (apCb) apCb.checked = Boolean(AppState.autoPrintBluetooth);
+      }
+
+      function toggleAutoPrintSwitch(checked) {
+        AppState.autoPrintBluetooth = checked;
+        safeStorageSet('warehouse_autoprint_bt', checked);
+        showToast("Auto-Print Bluetooth", checked ? "Aktif: Pesanan baru akan langsung dicetak & dipotong otomatis." : "Nonaktif: Pesanan dicetak manual.");
       }
 
       function setOrderFilter(filterName) {
@@ -1410,6 +1616,48 @@
           }
         });
         renderOrders();
+      }
+
+      function generateEscPosCommands(orders) {
+        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+        let escpos = "";
+
+        orders.forEach(order => {
+          escpos += '\x1B\x40'; // Init printer
+          escpos += '\x1B\x61\x01'; // Center align
+          escpos += 'PUSAT KENDALI GUDANG\n';
+          escpos += 'MANIFEST PENGIRIMAN\n';
+          escpos += '\x1B\x61\x00'; // Left align
+          escpos += '--------------------------------\n';
+          escpos += `ID Order: #${order.idPesanan}\n`;
+          escpos += `Toko    : ${order.namaToko}\n`;
+          escpos += `Tanggal : ${order.tanggal || '-'}\n`;
+          escpos += `Picker  : ${order.picker || '-'}\n`;
+          escpos += `Dicetak : ${printTime}\n`;
+          escpos += '--------------------------------\n';
+
+          let totalQty = 0;
+          (order.items || []).forEach(it => {
+            const nama = (it.namaBarang || '').substring(0, 32);
+            escpos += `${nama}\n`;
+            escpos += `${it.idBarang}  -> Qty: ${it.jumlah}\n\n`;
+            totalQty += (Number(it.jumlah) || 0);
+          });
+
+          escpos += '--------------------------------\n';
+          escpos += `Total Item: ${totalQty} Pcs\n`;
+
+          if (order.catatan) {
+            escpos += '\x1B\x61\x01';
+            escpos += `\n[CATATAN]\n${order.catatan}\n`;
+          }
+
+          // Feed lines then AUTOCUT
+          escpos += '\x0A\x0A\x0A\x0A\x0A'; 
+          escpos += '\x1D\x56\x00'; // Autocut Full (GS V 0)
+        });
+
+        return escpos;
       }
 
       function renderOrders() {
@@ -1484,6 +1732,12 @@
         const isSelected = AppState.selectedOrderIds.has(order.idPesanan);
         const items = order.items || [];
 
+        const printStatus = normalizePrintStatus(order);
+        const isPrinted = printStatus === 'Sudah di Print';
+        const printStatusBadge = isPrinted
+          ? `<button onclick="window.WarehouseApp.toggleOrderPrintStatusDirect('${order.idPesanan}', event)" class="px-2 py-0.5 rounded-full bg-ios-green/15 text-ios-green hover:bg-ios-green/25 text-[9.5px] font-bold flex items-center gap-1 border border-ios-green/30 ios-press" type="button" title="Klik untuk ubah ke Belum di Print"><span class="material-symbols-outlined text-[12px]">done_all</span><span>Sudah Print</span></button>`
+          : `<button onclick="window.WarehouseApp.toggleOrderPrintStatusDirect('${order.idPesanan}', event)" class="px-2 py-0.5 rounded-full bg-ios-orange/15 text-ios-orange hover:bg-ios-orange/25 text-[9.5px] font-bold flex items-center gap-1 border border-ios-orange/30 ios-press" type="button" title="Klik untuk ubah ke Sudah di Print"><span class="material-symbols-outlined text-[12px]">print</span><span>Belum Print</span></button>`;
+
         let totalTarget = 0, totalSiap = 0;
         items.forEach(it => {
           totalTarget += Number(it.jumlah) || 0;
@@ -1548,6 +1802,7 @@
                     <div class="flex items-center gap-1.5 flex-wrap">
                       <span class="font-mono font-extrabold text-xs text-ios-blue">#${id}</span>
                       <span class="text-[9.5px] text-ios-text-ter font-semibold px-2 py-0.2 rounded-md bg-ios-card-sub border border-ios-separator/40 truncate max-w-[130px]">${escapeHTML(order.sheetName || 'Toko')}</span>
+                      ${printStatusBadge}
                     </div>
                     <span class="font-bold text-xs sm:text-sm text-ios-text truncate mt-0.5">${store}</span>
                     <span class="text-[10.5px] text-ios-text-ter mt-0.5">${escapeHTML(order.tanggal || '')}</span>
@@ -1558,7 +1813,7 @@
                   <button onclick="window.WarehouseApp.openPrintModal('${order.idPesanan}')" class="w-8 h-8 rounded-full bg-ios-card-sub text-ios-blue flex items-center justify-center border border-ios-separator/40 ios-press" type="button" title="Cetak Stiker A4">
                     <span class="material-symbols-outlined text-[16px]">print</span>
                   </button>
-                  <button onclick="window.WarehouseApp.cetakThermal('${order.idPesanan}')" class="w-8 h-8 rounded-full bg-ios-orange/15 text-ios-orange flex items-center justify-center border border-ios-orange/30 ios-press" type="button" title="Cetak Struk Thermal">
+                  <button onclick="window.WarehouseApp.cetakThermal('${order.idPesanan}')" class="w-8 h-8 rounded-full bg-ios-orange/15 text-ios-orange flex items-center justify-center border border-ios-orange/30 ios-press" type="button" title="Cetak Struk Minipos">
                     <span class="material-symbols-outlined text-[16px]">receipt_long</span>
                   </button>
                 </div>
@@ -2583,19 +2838,115 @@
         pWin.document.close();
       }
 
-      // --- SISTEM CETAK STRUK THERMAL UNIVERSAL ---
+      function updateBluetoothButtonUI() {
+        const btn = document.getElementById('btnConnectBluetooth');
+        const icon = document.getElementById('btStatusIcon');
+        const txt = document.getElementById('btStatusText');
+        const dot = document.getElementById('btStatusDot');
+        
+        const isConnected = Boolean(AppState.btCharacteristic && AppState.btDevice && AppState.btDevice.gatt && AppState.btDevice.gatt.connected);
+
+        if (isConnected) {
+          if (btn) btn.className = 'h-8 px-2.5 rounded-full bg-ios-green/15 text-ios-green flex items-center gap-1.5 ios-press border border-ios-green/30';
+          if (icon) { icon.innerText = 'bluetooth_connected'; icon.className = 'material-symbols-outlined text-[16px] text-ios-green'; }
+          if (txt) { txt.innerText = AppState.btDevice?.name || 'Minipos Aktif'; txt.className = 'text-[10.5px] font-bold hidden sm:inline text-ios-green'; }
+          if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-ios-green animate-pulse';
+        } else {
+          if (btn) btn.className = 'h-8 px-2.5 rounded-full bg-ios-card-sub text-ios-text flex items-center gap-1.5 ios-press border border-ios-separator/60';
+          if (icon) { icon.innerText = 'bluetooth'; icon.className = 'material-symbols-outlined text-[16px] text-ios-text-ter'; }
+          if (txt) { txt.innerText = 'Hubungkan Minipos'; txt.className = 'text-[10.5px] font-bold hidden sm:inline text-ios-text-sec'; }
+          if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-ios-separator';
+        }
+      }
+
+      async function toggleBluetoothPrinter() {
+        if (AppState.btDevice && AppState.btDevice.gatt && AppState.btDevice.gatt.connected) {
+          try {
+            AppState.btDevice.gatt.disconnect();
+          } catch (e) {}
+          AppState.btDevice = null;
+          AppState.btServer = null;
+          AppState.btCharacteristic = null;
+          updateBluetoothButtonUI();
+          showToast("Bluetooth Terputus", "Koneksi ke printer Minipos telah diputus.");
+          return;
+        }
+
+        await connectBluetoothPrinter(false);
+      }
+
+      async function connectBluetoothPrinter(silent = false) {
+        if (!navigator.bluetooth) {
+          if (!silent) showToast("Bluetooth Tidak Didukung", "Browser ini belum mendukung Web Bluetooth API. Gunakan Chrome di Android/PC.", true);
+          return null;
+        }
+
+        try {
+          if (!silent) showToast("Mencari Printer", "Pilih Minipos MP-80UBX pada daftar pop-up...");
+          const device = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [
+              '000018f0-0000-1000-8000-00805f9b34fb',
+              'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+              '0000ff00-0000-1000-8000-00805f9b34fb',
+              '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+              '00001101-0000-1000-8000-00805f9b34fb'
+            ]
+          });
+
+          device.addEventListener('gattserverdisconnected', () => {
+            AppState.btCharacteristic = null;
+            updateBluetoothButtonUI();
+            showToast("Bluetooth Terputus", "Koneksi printer Minipos terputus.");
+          });
+
+          const server = await device.gatt.connect();
+          let targetCharacteristic = null;
+          const services = await server.getPrimaryServices();
+
+          for (const service of services) {
+            try {
+              const chars = await service.getCharacteristics();
+              for (const c of chars) {
+                if (c.properties.write || c.properties.writeWithoutResponse) {
+                  targetCharacteristic = c;
+                  break;
+                }
+              }
+              if (targetCharacteristic) break;
+            } catch (e) {}
+          }
+
+          if (!targetCharacteristic) {
+            throw new Error("Karakteristik write Bluetooth printer tidak ditemukan.");
+          }
+
+          AppState.btDevice = device;
+          AppState.btServer = server;
+          AppState.btCharacteristic = targetCharacteristic;
+          updateBluetoothButtonUI();
+
+          if (!silent) showToast("Minipos Terhubung", `${device.name || 'Printer'} siap digunakan untuk Auto-Print!`);
+          return targetCharacteristic;
+        } catch (err) {
+          console.warn("Bluetooth connection cancelled/failed:", err);
+          if (!silent) showToast("Bluetooth Batal", "Koneksi dibatalkan atau gagal.", true);
+          updateBluetoothButtonUI();
+          return null;
+        }
+      }
 
       function updateThermalModalWidthButtons() {
         const w58 = document.getElementById('btnWidth58');
         const w80 = document.getElementById('btnWidth80');
-        const is58 = AppState.thermalPaperWidth === '58mm';
-        if (w58) {
-          w58.className = is58 
+        const is80 = AppState.thermalPaperWidth === '80mm';
+        if (w80) {
+          w80.className = is80 
             ? 'px-2.5 py-0.5 rounded-lg bg-ios-blue text-white border-ios-blue font-bold text-xs' 
             : 'px-2.5 py-0.5 rounded-lg bg-ios-card-sub text-ios-text-ter border-ios-separator/60 text-xs';
         }
-        if (w80) {
-          w80.className = !is58 
+        if (w58) {
+          w58.className = !is80 
             ? 'px-2.5 py-0.5 rounded-lg bg-ios-blue text-white border-ios-blue font-bold text-xs' 
             : 'px-2.5 py-0.5 rounded-lg bg-ios-card-sub text-ios-text-ter border-ios-separator/60 text-xs';
         }
@@ -2622,7 +2973,14 @@
       }
 
       function cetakThermal(orderId) {
-        // Jika sudah memilih metode spesifik selain default dialog, bisa langsung eksekusi atau buka modal
+        // Jika Bluetooth printer sudah tersambung aktif, langsung cetak tanpa dialog
+        if (AppState.btCharacteristic && AppState.btDevice?.gatt?.connected) {
+          const o = AppState.globalOrders.find(it => it.idPesanan === orderId);
+          if (o) {
+            printThermalBluetooth([o]);
+            return;
+          }
+        }
         openThermalChoiceModal(orderId, false);
       }
 
@@ -2630,6 +2988,13 @@
         if (AppState.selectedOrderIds.size === 0) {
           showToast("Pilih Pesanan", "Pilih minimal 1 pesanan untuk dicetak thermal.");
           return;
+        }
+        if (AppState.btCharacteristic && AppState.btDevice?.gatt?.connected) {
+          const targetOrders = (AppState.globalOrders || []).filter(o => AppState.selectedOrderIds.has(o.idPesanan));
+          if (targetOrders.length > 0) {
+            printThermalBluetooth(targetOrders);
+            return;
+          }
         }
         openThermalChoiceModal(null, true);
       }
@@ -2652,20 +3017,73 @@
           return;
         }
 
-        if (mode === 'browser') {
-          printThermalBrowser(targetOrders, AppState.thermalPaperWidth || '58mm');
+        if (mode === 'bluetooth') {
+          printThermalBluetooth(targetOrders);
+        } else if (mode === 'browser') {
+          printThermalBrowser(targetOrders, AppState.thermalPaperWidth || '80mm');
         } else if (mode === 'rawbt') {
           printThermalRawBT(targetOrders);
-        } else if (mode === 'bluetooth') {
-          printThermalBluetooth(targetOrders);
         } else if (mode === 'qz') {
           printThermalQZTray(targetOrders);
         }
       }
 
-      function printThermalBrowser(orders, paperWidth = '58mm') {
+      async function printThermalBluetooth(orders, isAuto = false) {
+        let char = AppState.btCharacteristic;
+
+        if (!char || !AppState.btDevice || !AppState.btDevice.gatt || !AppState.btDevice.gatt.connected) {
+          char = await connectBluetoothPrinter(isAuto);
+        }
+
+        if (!char) {
+          if (!isAuto) {
+            showToast("Bluetooth Tidak Terhubung", "Beralih ke dialog cetak browser...");
+            printThermalBrowser(orders, AppState.thermalPaperWidth || '80mm');
+          } else {
+            orders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
+          }
+          return;
+        }
+
+        try {
+          if (!isAuto) showToast("Mencetak...", `Mengirim ${orders.length} struk ke Minipos...`);
+
+          const escpos = generateEscPosCommands(orders);
+          const encoder = new TextEncoder();
+          const data = encoder.encode(escpos);
+
+          // Transmisi per chunk 100 bytes (MTU standar BLE)
+          const CHUNK_SIZE = 100;
+          for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+            const chunk = data.slice(i, i + CHUNK_SIZE);
+            if (char.properties.writeWithoutResponse) {
+              await char.writeValueWithoutResponse(chunk);
+            } else {
+              await char.writeValue(chunk);
+            }
+          }
+
+          // Sukses mencetak: Update status di Kolom K database & memori
+          const printedIds = orders.map(o => o.idPesanan);
+          setOrderPrintStatus(printedIds, 'Sudah di Print');
+          orders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
+
+          showToast("Print Sukses", `${orders.length} struk dicetak & status Kolom K diupdate ke 'Sudah di Print'.`);
+        } catch (err) {
+          console.error("Bluetooth print error:", err);
+          orders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
+          showToast("Bluetooth Putus", "Koneksi terputus saat mencetak.", true);
+          updateBluetoothButtonUI();
+        }
+      }
+
+      function printThermalBrowser(orders, paperWidth = '80mm') {
         const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
-        const widthVal = paperWidth === '80mm' ? '72mm' : '48mm'; // print printable area width
+        const widthVal = paperWidth === '80mm' ? '72mm' : '48mm';
+
+        // Tandai status sudah di print ke Kolom K
+        const printedIds = orders.map(o => o.idPesanan);
+        setOrderPrintStatus(printedIds, 'Sudah di Print');
 
         const receiptsHTML = orders.map((order, idx) => {
           let totalQty = 0;
@@ -2673,10 +3091,12 @@
             const qty = Number(it.jumlah) || 0;
             totalQty += qty;
             return `
-              <div style="margin-bottom: 4px; border-bottom: 1px dotted #ccc; padding-bottom: 2px;">
-                <div style="font-weight: bold; font-size: 11px; word-break: break-word;">${escapeHTML(it.namaBarang)}</div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #222;">
-                  <span style="font-family: monospace;">[${escapeHTML(it.idBarang)}]</span>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 3px;">
+                <div style="flex: 1; padding-right: 6px;">
+                  <div style="font-weight: bold; font-size: 10px;">${escapeHTML(it.idBarang)}</div>
+                  <div style="font-size: 9.5px; color: #333;">${escapeHTML(it.namaBarang)}</div>
+                </div>
+                <div style="text-align: right; white-space: nowrap;">
                   <span style="font-weight: bold; font-family: monospace;">Qty: ${qty} Pcs</span>
                 </div>
               </div>
@@ -2730,10 +3150,7 @@
               <meta charset="utf-8">
               <title>Cetak Struk Thermal</title>
               <style>
-                @page {
-                  size: ${paperWidth} auto;
-                  margin: 0;
-                }
+                @page { size: ${paperWidth} auto; margin: 0; }
                 @media print {
                   html, body {
                     width: ${paperWidth};
@@ -2758,10 +3175,7 @@
                   font-size: 10.5px;
                   line-height: 1.25;
                 }
-                .receipt-box {
-                  width: 100%;
-                  box-sizing: border-box;
-                }
+                .receipt-box { width: 100%; box-sizing: border-box; }
               </style>
             </head>
             <body>
@@ -2786,48 +3200,6 @@
         pWin.document.open();
         pWin.document.write(fullHTML);
         pWin.document.close();
-        showToast("Membuka Struk", `Mempersiapkan dialog cetak (${paperWidth})...`);
-      }
-
-      function generateEscPosCommands(orders) {
-        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
-        let escpos = "";
-
-        orders.forEach(order => {
-          escpos += '\x1B\x40'; // Init printer
-          escpos += '\x1B\x61\x01'; // Center align
-          escpos += 'PUSAT KENDALI GUDANG\n';
-          escpos += 'MANIFEST PENGIRIMAN\n';
-          escpos += '\x1B\x61\x00'; // Left align
-          escpos += '--------------------------------\n';
-          escpos += `ID Order: #${order.idPesanan}\n`;
-          escpos += `Toko    : ${order.namaToko}\n`;
-          escpos += `Tanggal : ${order.tanggal || '-'}\n`;
-          escpos += `Picker  : ${order.picker || '-'}\n`;
-          escpos += `Dicetak : ${printTime}\n`;
-          escpos += '--------------------------------\n';
-
-          let totalQty = 0;
-          (order.items || []).forEach(it => {
-            const nama = (it.namaBarang || '').substring(0, 32);
-            escpos += `${nama}\n`;
-            escpos += `${it.idBarang}  -> Qty: ${it.jumlah}\n\n`;
-            totalQty += (Number(it.jumlah) || 0);
-          });
-
-          escpos += '--------------------------------\n';
-          escpos += `Total Item: ${totalQty} Pcs\n`;
-
-          if (order.catatan) {
-            escpos += '\x1B\x61\x01';
-            escpos += `\n[CATATAN]\n${order.catatan}\n`;
-          }
-
-          escpos += '\x0A\x0A\x0A\x0A'; 
-          escpos += '\x1D\x56\x00'; // Autocut
-        });
-
-        return escpos;
       }
 
       function printThermalRawBT(orders) {
@@ -2839,72 +3211,7 @@
           const intentUrl = "intent:" + base64Data + "#Intent;scheme=rawb64;package=ru.a402d.rawbtprinter;end;";
           window.location.assign(intentUrl);
         } catch (e) {
-          showToast("Gagal RawBT", "Tidak dapat membuat instruksi RawBT. Beralih ke mode Universal.", true);
-          printThermalBrowser(orders, AppState.thermalPaperWidth);
-        }
-      }
-
-      async function printThermalBluetooth(orders) {
-        if (!navigator.bluetooth) {
-          showToast("Bluetooth Tidak Didukung", "Gunakan Chrome di Android atau beralih ke Mode Universal.", true);
-          printThermalBrowser(orders, AppState.thermalPaperWidth);
-          return;
-        }
-
-        try {
-          showToast("Mencari Printer", "Pilih printer Bluetooth thermal pada pop-up...");
-          const device = await navigator.bluetooth.requestDevice({
-            acceptAllDevices: true,
-            optionalServices: [
-              '000018f0-0000-1000-8000-00805f9b34fb',
-              'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-              '0000ff00-0000-1000-8000-00805f9b34fb',
-              '49535343-fe7d-4ae5-8fa9-9fafd205e455'
-            ]
-          });
-
-          if (!device.gatt) throw new Error("GATT tidak tersedia");
-          const server = await device.gatt.connect();
-          
-          let characteristic = null;
-          const services = await server.getPrimaryServices();
-          for (const service of services) {
-            try {
-              const chars = await service.getCharacteristics();
-              for (const c of chars) {
-                if (c.properties.write || c.properties.writeWithoutResponse) {
-                  characteristic = c;
-                  break;
-                }
-              }
-              if (characteristic) break;
-            } catch (e) {}
-          }
-
-          if (!characteristic) {
-            throw new Error("Karakteristik write Bluetooth printer tidak ditemukan.");
-          }
-
-          const escpos = generateEscPosCommands(orders);
-          const encoder = new TextEncoder();
-          const data = encoder.encode(escpos);
-
-          // Kirim per chunk 100 bytes (standar MTU Bluetooth LE)
-          const CHUNK_SIZE = 100;
-          for (let i = 0; i < data.length; i += CHUNK_SIZE) {
-            const chunk = data.slice(i, i + CHUNK_SIZE);
-            if (characteristic.properties.writeWithoutResponse) {
-              await characteristic.writeValueWithoutResponse(chunk);
-            } else {
-              await characteristic.writeValue(chunk);
-            }
-          }
-
-          showToast("Print Sukses", "Data struk berhasil dikirim via Bluetooth.");
-          if (device.gatt.connected) device.gatt.disconnect();
-        } catch (err) {
-          console.error("Bluetooth print error:", err);
-          showToast("Bluetooth Batal/Gagal", "Membuka struk dalam Mode Universal...");
+          showToast("Gagal RawBT", "Beralih ke mode Universal...", true);
           printThermalBrowser(orders, AppState.thermalPaperWidth);
         }
       }
@@ -2929,7 +3236,7 @@
           return qz.websocket.disconnect();
         }).catch((err) => {
           console.warn("QZ Tray connect failed:", err);
-          showToast("QZ Tray Tidak Aktif", "QZ Tray belum berjalan di PC. Beralih ke Mode Universal.", true);
+          showToast("QZ Tray Tidak Aktif", "Beralih ke Mode Universal...", true);
           printThermalBrowser(orders, AppState.thermalPaperWidth);
           if (qz.websocket && qz.websocket.isActive()) qz.websocket.disconnect();
         });
@@ -2941,20 +3248,20 @@
           namaToko: 'TOKO CONTOH TEST PRINT',
           tanggal: new Date().toISOString().slice(0, 10),
           picker: AppState.namaPicker || 'Operator Gudang',
-          catatan: 'Uji coba hasil cetak printer thermal berhasil!',
+          catatan: 'Uji coba hasil cetak printer thermal Minipos MP-80UBX berhasil!',
           items: [
             { idBarang: 'SKU-SAMPLE-1', namaBarang: 'Barang Uji Coba A', jumlah: 2 },
             { idBarang: 'SKU-SAMPLE-2', namaBarang: 'Barang Uji Coba B', jumlah: 5 }
           ]
         };
 
-        const mode = AppState.thermalMode || 'browser';
-        if (mode === 'browser') {
-          printThermalBrowser([sampleOrder], AppState.thermalPaperWidth || '58mm');
+        const mode = AppState.thermalMode || 'bluetooth';
+        if (mode === 'bluetooth') {
+          printThermalBluetooth([sampleOrder]);
+        } else if (mode === 'browser') {
+          printThermalBrowser([sampleOrder], AppState.thermalPaperWidth || '80mm');
         } else if (mode === 'rawbt') {
           printThermalRawBT([sampleOrder]);
-        } else if (mode === 'bluetooth') {
-          printThermalBluetooth([sampleOrder]);
         } else if (mode === 'qz') {
           printThermalQZTray([sampleOrder]);
         }
@@ -3015,8 +3322,8 @@
         }
         
         if (inpPrinter) inpPrinter.value = AppState.thermalPrinterName || '';
-        if (selMode) selMode.value = AppState.thermalMode || 'browser';
-        if (selWidth) selWidth.value = AppState.thermalPaperWidth || '58mm';
+        if (selMode) selMode.value = AppState.thermalMode || 'bluetooth';
+        if (selWidth) selWidth.value = AppState.thermalPaperWidth || '80mm';
         onThermalSettingChange();
       }
 
@@ -3042,9 +3349,9 @@
           return;
         }
         
-        if(printerName) {
-            AppState.thermalPrinterName = printerName;
-            safeStorageSet('warehouse_printer_name', printerName);
+        if (printerName) {
+          AppState.thermalPrinterName = printerName;
+          safeStorageSet('warehouse_printer_name', printerName);
         }
 
         setSyncIndicator(true);
@@ -3201,12 +3508,18 @@
         verifyAndSaveSuperAdmin,
         clearAppCache,
         toggleNotifMute,
+        toggleAutoPrintSwitch,
+        simulasiOrderBaruAutoPrint,
         syncNotifToggleUI,
         updateStokBadge,
         processOfflineQueue,
         loadAdminData,
         openModal,
-        closeModal
+        closeModal,
+        toggleBluetoothPrinter,
+        connectBluetoothPrinter,
+        setOrderPrintStatus,
+        toggleOrderPrintStatusDirect
       };
 
       window.onload = async function() {
@@ -3215,7 +3528,8 @@
         updateOutboxUI();
         loadNotificationSnapshot();
         syncNotifToggleUI();
-        startLiveClock(); // <--- Menjalankan Jam Realtime di App Bar
+        startLiveClock();
+        updateBluetoothButtonUI();
 
         const idbO = await idbGet('cached_orders', null);
         const idbS = await idbGet('cached_stok', null);
@@ -3228,15 +3542,15 @@
         if (!AppState.currentUser) {
           openModal('modalLoginAwal');
         } else {
-          // First load = silent baseline (no toast for pre-existing data)
           loadAdminData(false, false);
         }
 
+        // Interval polling sinkronisasi & auto-print tiap 20 detik
         setInterval(() => {
           if (navigator.onLine && AppState.currentUser && !AppState.activePickingOrder) {
-            loadAdminData(false, true); // polling announces diffs as toasts
+            loadAdminData(false, true);
           }
-        }, 30000);
+        }, 1000);
       };
     </script>
   </body>
