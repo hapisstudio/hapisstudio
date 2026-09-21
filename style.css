@@ -1,0 +1,78 @@
+:root {
+  --ios-bg: 242, 242, 247;
+  --ios-card: 255, 255, 255;
+  --ios-card-sub: 245, 245, 247;
+  --ios-text: 15, 17, 23;
+  --ios-text-sec: 100, 100, 108;
+  --ios-text-ter: 142, 142, 147;
+  --ios-separator: 226, 226, 232;
+  --ios-blue: 0, 122, 255;
+  --ios-green: 52, 199, 89;
+  --ios-red: 255, 59, 48;
+  --ios-orange: 255, 149, 0;
+  --ios-purple: 175, 82, 222;
+  --ios-bar-bg: 255, 255, 255;
+}
+html.dark {
+  --ios-bg: 12, 12, 14;
+  --ios-card: 24, 24, 28;
+  --ios-card-sub: 34, 34, 38;
+  --ios-text: 250, 250, 252;
+  --ios-text-sec: 174, 174, 182;
+  --ios-text-ter: 130, 130, 136;
+  --ios-separator: 44, 44, 50;
+  --ios-blue: 10, 132, 255;
+  --ios-green: 48, 209, 88;
+  --ios-red: 255, 69, 58;
+  --ios-orange: 255, 159, 10;
+  --ios-purple: 191, 90, 242;
+  --ios-bar-bg: 20, 20, 24;
+}
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(var(--ios-bg));
+    color: rgb(var(--ios-text));
+    font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Text", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  body {
+    overscroll-behavior-y: none;
+    padding-bottom: env(safe-area-inset-bottom, 24px);
+  }
+}
+
+.ios-press {
+  transition: transform 0.14s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.14s ease;
+}
+.ios-press:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+.ios-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
