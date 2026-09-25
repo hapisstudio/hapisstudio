@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
-    <title>Pusat Kendali Gudang</title>
+    <title>DUTA ABADI</title>
     
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
@@ -158,7 +158,7 @@
             <span class="material-symbols-outlined text-[19px]">warehouse</span>
           </div>
           <div class="flex flex-col min-w-0">
-            <span class="font-bold text-[14.5px] leading-tight tracking-tight truncate">Kendali Gudang</span>
+            <span class="font-bold text-[14.5px] leading-tight tracking-tight truncate">DUTA ABADI</span>
             <div class="flex items-center gap-1.5 text-[10px] mt-0.5">
               <span id="liveStatusDot" class="w-1.5 h-1.5 rounded-full bg-ios-green shrink-0 animate-pulse"></span>
               <span id="liveStatusText" class="text-ios-green font-bold uppercase tracking-wider">Online</span>
@@ -1618,43 +1618,115 @@
         renderOrders();
       }
 
-      function generateEscPosCommands(orders) {
-        const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+      function formatEscPosRow(left, right, colWidth = 48) {
+        const l = String(left || '');
+        const r = String(right || '');
+        const spaceNeeded = colWidth - l.length - r.length;
+        if (spaceNeeded > 0) {
+          return l + ' '.repeat(spaceNeeded) + r + '\n';
+        }
+        return l + '\n' + ' '.repeat(Math.max(0, colWidth - r.length)) + r + '\n';
+      }
+
+      function generateEscPosCommands(orders, customWidth = null) {
+        const widthMode = customWidth || AppState.thermalPaperWidth || '80mm';
+        const is80 = widthMode === '80mm';
+        // Standar 80mm Font A: 48 kolom (576 dots), 58mm: 32 kolom (384 dots)
+        const colWidth = is80 ? 48 : 32;
+        const dividerThick = '='.repeat(colWidth) + '\n';
+        const dividerThin  = '-'.repeat(colWidth) + '\n';
+        const printTime = new Date().toLocaleString('id-ID', { 
+          dateStyle: 'short', 
+          timeStyle: 'medium' 
+        }).replace(/\./g, ':');
+
         let escpos = "";
 
         orders.forEach(order => {
-          escpos += '\x1B\x40'; // Init printer
-          escpos += '\x1B\x61\x01'; // Center align
-          escpos += 'PUSAT KENDALI GUDANG\n';
-          escpos += 'MANIFEST PENGIRIMAN\n';
-          escpos += '\x1B\x61\x00'; // Left align
-          escpos += '--------------------------------\n';
-          escpos += `ID Order: #${order.idPesanan}\n`;
-          escpos += `Toko    : ${order.namaToko}\n`;
-          escpos += `Tanggal : ${order.tanggal || '-'}\n`;
-          escpos += `Picker  : ${order.picker || '-'}\n`;
-          escpos += `Dicetak : ${printTime}\n`;
-          escpos += '--------------------------------\n';
+          escpos += '\x1B\x40'; // Reset & Initialize printer
 
-          let totalQty = 0;
-          (order.items || []).forEach(it => {
-            const nama = (it.namaBarang || '').substring(0, 32);
-            escpos += `${nama}\n`;
-            escpos += `${it.idBarang}  -> Qty: ${it.jumlah}\n\n`;
-            totalQty += (Number(it.jumlah) || 0);
-          });
-
-          escpos += '--------------------------------\n';
-          escpos += `Total Item: ${totalQty} Pcs\n`;
-
-          if (order.catatan) {
-            escpos += '\x1B\x61\x01';
-            escpos += `\n[CATATAN]\n${order.catatan}\n`;
+          // Set lebar area fisik cetak (576 dots untuk 80mm, 384 dots untuk 58mm)
+          if (is80) {
+            escpos += '\x1D\x57\x40\x02'; // GS W: 576 dots width (0x0240)
+            escpos += '\x1D\x4C\x00\x00'; // GS L: Margin kiri 0 dot
+          } else {
+            escpos += '\x1D\x57\x80\x01'; // GS W: 384 dots width (0x0180)
+            escpos += '\x1D\x4C\x00\x00'; // GS L: Margin kiri 0 dot
           }
 
-          // Feed lines then AUTOCUT
-          escpos += '\x0A\x0A\x0A\x0A\x0A'; 
-          escpos += '\x1D\x56\x00'; // Autocut Full (GS V 0)
+          // Header Utama (Center Alignment)
+    escpos += '\x1B\x61\x01';
+    escpos += '\x1B\x45\x01'; // Bold ON
+    if (is80) {
+      escpos += '\x1D\x21\x11'; // Double Width + Double Height
+      escpos += 'DUTA ABADI\n';
+      escpos += '\x1D\x21\x00'; // Ukuran Normal
+      escpos += 'SURAT MANIFEST PESANAN\n';
+    } else {
+      escpos += 'DUTA ABADI\n';
+      escpos += 'MANIFEST PENGIRIMAN\n';
+    }
+    escpos += '\x1B\x45\x00'; // Bold OFF
+
+          // Informasi Pesanan (Left Alignment terstruktur)
+          escpos += '\x1B\x61\x00';
+          escpos += dividerThick;
+          escpos += formatEscPosRow(`ID Order  : #${order.idPesanan}`, `[${order.sheetName || 'Gudang'}]`, colWidth);
+          escpos += `Toko/Tujuan: ${order.namaToko}\n`;
+          escpos += `Waktu Order: ${order.tanggal || '-'}\n`;
+          escpos += `Waktu Cetak: ${printTime}\n`;
+          if (order.picker) {
+            escpos += `Petugas PK : ${order.picker}\n`;
+          }
+          escpos += dividerThin;
+
+          // Header Kolom Tabel Produk
+          escpos += '\x1B\x45\x01'; // Bold ON
+          escpos += formatEscPosRow(is80 ? "NO  DESKRIPSI PRODUK / SKU" : "ITEM / SKU", is80 ? "KUANTITAS" : "QTY", colWidth);
+          escpos += '\x1B\x45\x00'; // Bold OFF
+          escpos += dividerThin;
+
+          // Looping Daftar Item dengan nomor urut rapi & kompak
+          let totalQty = 0;
+          const items = order.items || [];
+          items.forEach((it, idx) => {
+            const qty = Number(it.jumlah) || 0;
+            totalQty += qty;
+            const sku = String(it.idBarang || '-').trim();
+            const nama = String(it.namaBarang || '-').trim();
+            const nomor = `${idx + 1}.`.padEnd(3, ' ');
+
+            if (is80) {
+              escpos += `${nomor} ${nama}\n`;
+              escpos += formatEscPosRow(`    SKU: ${sku}`, `${qty} Pcs`, colWidth);
+            } else {
+              escpos += `${idx + 1}. ${nama.substring(0, 28)}\n`;
+              escpos += formatEscPosRow(`   ${sku}`, `${qty} Pcs`, colWidth);
+            }
+          });
+
+          // Total Ringkasan
+          escpos += dividerThin;
+          escpos += '\x1B\x45\x01'; // Bold ON
+          escpos += formatEscPosRow(`TOTAL ITEM FISIK (${items.length} SKU):`, `${totalQty} Pcs`, colWidth);
+          escpos += '\x1B\x45\x00'; // Bold OFF
+          escpos += dividerThick;
+
+          // Catatan Khusus bila ada
+          if (order.catatan) {
+            escpos += `Catatan: ${order.catatan}\n`;
+            escpos += dividerThin;
+          }
+
+          // Penutup / Footer
+          escpos += '\x1B\x61\x01'; // Center
+          escpos += '*** DOKUMEN MANIFEST RESMI GUDANG ***\n';
+          escpos += 'Harap periksa fisik barang sebelum serah terima\n';
+          escpos += '\x1B\x61\x00'; // Reset ke Left
+
+          // Feed baris secukupnya agar teks melewati pisau pemotong, lalu AUTOCUT
+          escpos += '\x0A\x0A\x0A\x0A'; 
+          escpos += '\x1D\x56\x00'; // Full cut command (GS V 0)
         });
 
         return escpos;
@@ -2791,12 +2863,12 @@
           }).join('');
 
           return `
-            <div class="a4-batch-page">
-              <div class="batch-page-header">
-                <span>Pusat Kendali Gudang - Manifest Batch</span>
-                <span>Halaman ${pIdx + 1} dari ${AppState.pendingBatchPages.length}</span>
-              </div>
-              <div class="batch-columns-container">
+      <div class="a4-batch-page">
+        <div class="batch-page-header">
+          <span>DUTA ABADI - Manifest Batch</span>
+          <span>Halaman ${pIdx + 1} dari ${AppState.pendingBatchPages.length}</span>
+        </div>
+        <div class="batch-columns-container">
                 <div class="batch-col">${renderCol(page.col1)}</div>
                 <div class="batch-col">${renderCol(page.col2)}</div>
               </div>
@@ -3046,9 +3118,9 @@
         }
 
         try {
-          if (!isAuto) showToast("Mencetak...", `Mengirim ${orders.length} struk ke Minipos...`);
+          if (!isAuto) showToast("Mencetak...", `Mengirim ${orders.length} struk ke Minipos (80mm)...`);
 
-          const escpos = generateEscPosCommands(orders);
+          const escpos = generateEscPosCommands(orders, AppState.thermalPaperWidth || '80mm');
           const encoder = new TextEncoder();
           const data = encoder.encode(escpos);
 
@@ -3068,7 +3140,7 @@
           setOrderPrintStatus(printedIds, 'Sudah di Print');
           orders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
 
-          showToast("Print Sukses", `${orders.length} struk dicetak & status Kolom K diupdate ke 'Sudah di Print'.`);
+          showToast("Print Sukses", `${orders.length} struk 80mm dicetak & dipotong otomatis.`);
         } catch (err) {
           console.error("Bluetooth print error:", err);
           orders.forEach(o => AppState.inFlightPrintIds.delete(String(o.idPesanan).trim()));
@@ -3078,8 +3150,10 @@
       }
 
       function printThermalBrowser(orders, paperWidth = '80mm') {
+        const selectedWidth = paperWidth || AppState.thermalPaperWidth || '80mm';
+        const is80 = selectedWidth === '80mm';
+        const widthVal = is80 ? '76mm' : '48mm';
         const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
-        const widthVal = paperWidth === '80mm' ? '72mm' : '48mm';
 
         // Tandai status sudah di print ke Kolom K
         const printedIds = orders.map(o => o.idPesanan);
@@ -3091,28 +3165,28 @@
             const qty = Number(it.jumlah) || 0;
             totalQty += qty;
             return `
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 3px;">
-                <div style="flex: 1; padding-right: 6px;">
-                  <div style="font-weight: bold; font-size: 10px;">${escapeHTML(it.idBarang)}</div>
-                  <div style="font-size: 9.5px; color: #333;">${escapeHTML(it.namaBarang)}</div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 4px;">
+                <div style="flex: 1; padding-right: 8px;">
+                  <div style="font-weight: bold; font-size: ${is80 ? '11.5px' : '10px'}; font-family: monospace;">${escapeHTML(it.idBarang)}</div>
+                  <div style="font-size: ${is80 ? '11px' : '9.5px'}; color: #222;">${escapeHTML(it.namaBarang)}</div>
                 </div>
                 <div style="text-align: right; white-space: nowrap;">
-                  <span style="font-weight: bold; font-family: monospace;">Qty: ${qty} Pcs</span>
+                  <span style="font-weight: bold; font-family: monospace; font-size: ${is80 ? '12px' : '10px'};">${qty} Pcs</span>
                 </div>
               </div>
             `;
           }).join('');
 
           return `
-            <div class="receipt-box" style="${idx > 0 ? 'page-break-before: always; margin-top: 15px;' : ''}">
-              <div style="text-align: center; margin-bottom: 6px;">
-                <div style="font-weight: 800; font-size: 13px; letter-spacing: 0.5px;">PUSAT KENDALI GUDANG</div>
-                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase;">MANIFEST PENGIRIMAN</div>
-              </div>
-              <div style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 4px 0; margin-bottom: 6px; font-size: 10px; line-height: 1.35;">
+      <div class="receipt-box" style="${idx > 0 ? 'page-break-before: always; margin-top: 15px;' : ''}">
+        <div style="text-align: center; margin-bottom: 8px;">
+          <div style="font-weight: 800; font-size: ${is80 ? '15px' : '13px'}; letter-spacing: 0.5px;">DUTA ABADI</div>
+          <div style="font-size: ${is80 ? '11.5px' : '10px'}; font-weight: bold; text-transform: uppercase;">MANIFEST PENGIRIMAN</div>
+        </div>
+        <div style="border-top: 1.5px dashed #000; border-bottom: 1.5px dashed #000; padding: 5px 0; margin-bottom: 8px; font-size: ${is80 ? '11.5px' : '10px'}; line-height: 1.4;">
                 <div style="display: flex; justify-content: space-between;">
                   <span>ID ORDER:</span>
-                  <strong style="font-family: monospace; font-size: 11px;">#${order.idPesanan}</strong>
+                  <strong style="font-family: monospace; font-size: ${is80 ? '12.5px' : '11px'};">#${order.idPesanan}</strong>
                 </div>
                 <div>TOKO : <strong>${escapeHTML(order.namaToko)}</strong></div>
                 <div>WAKTU: ${order.tanggal || '-'}</div>
@@ -3120,24 +3194,24 @@
                 <div>CETAK: ${printTime}</div>
               </div>
 
-              <div style="margin-bottom: 6px;">
+              <div style="margin-bottom: 8px;">
                 ${itemsHTML}
               </div>
 
-              <div style="border-top: 1px dashed #000; padding-top: 4px; font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+              <div style="border-top: 1.5px dashed #000; padding-top: 5px; font-size: ${is80 ? '12px' : '11px'}; font-weight: bold; display: flex; justify-content: space-between;">
                 <span>TOTAL BARANG:</span>
                 <span style="font-family: monospace;">${totalQty} Pcs</span>
               </div>
 
               ${order.catatan ? `
-                <div style="margin-top: 6px; padding: 3px; border: 1px dashed #555; font-size: 9.5px; word-break: break-word;">
+                <div style="margin-top: 8px; padding: 4px; border: 1px dashed #555; font-size: 10px; word-break: break-word;">
                   <strong>CATATAN:</strong> ${escapeHTML(order.catatan)}
                 </div>
               ` : ''}
 
-              <div style="text-align: center; font-size: 8.5px; margin-top: 8px; color: #444;">
-                <div>- Simpan tanda bukti ini untuk manifest -</div>
-                <div style="letter-spacing: 2px; margin-top: 2px;">*** SELESAI ***</div>
+              <div style="text-align: center; font-size: 9px; margin-top: 10px; color: #333;">
+                <div>- Simpan tanda bukti ini untuk manifest pengiriman -</div>
+                <div style="letter-spacing: 2px; margin-top: 2px; font-weight: bold;">*** SELESAI ***</div>
               </div>
             </div>
           `;
@@ -3148,12 +3222,12 @@
           <html>
             <head>
               <meta charset="utf-8">
-              <title>Cetak Struk Thermal</title>
+              <title>Cetak Struk Thermal ${selectedWidth}</title>
               <style>
-                @page { size: ${paperWidth} auto; margin: 0; }
+                @page { size: ${selectedWidth} auto; margin: 0; }
                 @media print {
                   html, body {
-                    width: ${paperWidth};
+                    width: ${selectedWidth};
                     margin: 0 !important;
                     padding: 0 !important;
                     background: #fff !important;
@@ -3162,7 +3236,7 @@
                   .receipt-box {
                     width: 100% !important;
                     box-sizing: border-box;
-                    padding: 3mm 2.5mm !important;
+                    padding: 4mm 3mm !important;
                   }
                 }
                 body {
@@ -3172,8 +3246,8 @@
                   font-family: 'Courier New', Courier, monospace, sans-serif;
                   background: #fff;
                   color: #000;
-                  font-size: 10.5px;
-                  line-height: 1.25;
+                  font-size: ${is80 ? '11.5px' : '10.5px'};
+                  line-height: 1.3;
                 }
                 .receipt-box { width: 100%; box-sizing: border-box; }
               </style>
@@ -3192,7 +3266,7 @@
           </html>
         `;
 
-        const pWin = window.open('', '_blank', 'width=380,height=600');
+        const pWin = window.open('', '_blank', 'width=420,height=650');
         if (!pWin) {
           showToast("Pop-up Diblokir", "Izinkan pop-up browser untuk mencetak struk thermal.", true);
           return;
