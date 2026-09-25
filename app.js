@@ -754,86 +754,102 @@ function formatEscPosRow(left, right, colWidth = 48) {
 function generateEscPosCommands(orders, customWidth = null) {
   const widthMode = customWidth || AppState.thermalPaperWidth || '80mm';
   const is80 = widthMode === '80mm';
-  // 80mm standard Font A = 48 columns (576 dots), 58mm = 32 columns (384 dots)
+  // Standar 80mm Font A: 48 kolom (576 dots), 58mm: 32 kolom (384 dots)
   const colWidth = is80 ? 48 : 32;
-  const divider = '-'.repeat(colWidth) + '\n';
-  const printTime = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }).replace(/\./g, ':');
+  const dividerThick = '='.repeat(colWidth) + '\n';
+  const dividerThin  = '-'.repeat(colWidth) + '\n';
+  const printTime = new Date().toLocaleString('id-ID', { 
+    dateStyle: 'short', 
+    timeStyle: 'medium' 
+  }).replace(/\./g, ':');
+
   let escpos = "";
 
   orders.forEach(order => {
     escpos += '\x1B\x40'; // Reset & Initialize printer
 
+    // Set lebar area fisik cetak (576 dots untuk 80mm, 384 dots untuk 58mm)
     if (is80) {
-      escpos += '\x1D\x57\x40\x02'; // GS W: 576 dots width (0x0240) for 80mm roll
-      escpos += '\x1D\x4C\x00\x00'; // GS L: Left margin 0 dots
+      escpos += '\x1D\x57\x40\x02'; // GS W: 576 dots width (0x0240)
+      escpos += '\x1D\x4C\x00\x00'; // GS L: Margin kiri 0 dot
     } else {
-      escpos += '\x1D\x57\x80\x01'; // GS W: 384 dots width (0x0180) for 58mm roll
-      escpos += '\x1D\x4C\x00\x00'; // GS L: Left margin 0 dots
+      escpos += '\x1D\x57\x80\x01'; // GS W: 384 dots width (0x0180)
+      escpos += '\x1D\x4C\x00\x00'; // GS L: Margin kiri 0 dot
     }
 
-    escpos += '\x1B\x61\x01'; // Center align
+    // Header Utama (Center Alignment)
+    escpos += '\x1B\x61\x01';
     escpos += '\x1B\x45\x01'; // Bold ON
     if (is80) {
-      escpos += '\x1D\x21\x11'; // Double width + Double height for wide 80mm impact
-      escpos += 'PUSAT KENDALI GUDANG\n';
-      escpos += '\x1D\x21\x00'; // Normal font size
-      escpos += 'MANIFEST PENGIRIMAN PESANAN\n';
+      escpos += '\x1D\x21\x11'; // Double Width + Double Height
+      escpos += 'DUTA ABADI\n';
+      escpos += '\x1D\x21\x00'; // Ukuran Normal
+      escpos += 'SURAT MANIFEST PESANAN\n';
     } else {
-      escpos += 'PUSAT KENDALI GUDANG\n';
+      escpos += 'DUTA ABADI\n';
       escpos += 'MANIFEST PENGIRIMAN\n';
     }
     escpos += '\x1B\x45\x00'; // Bold OFF
 
-    escpos += '\x1B\x61\x00'; // Left align
-    escpos += divider;
-    escpos += formatEscPosRow(`ID Order : #${order.idPesanan}`, `[${order.sheetName || 'Toko'}]`, colWidth);
-    escpos += `Penerima : ${order.namaToko}\n`;
-    escpos += formatEscPosRow(`Waktu    : ${order.tanggal || '-'}`, `Cetak: ${printTime}`, colWidth);
+    // Informasi Pesanan (Left Alignment terstruktur)
+    escpos += '\x1B\x61\x00';
+    escpos += dividerThick;
+    escpos += formatEscPosRow(`ID Order  : #${order.idPesanan}`, `[${order.sheetName || 'Gudang'}]`, colWidth);
+    escpos += `Toko/Tujuan: ${order.namaToko}\n`;
+    escpos += `Waktu Order: ${order.tanggal || '-'}\n`;
+    escpos += `Waktu Cetak: ${printTime}\n`;
     if (order.picker) {
-      escpos += `Picker   : ${order.picker}\n`;
+      escpos += `Petugas PK : ${order.picker}\n`;
     }
-    escpos += divider;
+    escpos += dividerThin;
 
+    // Header Kolom Tabel Produk
     escpos += '\x1B\x45\x01'; // Bold ON
-    escpos += formatEscPosRow(is80 ? "DESKRIPSI PRODUK & SKU" : "ITEM", is80 ? "KUANTITAS" : "QTY", colWidth);
+    escpos += formatEscPosRow(is80 ? "NO  DESKRIPSI PRODUK / SKU" : "ITEM / SKU", is80 ? "KUANTITAS" : "QTY", colWidth);
     escpos += '\x1B\x45\x00'; // Bold OFF
-    escpos += divider;
+    escpos += dividerThin;
 
+    // Looping Daftar Item dengan nomor urut rapi & kompak
     let totalQty = 0;
-    (order.items || []).forEach(it => {
+    const items = order.items || [];
+    items.forEach((it, idx) => {
       const qty = Number(it.jumlah) || 0;
       totalQty += qty;
-      const sku = String(it.idBarang || '').trim();
-      const nama = String(it.namaBarang || '').trim();
+      const sku = String(it.idBarang || '-').trim();
+      const nama = String(it.namaBarang || '-').trim();
+      const nomor = `${idx + 1}.`.padEnd(3, ' ');
 
       if (is80) {
-        escpos += `${nama}\n`;
-        escpos += formatEscPosRow(`  SKU: ${sku}`, `${qty} Pcs`, colWidth);
+        escpos += `${nomor} ${nama}\n`;
+        escpos += formatEscPosRow(`    SKU: ${sku}`, `${qty} Pcs`, colWidth);
       } else {
-        escpos += `${nama.substring(0, 32)}\n`;
-        escpos += formatEscPosRow(`  ${sku}`, `${qty} Pcs`, colWidth);
+        escpos += `${idx + 1}. ${nama.substring(0, 28)}\n`;
+        escpos += formatEscPosRow(`   ${sku}`, `${qty} Pcs`, colWidth);
       }
-      escpos += '\n';
     });
 
-    escpos += divider;
+    // Total Ringkasan
+    escpos += dividerThin;
     escpos += '\x1B\x45\x01'; // Bold ON
-    escpos += formatEscPosRow("TOTAL ITEM FISIK:", `${totalQty} Pcs`, colWidth);
+    escpos += formatEscPosRow(`TOTAL ITEM FISIK (${items.length} SKU):`, `${totalQty} Pcs`, colWidth);
     escpos += '\x1B\x45\x00'; // Bold OFF
+    escpos += dividerThick;
 
+    // Catatan Khusus bila ada
     if (order.catatan) {
-      escpos += divider;
       escpos += `Catatan: ${order.catatan}\n`;
+      escpos += dividerThin;
     }
 
-    escpos += divider;
-    escpos += '\x1B\x61\x01'; // Center align
+    // Penutup / Footer
+    escpos += '\x1B\x61\x01'; // Center
     escpos += '*** DOKUMEN MANIFEST RESMI GUDANG ***\n';
-    escpos += '\x1B\x61\x00'; // Left align
+    escpos += 'Harap periksa fisik barang sebelum serah terima\n';
+    escpos += '\x1B\x61\x00'; // Reset ke Left
 
-    // Feed lines then AUTOCUT Full (GS V 0)
-    escpos += '\x0A\x0A\x0A\x0A\x0A'; 
-    escpos += '\x1D\x56\x00'; 
+    // Feed baris secukupnya agar teks melewati pisau pemotong, lalu AUTOCUT
+    escpos += '\x0A\x0A\x0A\x0A'; 
+    escpos += '\x1D\x56\x00'; // Full cut command (GS V 0)
   });
 
   return escpos;
@@ -1969,7 +1985,7 @@ function eksekusiCetakBatchPintar() {
     return `
       <div class="a4-batch-page">
         <div class="batch-page-header">
-          <span>Pusat Kendali Gudang - Manifest Batch</span>
+          <span>DUTA ABADI - Manifest Batch</span>
           <span>Halaman ${pIdx + 1} dari ${AppState.pendingBatchPages.length}</span>
         </div>
         <div class="batch-columns-container">
@@ -2280,7 +2296,7 @@ function printThermalBrowser(orders, paperWidth = null) {
     return `
       <div class="receipt-box" style="${idx > 0 ? 'page-break-before: always; margin-top: 15px;' : ''}">
         <div style="text-align: center; margin-bottom: 8px;">
-          <div style="font-weight: 800; font-size: ${is80 ? '15px' : '13px'}; letter-spacing: 0.5px;">PUSAT KENDALI GUDANG</div>
+          <div style="font-weight: 800; font-size: ${is80 ? '15px' : '13px'}; letter-spacing: 0.5px;">DUTA ABADI</div>
           <div style="font-size: ${is80 ? '11.5px' : '10px'}; font-weight: bold; text-transform: uppercase;">MANIFEST PENGIRIMAN</div>
         </div>
         <div style="border-top: 1.5px dashed #000; border-bottom: 1.5px dashed #000; padding: 5px 0; margin-bottom: 8px; font-size: ${is80 ? '11.5px' : '10px'}; line-height: 1.4;">
